@@ -1,0 +1,210 @@
+<!doctype html>
+<!--
+  Material Design Lite
+  Copyright 2015 Google Inc. All rights reserved.
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+      https://www.apache.org/licenses/LICENSE-2.0
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="A front-end template that helps you build fast, modern mobile web apps.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Friendly Pix</title>
+
+  <!-- Disable tap highlight on IE -->
+  <meta name="msapplication-tap-highlight" content="no">
+
+  <!-- Web Application Manifest -->
+  <link rel="manifest" href="manifest.json">
+
+  <!-- Add to homescreen for Chrome on Android -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="Friendly Pix">
+  <meta name="theme-color" content="#303F9F">
+  <link rel="icon" sizes="192x192" href="images/touch/touch-icon-192x192.png">
+  <link rel="icon" sizes="128x128" href="images/touch/touch-icon-128x128.png">
+
+  <!-- Add to homescreen for Safari on iOS -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Web Starter Kit">
+  <link rel="apple-touch-icon" href="images/touch/touch-icon-180x180.png">
+  <link rel="apple-touch-icon-precomposed" href="images/touch/touch-icon-180x180.png">
+  <meta name="apple-mobile-web-app-status-bar-style" content="#303F9F">
+
+  <!-- Tile icon for Win8 -->
+  <meta name="msapplication-TileImage" content="images/touch/touch-icon-144x144.png">
+  <meta name="msapplication-TileColor" content="#3372DF">
+  <meta name="msapplication-navbutton-color" content="#303F9F">
+
+  <link rel="shortcut icon" href="images/favicon.png">
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Amaranth:700">
+  <link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.indigo-amber.min.css">
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+<div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-header">
+
+  <!-- Header section containing logo and menu -->
+  <header class="fp-header mdl-layout__header mdl-color-text--white mdl-color--primary">
+    <div class="mdl-layout__header-row fp-titlebar">
+      <h3><i class="material-icons">photo</i> Friendly Pix</h3>
+      <div class="mdl-layout-spacer"></div>
+      <div class="fp-searchcontainer mdl-textfield mdl-js-textfield mdl-textfield--expandable">
+        <label class="mdl-button mdl-js-button mdl-button--icon" for="searchQuery">
+          <i class="material-icons">search</i>
+        </label>
+        <div class="mdl-textfield__expandable-holder">
+          <form id="searchForm" action="#">
+            <input class="mdl-textfield__input" type="text" id="searchQuery">
+          </form>
+          <label class="mdl-textfield__label" for="searchQuery">Enter your query...</label>
+        </div>
+      </div>
+      <button class="fp-sign-in-button fp-signed-out-only mdl-button mdl-js-button mdl-js-ripple-effect"><i class="material-icons">account_circle</i> Sign in</button>
+      <div class="fp-signed-in-user-container mdl-cell--hide-phone fp-signed-in-only">
+        <a class="fp-usernamelink mdl-button mdl-js-button">
+          <div class="fp-avatar"></div>
+          <div class="fp-username mdl-color-text--white"></div>
+        </a>
+      </div>
+      <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon mdl-cell--hide-phone" id="fp-menu">
+        <i class="material-icons">more_vert</i>
+      </button>
+      <ul class="fp-menu-list mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right" for="fp-menu">
+        <a href="/about">
+          <li class="mdl-menu__item"><i class="material-icons">perm_contact_calendar</i> About</li>
+        </a>
+        <li class="fp-sign-out mdl-menu__item fp-signed-in-only"><i class="material-icons">exit_to_app</i> Sign out</li>
+      </ul>
+    </div>
+    <div class="fp-tab mdl-layout__header-row mdl-cell--hide-phone mdl-color--primary-dark">
+      <div class="mdl-tab">
+        <a href="/" class="mdl-layout__tab is-active mdl-button mdl-js-button mdl-js-ripple-effect">Home</a>
+        <a href="/recent" class="mdl-layout__tab mdl-button mdl-js-button mdl-js-ripple-effect">Recent</a>
+        <a href="/popular" class="mdl-layout__tab mdl-button mdl-js-button mdl-js-ripple-effect">Popular</a>
+        <input id="fp-mediacapture" type="file" accept="image/*;capture=camera">
+        <button class="mdl-button mdl-js-button mdl-button--fab mdl-cell--hide-tablet mdl-button--colored mdl-shadow--4dp mdl-js-ripple-effect" id="add">
+          <i class="material-icons">file_upload</i>
+        </button>
+      </div>
+    </div>
+    <button class="mdl-cell--hide-desktop mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored mdl-shadow--4dp" id="add-floating">
+      <i class="material-icons">photo_camera</i>
+    </button>
+  </header>
+  <div class="mdl-cell--hide-desktop mdl-cell--hide-tablet mdl-layout__drawer">
+    <button class="fp-sign-in-button fp-signed-out-only mdl-button mdl-js-button mdl-js-ripple-effect"><i class="material-icons">account_circle</i> Sign in</button>
+    <div class="fp-signed-in-user-container mdl-color--primary fp-signed-in-only">
+      <a class="fp-usernamelink">
+        <div class="fp-avatar"></div>
+        <div class="fp-username mdl-color-text--white"></div>
+      </a>
+    </div>
+    <nav class="mdl-navigation">
+      <a class="mdl-navigation__link is-active" href="/"><i class="material-icons">home</i> Home</a>
+      <a class="mdl-navigation__link" href="/recent"><i class="material-icons">new_releases</i> Recent</a>
+      <a class="mdl-navigation__link" href="/popular"><i class="material-icons">trending_up</i> Popular</a>
+      <hr />
+      <a class="mdl-navigation__link" href="/about"><i class="material-icons">perm_contact_calendar</i> About / Contact</a>
+      <hr class="fp-signed-in-only"/>
+      <a class="fp-sign-out mdl-navigation__link fp-signed-in-only"><i class="material-icons">exit_to_app</i> Sign Out</a>
+    </nav>
+  </div>
+
+  <main class="mdl-layout__content mdl-color--grey-100">
+    <div id="undefined"></div>
+
+    <!-- Home section displaying a random selection of images -->
+    <section id="page-home" class="mdl-grid fp-content">
+      <div class="demo-cards mdl-cell mdl-cell--4-col mdl-cell--8-col-tablet mdl-grid mdl-grid--no-spacing">
+        <div class="demo-updates mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--4-col-tablet mdl-cell--12-col-desktop">
+          <div class="mdl-card__title mdl-card--expand mdl-color--teal-300">
+            <h2 class="mdl-card__title-text">Updates</h2>
+          </div>
+          <div class="mdl-card__supporting-text mdl-color-text--grey-600">
+            Non dolore elit adipisicing ea reprehenderit consectetur culpa.
+          </div>
+          <div class="mdl-card__actions mdl-card--border">
+            <a href="#" class="mdl-button mdl-js-button mdl-js-ripple-effect">Read More</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- About & Contact page -->
+    <section id="page-about" class="mdl-grid fp-content">
+      <div class="mdl-cell mdl-cell--4-col mdl-cell--8-col-tablet mdl-grid mdl-grid--no-spacing">
+        <div class="mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--4-col-tablet mdl-cell--12-col-desktop">
+          <div class="mdl-card__title mdl-card--expand mdl-color--teal-300">
+            <h2 class="mdl-card__title-text">About</h2>
+          </div>
+          <div class="mdl-card__supporting-text mdl-color-text--grey-600">
+            This app has been built with Firebase.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- user page -->
+    <section id="page-user-info" class="mdl-grid fp-content">
+      <div class="fp-image-container mdl-cell mdl-cell--12-col mdl-grid">
+        <div class="fp-user-container mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col">
+          <div class="fp-user-avatar"></div>
+          <div class="fp-name-follow-container mdl-cell mdl-cell--5-col">
+            <div class="fp-user-username"></div>
+            <label class="fp-follow fp-signed-in-only mdl-switch mdl-js-switch mdl-js-ripple-effect" for="follow">
+              <input type="checkbox" id="follow" class="mdl-switch__input">
+              <span class="mdl-switch__label">Follow</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Add page -->
+    <section id="page-add" class="mdl-grid fp-content">
+      <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-grid mdl-grid--no-spacing">
+        <div class="fp-addcontainer mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-desktop">
+          <img id="newPictureContainer" src="">
+          <div class="mdl-card__supporting-text mdl-color-text--grey-600">
+            <form id="uploadPicForm" action="#">
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" id="imageCaptionInput">
+                <label class="mdl-textfield__label" for="imageCaptionInput">Image caption...</label>
+              </div>
+              <br />
+              <button type="submit" class="fp-upload mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                Upload this pic!
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.min.js"></script>
+<script src="bower_components/page/page.js"></script>
+<script src="bower_components/firebase/firebase.js"></script>
+<script src="scripts/auth.js"></script>
+<script src="scripts/search.js"></script>
+<script src="scripts/photo.js"></script>
+<script src="scripts/userpage.js"></script>
+<script src="scripts/routing.js"></script>
+</body>
+</html>

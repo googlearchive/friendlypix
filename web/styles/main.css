@@ -1,0 +1,259 @@
+/**
+ * Copyright 2015 Google Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+html, body {
+  font-family: 'Roboto', 'Helvetica', sans-serif;
+}
+a {
+  text-decoration: none;
+}
+.fp-titlebar h3 {
+  font-family: 'Amaranth', sans-serif;
+}
+
+.fp-titlebar h3 .material-icons {
+  top: 4px;
+  font-size: 32px;
+  margin-right: -2px;
+  position: relative;
+}
+.fp-header .mdl-layout__header-row {
+  max-width: 1024px;
+  width: 100%;
+  height: 100%;
+  padding: 10px 20px;
+  margin: auto;
+  position: relative;
+}
+.fp-signed-in-user-container {
+  display: none;
+  margin-left: 10px;
+}
+.fp-avatar {
+  height: 30px;
+  width: 30px;
+  display: inline-block;
+  background-size: 30px 30px;
+  border-radius: 30px;
+  border: 2px white solid;
+  margin: 2px 10px -2px 0;
+}
+.fp-username {
+  display: inline-block;
+  line-height: 38px;
+  vertical-align: top;
+}
+.fp-usernamelink {
+  padding: 0 10px 0 0;
+  border-radius: 15px 5px 5px 15px;
+  text-transform: none;
+}
+.mdl-layout__drawer .fp-signed-in-user-container {
+  margin: 0;
+  padding: 16px;
+  height: 44px;
+}
+.mdl-layout__drawer .fp-signed-in-user-container .fp-avatar {
+  height: 40px;
+  width: 40px;
+  background-size: 40px 40px;
+  border-radius: 40px;
+  margin-right: 15px;
+}
+.mdl-layout__drawer .fp-signed-in-user-container .fp-username {
+  font-size: 16px;
+  line-height: 48px;
+}
+.mdl-layout__drawer .fp-sign-in-button {
+  margin: 10px 0 0 0;
+}
+.fp-sign-out {
+  display: none;
+}
+.fp-sign-in-button {
+  margin-left: 10px;
+  color: inherit;
+}
+.fp-searchcontainer {
+  margin-top: 4px;
+}
+.mdl-button .material-icons {
+  margin-top: -2px;
+}
+.mdl-button.mdl-button--icon .material-icons,
+.mdl-button.mdl-button--fab .material-icons {
+  margin-top: 0;
+}
+.fp-header .mdl-tab {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  overflow: visible;
+  position: relative;
+  margin: auto;
+  max-width: 1024px;
+}
+.fp-header .fp-tab {
+  padding: 0;
+  max-width: none;
+}
+#add {
+  position: absolute;
+  right: 20px;
+  top: 18px;
+  z-index: 998;
+}
+#add-floating {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  z-index: 998;
+}
+.fp-content {
+  max-width: 1024px;
+}
+.fp-header .mdl-textfield__label:after{
+  background-color: rgb(255,215,64);
+}
+.mdl-layout__drawer-button {
+  display: none;
+}
+.mdl-layout__drawer .mdl-navigation .mdl-navigation__link.is-active,
+.is-active .mdl-menu__item {
+  color: black;
+  background-color: #EBEBEB;
+}
+.mdl-layout__drawer {
+  border-right-width: 0;
+}
+.mdl-navigation__link .material-icons, .mdl-menu__item .material-icons {
+  position: relative;
+  top: 7px;
+  margin-top: -7px;
+  margin-right: 10px;
+}
+#fp-mediacapture {
+  transform: scale(0.0001);
+  opacity: 0;
+}
+.fp-content .mdl-cell .fp-addcontainer {
+  margin: auto;
+  max-width: 800px;
+  display: block;
+  text-align: center;
+}
+.fp-addcontainer .mdl-card__supporting-text {
+  padding-top: 0;
+  width: auto;
+}
+#newPictureContainer {
+  margin: 15px 15px 0 15px;
+  max-width: calc(100% - 30px);
+}
+#page-add {
+  display: block;
+  text-align: center;
+}
+#page-add .mdl-cell {
+  width: auto;
+  min-width: 300px;
+}
+@media screen and (max-width: 960px) {
+  .fp-header .mdl-layout__header-row.fp-titlebar {
+    height: 56px;
+  }
+  .fp-titlebar h3 {
+    font-size: 24px;
+  }
+  .fp-titlebar h3 .material-icons {
+    top: 2.5px;
+    font-size: 23px;
+  }
+  .fp-searchcontainer {
+    max-width: 140px;
+    margin-left: 20px;
+  }
+}
+@media screen and (max-width: 480px) {
+  .mdl-layout__drawer-button {
+    display: block;
+    top: 3px;
+  }
+  .fp-titlebar h3 {
+    margin-left: 50px;
+  }
+}
+
+/* User Info page */
+
+.fp-user-avatar {
+  width: 150px;
+  height: 150px;
+  display: inline-block;
+  background-size: cover;
+  background-position: 50% 50%;
+}
+.fp-user-username {
+  font-size: 30px;
+  font-weight: 300;
+  white-space: nowrap;
+  width: 100%;
+  text-align: center;
+}
+.fp-user-container {
+  min-height: 150px;
+  height: 150px;
+  flex-direction: row;
+  align-items: center;
+  text-align: right;
+}
+.fp-follow {
+  width: 120px;
+  text-align: left;
+  margin-top: 20px;
+}
+.fp-name-follow-container {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+}
+@media screen and (max-width: 480px) {
+  .fp-user-username {
+    font-size: 20px;
+  }
+  .fp-user-avatar {
+    width: 100px;
+    height: 100px;
+    background-size: 100px 100px;
+  }
+  .fp-user-container {
+    min-height: 100px;
+    height: 100px;
+  }
+}
+
+/* Photo cards */
+
+.fp-image img {
+  height: 100%;
+  width: 100%;
+}
+.fp-image .mdl-card {
+  max-height: 150px;
+  display: block;
+  background-size: cover;
+  background-position: 50% 50%;
+}
