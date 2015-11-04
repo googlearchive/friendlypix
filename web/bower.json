@@ -1,0 +1,25 @@
+{
+  "name": "friendlypix",
+  "description": "FriendlyPix is a place where you can share photos by theme, follow posters, comment on photos and find photos near me. It is a Firebase sample application",
+  "version": "0.0.0",
+  "authors": [
+    "Firebase <support@firebase.com> (https://www.firebase.com/)"
+  ],
+  "homepage": "https://fborange.firebaseapp.com/",
+  "repository": {
+    "type": "git",
+    "url": "https://devrel.git.corp.google.com/samples/firebase/friendlypix"
+  },
+  "license": "Apache v2.0",
+  "keywords": [
+    "pictures",
+    "photos",
+    "firebase",
+    "realtime",
+    "sharing"
+  ],
+  "dependencies": {
+    "firebase": "2.0.x",
+    "page": "visionmedia/page.js#~1.6.3"
+  }
+}
