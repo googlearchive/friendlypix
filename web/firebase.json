@@ -1,0 +1,18 @@
+{
+  "firebase": "fborange",//"friendlypix-js-dev-44faa",
+  "rules": "security-rules.json",
+  "public": "./",
+  "ignore": [
+    "firebase.json",
+    "**/.*",
+    "**/node_modules/**",
+    "security-rules.json",
+    "bower.json",
+    "package.json"
+  ],
+  "functions": {
+    ".source": "functions",
+    ".credentials": "secrets.json"
+  }
+
+}

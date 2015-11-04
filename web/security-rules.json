@@ -1,0 +1,8 @@
+{
+  // Firechat sample security rules
+  "rules": {
+    // By default, make all data private unless specified otherwise.
+    ".read": true,
+    ".write": true
+  }
+}
