@@ -18,6 +18,7 @@
 // DOM Elements
 var userAvatar = $('.fp-user-avatar');
 var userUsername = $('.fp-user-username');
+var userContainer = $('.fp-user-container');
 var userInfoPageImageContainer = $('.fp-image-container', $('#page-user-info'));
 
 // Displays the User information in the UI or hides it and displays the
@@ -31,12 +32,9 @@ function loadUser(userid) {
       userUsername.text(userInfo.displayName);
     }
   });
-  firebase.child('photos').orderByChild('userId').equalTo(userid).once('value', function(snapshot) {
-    var images = snapshot.val();
-    for (var i in images) {
-      var image = images[i];
-      userInfoPageImageContainer.append(createImageCard(image.imageDataUri, image.userId));
-    }
+  firebase.child('photos').orderByChild('userId').equalTo(userid).on('child_added', function(val) {
+    var image = val.val();
+    userContainer.after(createImageCard(image.imageDataUri, image.userId));
   });
 }
 
