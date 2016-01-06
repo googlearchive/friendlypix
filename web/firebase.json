@@ -1,5 +1,5 @@
 {
-  "firebase": "fborange",//"friendlypix-js-dev-44faa",
+  "firebase": "fborange",
   "rules": "security-rules.json",
   "public": "./",
   "ignore": [

@@ -1,5 +1,6 @@
 {
   "devDependencies": {
+    "bower": "^1.6.5",
     "firebase-tools": "^2.0.2"
   }
 }
