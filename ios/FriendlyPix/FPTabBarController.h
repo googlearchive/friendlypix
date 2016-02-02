@@ -14,9 +14,6 @@
 //  limitations under the License.
 //
 
-
-#import "FPEditPhotoViewController.h"
-
 @protocol FPTabBarControllerDelegate;
 
 @interface FPTabBarController : UITabBarController <UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIActionSheetDelegate>

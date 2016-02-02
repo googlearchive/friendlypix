@@ -30,5 +30,7 @@
 - (instancetype)initWithSnapshot:(FDataSnapshot *)snapshot;
 
 - (void)addComment:(FPComment *)comment;
+- (NSArray *)mutableComments;
+@property (nonatomic) BOOL liked;
 
 @end

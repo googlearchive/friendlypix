@@ -43,15 +43,15 @@
 
     Firebase *ref;
     ref = [[Firebase alloc] initWithUrl:[FIRContext sharedInstance].serviceInfo.databaseURL];
-    Firebase *peopleRef = [ref childByAppendingPath: [NSString stringWithFormat:@"people/%@", user.userId]];
+    Firebase *peopleRef = [ref childByAppendingPath: [NSString stringWithFormat:@"people/%@", user.userID]];
     [peopleRef observeSingleEventOfType:FEventTypeValue withBlock:^(FDataSnapshot *peopleSnapshot) {
       if (peopleSnapshot.exists) {
         [FPAppState sharedInstance].currentUser = [[FPUser alloc] initWithSnapshot:peopleSnapshot];
       } else {
         NSDictionary *person = @{
-                                 @"username" : user.email,
-                                 @"full_name" : user.displayName,
-                                 @"profile_picture" : [user.photoURL absoluteString]
+                                 @"username" : user.email ? user.email : @"",
+                                 @"full_name" : user.displayName ? user.displayName : @"",
+                                 @"profile_picture" : user.photoURL ? [user.photoURL absoluteString] : @""
                                 };
 
         [peopleRef setValue:person];

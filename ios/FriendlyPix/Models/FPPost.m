@@ -38,16 +38,13 @@
 @property (copy, nonatomic) NSMutableArray *comments;
 @property (copy, nonatomic) NSDictionary *likes;
 
-//@property (nonatomic) BOOL liked;
-
 @end
 
 @implementation FPPost
 
 #pragma mark - NSCoding
 
-- (void)encodeWithCoder:(NSCoder *)encoder
-{
+- (void)encodeWithCoder:(NSCoder *)encoder {
   [encoder encodeObject:_postID forKey:@"postID"];
   [encoder encodeObject:_postDate forKey:@"postDate"];
   [encoder encodeObject:_imageURL forKey:@"imageURL"];
@@ -59,11 +56,10 @@
   [encoder encodeObject:_likes forKey:@"likes"];
   [encoder encodeObject:_fromUser forKey:@"fromUser"];
   [encoder encodeObject:_text forKey:@"text"];
-//  [encoder encodeBool:_liked forKey:@"liked"];
+  [encoder encodeBool:_liked forKey:@"liked"];
 }
 
-- (instancetype)initWithCoder:(NSCoder *)decoder
-{
+- (instancetype)initWithCoder:(NSCoder *)decoder {
   self = [super init];
   if (self) {
     _postID = [decoder decodeObjectForKey:@"postID"];
@@ -77,13 +73,12 @@
     _likes = [decoder decodeObjectForKey:@"likes"];
     _fromUser = [decoder decodeObjectForKey:@"fromUser"];
     _text = [decoder decodeObjectForKey:@"text"];
-//    _liked = [decoder decodeBoolForKey:@"liked"];
+    _liked = [decoder decodeBoolForKey:@"liked"];
   }
   return self;
 }
 
-- (instancetype)copyWithZone:(NSZone *)zone
-{
+- (instancetype)copyWithZone:(NSZone *)zone {
   FPPost *theCopy = [[FPPost allocWithZone:zone] init];  // use designated initializer
 
   [theCopy setPostID:[_postID copy]];
@@ -101,8 +96,7 @@
   return theCopy;
 }
 
-- (instancetype)initWithDictionary:(NSDictionary *)dictionary
-{
+- (instancetype)initWithDictionary:(NSDictionary *)dictionary {
   self = [super init];
   if (self) {
     NSArray *errors;
@@ -124,29 +118,26 @@
   return self;
 }
 
-- (instancetype)initWithSnapshot:(FDataSnapshot *)snapshot
-{
+- (instancetype)initWithSnapshot:(FDataSnapshot *)snapshot {
   FPPost *post = [self initWithDictionary:snapshot.value];
   post.postID = snapshot.key;
   _comments = [[NSMutableArray alloc] init];
+  _liked = [_likes objectForKey:[FPAppState sharedInstance].currentUser.userID];
   return post;
 }
 
 
 #pragma mark - NSObject
 
-- (NSUInteger)hash
-{
+- (NSUInteger)hash {
   return [_postID hash];
 }
 
-- (BOOL)isEqualToPost:(FPPost *)post
-{
+- (BOOL)isEqualToPost:(FPPost *)post {
   return [post.postID isEqualToString:_postID];
 }
 
-- (BOOL)isEqual:(id)object
-{
+- (BOOL)isEqual:(id)object {
   if (self == object) {
     return YES;
   }
@@ -158,8 +149,7 @@
   return [self isEqualToPost:(FPPost *)object];
 }
 
-- (NSString *)description
-{
+- (NSString *)description {
   NSDictionary *dictionary = @{ @"postID": self.postID ? : @"",
                                 @"postDate": self.postDate ? : @"",
                                 @"sharedURL": self.sharedURL ? : @"" };
@@ -168,66 +158,62 @@
 
 #pragma mark - STXPostItem
 
-- (NSDate *)postDate
-{
+- (NSDate *)postDate {
   return [[NSDate alloc] initWithTimeIntervalSince1970:1420973061];
   //return self.postDate;
 }
 
-- (NSString *)captionText
-{
+- (NSString *)captionText {
   return self.text;
 }
 
-- (NSURL *)sharedURL
-{
+- (NSURL *)sharedURL {
   return self.link;
 }
 
-- (NSURL *)photoURL
-{
+- (NSURL *)photoURL {
   return self.imageURL;
 }
 
-- (NSArray *)comments
-{
+- (NSArray *)comments {
   return [_comments copy];
 }
 
-- (NSInteger)totalLikes
-{
-  return [_likes count];
+- (NSArray *)mutableComments {
+  return _comments;
 }
 
-- (NSInteger)totalComments
-{
+- (NSInteger)totalLikes {
+  long totalLikes = [_likes count];
+  // if current user liked after syncing.
+  if (_liked && [_likes objectForKey:[FPAppState sharedInstance].currentUser.userID]) {
+    ++totalLikes;
+  } else if (!_liked && ![_likes objectForKey:[FPAppState sharedInstance].currentUser.userID]) {
+    // if current user disliked after syncing.
+    --totalLikes;
+  }
+  return totalLikes;
+}
+
+- (NSInteger)totalComments {
   return [_comments count];
 }
 
-- (NSDictionary *)likes
-{
+- (NSDictionary *)likes {
   return @{@"count": [NSNumber numberWithInt:[self totalLikes]]} ;
 }
 
-- (NSDictionary *)caption
-{
+- (NSDictionary *)caption {
   return @{@"text": self.text};
 }
 
 
--(void)addComment:(FPComment *)comment
-{
+-(void)addComment:(FPComment *)comment {
   [_comments addObject:comment];
 }
 
-- (id<STXUserItem>)user
-{
+- (id<STXUserItem>)user {
   return [FPAppState sharedInstance].users[_fromUser];
-}
-
-- (BOOL)liked
-{
-  return [_likes objectForKey:[FPAppState sharedInstance].currentUser.userID];
 }
 
 @end

@@ -16,7 +16,14 @@
 
 
 #import <UIKit/UIKit.h>
+#import "FPPost.h"
 
-@interface FPCommentViewController : UITableViewController
+@interface FPCommentViewController : UITableViewController<UITextFieldDelegate>
+@property (weak, nonatomic) IBOutlet UIView *footerView;
+@property (weak, nonatomic) IBOutlet UITextField *commentField;
+
+@property (nonatomic) BOOL hideDropShadow;
+
+@property (nonatomic, strong) FPPost *post;
 
 @end

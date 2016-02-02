@@ -14,8 +14,8 @@
 //  limitations under the License.
 //
 
-
 #import "FPTabBarController.h"
+#import "FPEditPhotoViewController.h"
 
 @interface FPTabBarController ()
 @property (nonatomic,strong) UINavigationController *navController;

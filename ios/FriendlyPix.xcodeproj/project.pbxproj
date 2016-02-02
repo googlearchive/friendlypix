@@ -27,7 +27,6 @@
 		1061E49C1C2238D400B3BD42 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1061E49B1C2238D400B3BD42 /* Foundation.framework */; };
 		1061E49E1C2238E400B3BD42 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1061E49D1C2238E400B3BD42 /* CoreGraphics.framework */; };
 		1061E4A11C2280CA00B3BD42 /* SignInViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1061E4A01C2280CA00B3BD42 /* SignInViewController.m */; };
-		1061E4A31C232D3400B3BD42 /* instagram_media_popular.json in Resources */ = {isa = PBXBuildFile; fileRef = 1061E4A21C232D3400B3BD42 /* instagram_media_popular.json */; };
 		1061E5691C23552600B3BD42 /* STXButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 1061E53F1C23552500B3BD42 /* STXButton.m */; };
 		1061E56A1C23552600B3BD42 /* NSString+Emoji.m in Sources */ = {isa = PBXBuildFile; fileRef = 1061E5421C23552500B3BD42 /* NSString+Emoji.m */; };
 		1061E56B1C23552600B3BD42 /* UIButton+STXButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 1061E5441C23552500B3BD42 /* UIButton+STXButton.m */; };
@@ -55,8 +54,6 @@
 		1088F8591C20B83E00467D36 /* FPPhotoFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1088F8571C20B83E00467D36 /* FPPhotoFooterView.swift */; };
 		1088F85A1C20B83E00467D36 /* FPPhotoFooterView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1088F8581C20B83E00467D36 /* FPPhotoFooterView.xib */; };
 		109F8CE71C03AD7000831B94 /* FPActivityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 109F8CE61C03AD7000831B94 /* FPActivityViewController.swift */; };
-		109F8CEC1C03CA3A00831B94 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 109F8CEB1C03CA3A00831B94 /* GoogleService-Info.plist */; };
-		109F8CED1C03CA3A00831B94 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 109F8CEB1C03CA3A00831B94 /* GoogleService-Info.plist */; };
 		14F433D25FCAE7397B56557F /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 53ECDA2BCE56D9E4FAE51200 /* libPods.a */; };
 		2C595EF31B2F979F00355AE7 /* logotype-xxhdpi.png in Resources */ = {isa = PBXBuildFile; fileRef = 2C595EF21B2F979F00355AE7 /* logotype-xxhdpi.png */; };
 		2C595EF41B2F979F00355AE7 /* logotype-xxhdpi.png in Resources */ = {isa = PBXBuildFile; fileRef = 2C595EF21B2F979F00355AE7 /* logotype-xxhdpi.png */; };
@@ -110,7 +107,6 @@
 		1061E49D1C2238E400B3BD42 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		1061E49F1C2280CA00B3BD42 /* SignInViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SignInViewController.h; sourceTree = "<group>"; };
 		1061E4A01C2280CA00B3BD42 /* SignInViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SignInViewController.m; sourceTree = "<group>"; };
-		1061E4A21C232D3400B3BD42 /* instagram_media_popular.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = instagram_media_popular.json; path = ../../../../../../Documents/STXDynamicTableView/STXDynamicTableViewExample/Resources/instagram_media_popular.json; sourceTree = "<group>"; };
 		1061E5061C23481B00B3BD42 /* FriendlyPix-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "FriendlyPix-Prefix.pch"; sourceTree = "<group>"; };
 		1061E53E1C23552500B3BD42 /* STXButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STXButton.h; sourceTree = "<group>"; };
 		1061E53F1C23552500B3BD42 /* STXButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STXButton.m; sourceTree = "<group>"; };
@@ -165,7 +161,6 @@
 		1088F8571C20B83E00467D36 /* FPPhotoFooterView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FPPhotoFooterView.swift; sourceTree = "<group>"; };
 		1088F8581C20B83E00467D36 /* FPPhotoFooterView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FPPhotoFooterView.xib; sourceTree = "<group>"; };
 		109F8CE61C03AD7000831B94 /* FPActivityViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FPActivityViewController.swift; sourceTree = "<group>"; };
-		109F8CEB1C03CA3A00831B94 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		2C595EF21B2F979F00355AE7 /* logotype-xxhdpi.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "logotype-xxhdpi.png"; sourceTree = "<group>"; };
 		2C595F041B34B73A00355AE7 /* FPConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FPConstants.swift; sourceTree = "<group>"; };
 		2C85627D1AFAB65F00F0B24B /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
@@ -517,8 +512,6 @@
 		5F5A534F1ADE670C00F81DF0 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				109F8CEB1C03CA3A00831B94 /* GoogleService-Info.plist */,
-				1061E4A21C232D3400B3BD42 /* instagram_media_popular.json */,
 				5F5A53591ADE670C00F81DF0 /* Main.storyboard */,
 				5F5A53501ADE670C00F81DF0 /* Info.plist */,
 				5F5A53511ADE670C00F81DF0 /* main.m */,
@@ -655,12 +648,10 @@
 				2C8562861AFAB65F00F0B24B /* LaunchScreen.xib in Resources */,
 				2C595EF31B2F979F00355AE7 /* logotype-xxhdpi.png in Resources */,
 				1061E5731C23552600B3BD42 /* STXFeedPhotoCell.xib in Resources */,
-				1061E4A31C232D3400B3BD42 /* instagram_media_popular.json in Resources */,
 				1061E5761C23552600B3BD42 /* STXUserActionCell.xib in Resources */,
 				2C8562841AFAB65F00F0B24B /* Images.xcassets in Resources */,
 				5F5A535B1ADE670C00F81DF0 /* Main.storyboard in Resources */,
 				2C8562821AFAB65F00F0B24B /* Icon@2x.png in Resources */,
-				109F8CEC1C03CA3A00831B94 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -674,7 +665,6 @@
 				2C8562851AFAB65F00F0B24B /* Images.xcassets in Resources */,
 				5F5A539C1ADE69AA00F81DF0 /* Main.storyboard in Resources */,
 				2C8562831AFAB65F00F0B24B /* Icon@2x.png in Resources */,
-				109F8CED1C03CA3A00831B94 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

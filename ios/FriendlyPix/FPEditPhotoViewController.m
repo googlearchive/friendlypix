@@ -17,6 +17,7 @@
 
 #import "FPEditPhotoViewController.h"
 #import "FPPhotoDetailsFooterView.h"
+@import Firebase.AdMob;
 
 @interface FPEditPhotoViewController ()
 @property (nonatomic, strong) UIScrollView *scrollView;
@@ -192,8 +193,9 @@
                            @"location": @"1",
                            @"user" : [FPAppState sharedInstance].currentUser.userID
                            };
-                           
+
   Firebase *ref;
+  ref = [[Firebase alloc] initWithUrl:[FIRContext sharedInstance].serviceInfo.databaseURL];
   Firebase *photo = [[ref childByAppendingPath:@"posts"] childByAutoId];
   [photo setValue:data];
   NSString *postId = photo.key;
@@ -201,13 +203,14 @@
   [[ref childByAppendingPath: [NSString stringWithFormat:@"users/%@/feed/%@", [FPAppState sharedInstance].currentUser.userID, postId]] setValue:[NSNumber numberWithBool:YES]];
 
   [[ref childByAppendingPath: [NSString stringWithFormat:@"users/%@/followers", [FPAppState sharedInstance].currentUser.userID]] observeSingleEventOfType:FEventTypeValue withBlock:^(FDataSnapshot *snapshot) {
-    NSDictionary *followers = snapshot.value;
-    for (NSString *follower in followers.allKeys) {
-      [[ref childByAppendingPath: [NSString stringWithFormat:@"users/%@/feed/", follower]] setValue:[NSNumber numberWithBool:YES] forKey:postId];
+    if (snapshot.exists) {
+      NSDictionary *followers = snapshot.value;
+      for (NSString *follower in followers.allKeys) {
+        [[ref childByAppendingPath: [NSString stringWithFormat:@"users/%@/feed/%@", follower, postId]] setValue:[NSNumber numberWithBool:YES]];
+      }
     }
   }];
   [self.parentViewController dismissViewControllerAnimated:YES completion:nil];
-
 
 
     

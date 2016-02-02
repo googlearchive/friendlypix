@@ -22,10 +22,12 @@
 #import "FPComment.h"
 #import "FPAppState.h"
 #import "FPAccountViewController.h"
+#import "FPCommentViewController.h"
 
 #define PHOTO_CELL_ROW 0
 
-@interface FPPhotoTimelineViewController () <STXFeedPhotoCellDelegate, STXLikesCellDelegate, STXCaptionCellDelegate, STXCommentCellDelegate, STXUserActionDelegate>
+@interface FPPhotoTimelineViewController () <STXFeedPhotoCellDelegate, STXLikesCellDelegate,
+    STXCaptionCellDelegate, STXCommentCellDelegate, STXUserActionDelegate>
 
 @property (strong, nonatomic) UIActivityIndicatorView *activityIndicatorView;
 
@@ -36,75 +38,71 @@
 
 @implementation FPPhotoTimelineViewController
 @synthesize ref;
-FirebaseHandle *feedHandle;
-FirebaseHandle *authorHandle;
+@synthesize postsRef;
 
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
+- (void)viewDidLoad {
+  [super viewDidLoad];
 
-    ref = [[Firebase alloc] initWithUrl:[FIRContext sharedInstance].serviceInfo.databaseURL];
+  ref = [[Firebase alloc] initWithUrl:[FIRContext sharedInstance].serviceInfo.databaseURL];
+  postsRef = [ref childByAppendingPath:@"posts"];
 
-
-    self.title = NSLocalizedString(@"Feed", nil);
+  self.title = NSLocalizedString(@"Feed", nil);
     
-    self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+  self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     
-    STXFeedTableViewDataSource *dataSource = [[STXFeedTableViewDataSource alloc] initWithController:self tableView:self.tableView];
-    self.tableView.dataSource = dataSource;
-    self.tableViewDataSource = dataSource;
+  STXFeedTableViewDataSource *dataSource = [[STXFeedTableViewDataSource alloc]
+                                            initWithController:self tableView:self.tableView];
+  self.tableView.dataSource = dataSource;
+  self.tableViewDataSource = dataSource;
     
-    STXFeedTableViewDelegate *delegate = [[STXFeedTableViewDelegate alloc] initWithController:self];
-    self.tableView.delegate = delegate;
-    self.tableViewDelegate = delegate;
+  STXFeedTableViewDelegate *delegate = [[STXFeedTableViewDelegate alloc] initWithController:self];
+  self.tableView.delegate = delegate;
+  self.tableViewDelegate = delegate;
    
-    self.activityIndicatorView = [self activityIndicatorViewOnView:self.view];
+  self.activityIndicatorView = [self activityIndicatorViewOnView:self.view];
     
-    [self loadFeed];
+  [self loadFeed];
 }
 
-- (void)dealloc
-{
-    // To prevent crash when popping this from navigation controller
-    self.tableView.delegate = nil;
-    self.tableView.dataSource = nil;
+- (void)dealloc {
+  // To prevent crash when popping this from navigation controller
+  self.tableView.delegate = nil;
+  self.tableView.dataSource = nil;
 }
 
-- (void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
+- (void)viewDidAppear:(BOOL)animated {
+  [super viewDidAppear:animated];
     
-    // This will be notified when the Dynamic Type user setting changes (from the system Settings app)
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(contentSizeCategoryChanged:) name:UIContentSizeCategoryDidChangeNotification object:nil];
-    
-    if ([self.tableViewDataSource.posts count] == 0) {
-        [self.activityIndicatorView startAnimating];
-    }
+  // This will be notified when the Dynamic Type user setting changes (from the system Settings app)
+  [[NSNotificationCenter defaultCenter] addObserver:self
+                                           selector:@selector(contentSizeCategoryChanged:)
+                                               name:UIContentSizeCategoryDidChangeNotification
+                                             object:nil];
+
+  if ([self.tableViewDataSource.posts count] == 0) {
+      [self.activityIndicatorView startAnimating];
+  }
 }
 
-- (void)loadFeed
-{
+- (void)loadFeed {
   // Listen for new messages in the Firebase database
-  [[ref childByAppendingPath:@"posts"]
-                observeEventType:FEventTypeChildAdded
-                withBlock:^(FDataSnapshot *postSnapshot) {
-                  [self loadPost:postSnapshot];
+  [postsRef observeEventType:FEventTypeChildAdded withBlock:^(FDataSnapshot *postSnapshot) {
+    [self loadPost:postSnapshot];
   }];
 
-  [[ref childByAppendingPath:@"posts"]
-   observeEventType:FEventTypeChildRemoved
-   withBlock:^(FDataSnapshot *postSnapshot) {
+  [postsRef observeEventType:FEventTypeChildRemoved withBlock:^(FDataSnapshot *postSnapshot) {
      FPPost *post = [[FPPost alloc] initWithSnapshot:postSnapshot];
      [self.tableViewDataSource.posts removeObject:post];
-     //[self.tableView deleteSections:[NSIndexSet indexSetWithIndex:[self.tableViewDataSource.posts count]-1] withRowAnimation:UITableViewRowAnimationNone];
+     //[self.tableView deleteSections:[NSIndexSet
+     // indexSetWithIndex:[self.tableViewDataSource.posts count]-1]
+     // withRowAnimation:UITableViewRowAnimationNone];
      [self.tableView reloadData];
    }];
 
 
 }
 
-- (void)loadPost:(FDataSnapshot *)postSnapshot
-{
+- (void)loadPost:(FDataSnapshot *)postSnapshot {
   FPPost *post = [[FPPost alloc] initWithSnapshot:postSnapshot];
 
   for (NSString *commentId in postSnapshot.value[@"comments"]) {
@@ -117,7 +115,8 @@ FirebaseHandle *authorHandle;
          [[ref childByAppendingPath:[@"people/" stringByAppendingString:fromUser]]
           observeEventType:FEventTypeValue
           withBlock:^(FDataSnapshot *peopleSnapshot) {
-            [FPAppState sharedInstance].users[fromUser] = [[FPUser alloc] initWithSnapshot:peopleSnapshot];
+            [FPAppState sharedInstance].users[fromUser] = [[FPUser alloc]
+                                                           initWithSnapshot:peopleSnapshot];
             [post addComment:comment];
             [self.tableView reloadData];
           }];
@@ -133,44 +132,47 @@ FirebaseHandle *authorHandle;
     [[ref childByAppendingPath:[@"people/" stringByAppendingString:authorId]]
      observeEventType:FEventTypeValue
      withBlock:^(FDataSnapshot *peopleSnapshot) {
-       [FPAppState sharedInstance].users[authorId] = [[FPUser alloc] initWithSnapshot:peopleSnapshot];
+       [FPAppState sharedInstance].users[authorId] = [[FPUser alloc]
+                                                      initWithSnapshot:peopleSnapshot];
        [self.tableViewDataSource.posts addObject:post];
-       [self.tableView insertSections:[NSIndexSet indexSetWithIndex:[self.tableViewDataSource.posts count]-1] withRowAnimation:UITableViewRowAnimationNone];
+       [self.tableView insertSections:[NSIndexSet
+                                       indexSetWithIndex:[self.tableViewDataSource.posts count]-1]
+                     withRowAnimation:UITableViewRowAnimationNone];
      }];
   } else {
     [self.tableViewDataSource.posts addObject:post];
-    [self.tableView insertSections:[NSIndexSet indexSetWithIndex:[self.tableViewDataSource.posts count]-1] withRowAnimation:UITableViewRowAnimationNone];
+    [self.tableView insertSections:[NSIndexSet
+                                    indexSetWithIndex:[self.tableViewDataSource.posts count]-1]
+                  withRowAnimation:UITableViewRowAnimationNone];
   }
 }
 
-- (void)viewWillDisappear:(BOOL)animated
-{
+- (void)viewWillDisappear:(BOOL)animated {
   [ref removeAllObservers];
 }
 
 
-- (void)viewDidDisappear:(BOOL)animated
-{
+- (void)viewDidDisappear:(BOOL)animated {
     [super viewDidDisappear:animated];
 
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIContentSizeCategoryDidChangeNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:UIContentSizeCategoryDidChangeNotification
+                                                  object:nil];
 }
 
-- (void)didReceiveMemoryWarning
-{
+- (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
 }
 
-- (void)contentSizeCategoryChanged:(NSNotification *)notification
-{
+- (void)contentSizeCategoryChanged:(NSNotification *)notification {
     [self.tableView reloadData];
 }
 
 #pragma mark - Feed
 
-//- (void)loadFeed
-//{
-//    NSString *feedPath = [[NSBundle mainBundle] pathForResource:@"instagram_media_popular" ofType:@"json"];
+//- (void)loadFeed {
+//    NSString *feedPath = [[NSBundle mainBundle] pathForResource:@"instagram_media_popular"
+//          ofType:@"json"];
 //    
 //    NSError *error;
 //    NSData *jsonData = [NSData dataWithContentsOfFile:feedPath options:NSDataReadingMappedIfSafe error:&error];
@@ -209,60 +211,89 @@ FirebaseHandle *authorHandle;
 
 #pragma mark - User Action Cell
 
-- (void)userDidLike:(STXUserActionCell *)userActionCell
-{
-  id<STXPostItem> postItem = userActionCell.postItem;
+- (void)userDidLike:(STXUserActionCell *)userActionCell {
+  FPPost *postItem = userActionCell.postItem;
   // user_has_liked ???
   //++postItem.totalLikes;
-  [[ref childByAppendingPath:[[@"posts/" stringByAppendingString:[postItem postID]] stringByAppendingString:@"/like_count"]] runTransactionBlock:^FTransactionResult *(FMutableData *currentData) {
-    NSNumber *value = currentData.value;
-    if (currentData.value == [NSNull null]) {
-      value = 0;
+//  [[ref childByAppendingPath:[[@"posts/" stringByAppendingString:[postItem postID]]
+//         stringByAppendingString:@"/like_count"]] runTransactionBlock:^FTransactionResult
+//            *(FMutableData *currentData) {
+//    NSNumber *value = currentData.value;
+//    if (currentData.value == [NSNull null]) {
+//      value = 0;
+//    }
+//    [currentData setValue:[NSNumber numberWithInt:(1 + [value intValue])]];
+//    return [FTransactionResult successWithValue:currentData];
+//  }];
+  
+  [[postsRef childByAppendingPath:[NSString stringWithFormat:@"%@/likes/%@", [postItem postID],
+                                   [FPAppState sharedInstance].currentUser.userID]]
+       setValue:[NSNumber numberWithBool:YES] withCompletionBlock:^(NSError *error, Firebase *ref) {
+    if (error) {
+      NSLog(@"error in syncing like");
+    } else {
+      postItem.liked = YES;
+      [self.tableView reloadRowsAtIndexPaths:@[userActionCell.indexPath]
+                            withRowAnimation:UITableViewRowAnimationNone];
     }
-    [currentData setValue:[NSNumber numberWithInt:(1 + [value intValue])]];
-    return [FTransactionResult successWithValue:currentData];
   }];
 }
 
-- (void)userDidUnlike:(STXUserActionCell *)userActionCell
-{
-  id<STXPostItem> postItem = userActionCell.postItem;
+- (void)userDidUnlike:(STXUserActionCell *)userActionCell {
+  FPPost *postItem = userActionCell.postItem;
   // user_has_liked ???
   //--postItem.totalLikes;
-  [[ref childByAppendingPath:[[@"posts/" stringByAppendingString:[postItem postID]] stringByAppendingString:@"/like_count"]] runTransactionBlock:^FTransactionResult *(FMutableData *currentData) {
-    NSNumber *value = currentData.value;
-    if (currentData.value == [NSNull null] || currentData.value == 0) {
-      value = 0;
+//  [[ref childByAppendingPath:[[@"posts/" stringByAppendingString:[postItem postID]]
+//      stringByAppendingString:@"/like_count"]]
+//      runTransactionBlock:^FTransactionResult *(FMutableData *currentData) {
+//    NSNumber *value = currentData.value;
+//    if (currentData.value == [NSNull null] || currentData.value == 0) {
+//      value = 0;
+//    } else {
+//      [currentData setValue:[NSNumber numberWithInt:([value intValue] - 1)]];
+//    }
+//    return [FTransactionResult successWithValue:currentData];
+//  }];
+  [[postsRef childByAppendingPath:[NSString stringWithFormat:@"%@/likes/%@", [postItem postID],
+                                   [FPAppState sharedInstance].currentUser.userID]]
+       removeValueWithCompletionBlock:^(NSError *error, Firebase *ref) {
+    if (error) {
+      NSLog(@"error in syncing unlike");
     } else {
-      [currentData setValue:[NSNumber numberWithInt:([value intValue] - 1)]];
+      postItem.liked = NO;
+      [self.tableView reloadRowsAtIndexPaths:@[userActionCell.indexPath]
+                            withRowAnimation:UITableViewRowAnimationNone];
     }
-    return [FTransactionResult successWithValue:currentData];
   }];
+
 }
 
-- (void)userWillComment:(STXUserActionCell *)userActionCell
-{
+- (void)userWillComment:(STXUserActionCell *)userActionCell {
+  id<STXPostItem> postItem = userActionCell.postItem;
   // Present comment view controller
-    
+  [self performSegueWithIdentifier:@"comment" sender:postItem];
 }
 
-- (void)userWillShare:(STXUserActionCell *)userActionCell
-{
+- (void)userWillShare:(STXUserActionCell *)userActionCell {
     id<STXPostItem> postItem = userActionCell.postItem;
     
-    NSIndexPath *photoCellIndexPath = [NSIndexPath indexPathForRow:PHOTO_CELL_ROW inSection:userActionCell.indexPath.section];
-    STXFeedPhotoCell *photoCell = (STXFeedPhotoCell *)[self.tableView cellForRowAtIndexPath:photoCellIndexPath];
+    NSIndexPath *photoCellIndexPath = [NSIndexPath
+                                       indexPathForRow:PHOTO_CELL_ROW
+                                       inSection:userActionCell.indexPath.section];
+    STXFeedPhotoCell *photoCell = (STXFeedPhotoCell *)[self.tableView
+                                                       cellForRowAtIndexPath:photoCellIndexPath];
     UIImage *photoImage = photoCell.photoImage;
     
     [self shareImage:photoImage text:postItem.captionText url:postItem.sharedURL];
 }
 
 
-- (void)feedCellWillShowPoster:(id <STXUserItem>)poster
-{
+- (void)feedCellWillShowPoster:(id <STXUserItem>)poster {
   if ([self isKindOfClass:[FPAccountViewController class]]) {
-    CAKeyframeAnimation * anim = [ CAKeyframeAnimation animationWithKeyPath:@"transform" ] ;
-    anim.values = @[ [ NSValue valueWithCATransform3D:CATransform3DMakeTranslation(-5.0f, 0.0f, 0.0f) ], [ NSValue valueWithCATransform3D:CATransform3DMakeTranslation(5.0f, 0.0f, 0.0f) ] ] ;
+    CAKeyframeAnimation * anim = [ CAKeyframeAnimation animationWithKeyPath:@"transform" ];
+    anim.values = @[[NSValue
+                  valueWithCATransform3D:CATransform3DMakeTranslation(-5.0f, 0.0f, 0.0f)],
+                  [NSValue valueWithCATransform3D:CATransform3DMakeTranslation(5.0f, 0.0f, 0.0f)]];
     anim.autoreverses = YES ;
     anim.repeatCount = 2.0f ;
     anim.duration = 0.07f ;
@@ -272,17 +303,24 @@ FirebaseHandle *authorHandle;
   }
 }
 
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+  // Get reference to the destination view controller
+  UINavigationController *navController = [segue destinationViewController];
+
   // Make sure your segue name in storyboard is the same as this line
   if ([[segue identifier] isEqualToString:@"asd"])
   {
-    // Get reference to the destination view controller
-    UINavigationController *navController = [segue destinationViewController];
-    FPAccountViewController *accountViewController = (FPAccountViewController *)([navController viewControllers][0]);
+    FPAccountViewController *accountViewController =
+        (FPAccountViewController *)([navController viewControllers][0]);
 
     // Pass any objects to the view controller here, like...
     [accountViewController setUser:sender];
+  } else if ([[segue identifier] isEqualToString:@"comment"]) {
+    FPCommentViewController *commentViewController =
+        (FPCommentViewController *)([navController viewControllers][0]);
+
+    // Pass any objects to the view controller here, like...
+    [commentViewController setPost:sender];
   }
 }
 

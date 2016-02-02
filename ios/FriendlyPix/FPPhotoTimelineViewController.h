@@ -20,5 +20,6 @@
 
 @interface FPPhotoTimelineViewController : UITableViewController
 @property Firebase *ref;
+@property Firebase *postsRef;
 - (void)loadPost:(FDataSnapshot *)postSnapshot;
 @end

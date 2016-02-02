@@ -171,8 +171,11 @@
 
 - (STXUserActionCell *)userActionCellForTableView:(UITableView *)tableView atIndexPath:(NSIndexPath *)indexPath
 {
+    id<STXPostItem> postItem = self.posts[indexPath.section];
     STXUserActionCell *cell = [tableView dequeueReusableCellWithIdentifier:NSStringFromClass([STXUserActionCell class]) forIndexPath:indexPath];
+    cell.postItem = postItem;
     cell.delegate = self.controller;
+    cell.indexPath = indexPath;
     return cell;
 }
 
