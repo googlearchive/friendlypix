@@ -23,4 +23,5 @@ pod 'FormatterKit'
 
 
 platform :ios, '8.0'
-link_with 'FriendlyPix', 'FriendlyPixSwift'
+target 'FriendlyPix'
+target 'FriendlyPixSwift'
