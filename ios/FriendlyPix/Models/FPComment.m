@@ -19,7 +19,6 @@
 
 @interface FPComment ()
 
-@property (copy, nonatomic) NSString *commentID;
 @property (copy, nonatomic) NSString *text;
 @property (copy, nonatomic) NSDate *postDate;
 @property (copy, nonatomic) NSString *fromUser;
@@ -70,15 +69,15 @@
   if (self) {
     NSArray *errors;
     NSDictionary *mappingDictionary = @{ @"text": KZProperty(text),
-                                         @"created_time": KZBox(Date, postDate),
-                                         @"from": KZProperty(fromUser) };
+                                         @"timestamp": KZBox(Date, postDate),
+                                         @"author": KZProperty(fromUser) };
 
     [KZPropertyMapper mapValuesFrom:dictionary toInstance:self usingMapping:mappingDictionary errors:&errors];
   }
   return self;
 }
 
-- (instancetype)initWithSnapshot:(FDataSnapshot *)snapshot
+- (instancetype)initWithSnapshot:(FIRDataSnapshot *)snapshot
 {
   FPComment *comment = [self initWithDictionary:snapshot.value];
   comment.commentID = snapshot.key;

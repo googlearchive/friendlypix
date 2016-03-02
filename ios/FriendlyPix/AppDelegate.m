@@ -17,25 +17,17 @@
 #import "AppDelegate.h"
 
 // [START usermanagement_import]
-#import "FirebaseAuth/FIRAuth.h"
-#import "FirebaseApp/FIRFirebaseApp.h"
-#import "FirebaseApp/FIRFirebaseOptions.h"
-#import "FirebaseAuthProviderGoogle/FIRGoogleSignInAuthProvider.h"
+@import Firebase.Core;
+@import Firebase.Auth;
+@import FirebaseApp;
 // [END usermanagement_import]
-
-/*! @var kWidgetURL
- @brief The GITkit widget URL.
- */
-static NSString *const kWidgetURL = @"https://gitkitmobile.appspot.com/gitkit.jsp";
 
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-//  NSNotificationCenter.defaultCenter().addObserver(self, selector: "connectToFriendlyPing",
-//                                                   name: FPConstants.NotificationKeys.SignedIn, object: nil)
+  //  NSNotificationCenter.defaultCenter().addObserver(self, selector: "connectToFriendlyPing",
+  //                                                   name: FPConstants.NotificationKeys.SignedIn, object: nil)
   [self configureFIRContext];
-  [GINInvite applicationDidFinishLaunchingWithOptions:launchOptions];
-  [self configureSignIn];
   [self configureGCMService];
 
   return YES;
@@ -50,25 +42,9 @@ static NSString *const kWidgetURL = @"https://gitkitmobile.appspot.com/gitkit.js
   // [END firebase_configure]
 }
 
-- (void) configureSignIn {
-  // [START usermanagement_initialize]
-  // Configure the default Firebase application
-  FIRGoogleSignInAuthProvider *googleSignIn = [[FIRGoogleSignInAuthProvider alloc]
-      initWithClientID:[FIRContext sharedInstance].serviceInfo.clientID];
-
-  FIRFirebaseOptions *firebaseOptions = [[FIRFirebaseOptions alloc] init];
-  firebaseOptions.APIKey = [FIRContext sharedInstance].serviceInfo.apiKey;
-  firebaseOptions.authWidgetURL = [NSURL URLWithString:kWidgetURL];
-  firebaseOptions.signInProviders = @[ googleSignIn ];
-  [FIRFirebaseApp initializedAppWithAppId:[FIRContext sharedInstance].serviceInfo.googleAppID
-                                  options:firebaseOptions];
-  // [END usermanagement_initialize]
-}
-
 - (void) configureGCMService {
-  NSString *senderID = [FIRContext sharedInstance].gcmSenderID;
-//  FPAppState.sharedInstance.senderID = senderID
-//  FPAppState.sharedInstance.serverAddress = "\(senderID)@gcm.googleapis.com"
+  //  FPAppState.sharedInstance.senderID = senderID
+  //  FPAppState.sharedInstance.serverAddress = "\(senderID)@gcm.googleapis.com"
   // [START start_gcm_service]
   GCMConfig *gcmConfig = [GCMConfig defaultConfig];
   gcmConfig.receiverDelegate = self;
@@ -95,25 +71,25 @@ static NSString *const kWidgetURL = @"https://gitkitmobile.appspot.com/gitkit.js
     [[UIApplication sharedApplication] registerForRemoteNotifications];
   }
   // [END register_for_remote_notifications]
-//  __weak typeof(self) weakSelf = self;
-//  // Handler for registration token request
-//  _registrationHandler = ^(NSString *registrationToken, NSError *error) {
-//    if (registrationToken != nil) {
-//      weakSelf.registrationToken = registrationToken;
-//      NSLog(@"Registration Token: %@", registrationToken);
-//      [weakSelf subscribeToTopic];
-//      NSDictionary *userInfo = @{ @"registrationToken" : registrationToken };
-//      [[NSNotificationCenter defaultCenter] postNotificationName:weakSelf.registrationKey
-//                                                          object:nil
-//                                                        userInfo:userInfo];
-//    } else {
-//      NSLog(@"Registration to GCM failed with error: %@", error.localizedDescription);
-//      NSDictionary *userInfo = @{ @"error" : error.localizedDescription };
-//      [[NSNotificationCenter defaultCenter] postNotificationName:weakSelf.registrationKey
-//                                                          object:nil
-//                                                        userInfo:userInfo];
-//    }
-//  };
+  //  __weak typeof(self) weakSelf = self;
+  //  // Handler for registration token request
+  //  _registrationHandler = ^(NSString *registrationToken, NSError *error) {
+  //    if (registrationToken != nil) {
+  //      weakSelf.registrationToken = registrationToken;
+  //      NSLog(@"Registration Token: %@", registrationToken);
+  //      [weakSelf subscribeToTopic];
+  //      NSDictionary *userInfo = @{ @"registrationToken" : registrationToken };
+  //      [[NSNotificationCenter defaultCenter] postNotificationName:weakSelf.registrationKey
+  //                                                          object:nil
+  //                                                        userInfo:userInfo];
+  //    } else {
+  //      NSLog(@"Registration to GCM failed with error: %@", error.localizedDescription);
+  //      NSDictionary *userInfo = @{ @"error" : error.localizedDescription };
+  //      [[NSNotificationCenter defaultCenter] postNotificationName:weakSelf.registrationKey
+  //                                                          object:nil
+  //                                                        userInfo:userInfo];
+  //    }
+  //  };
 }
 
 
@@ -125,7 +101,7 @@ static NSString *const kWidgetURL = @"https://gitkitmobile.appspot.com/gitkit.js
                   sourceApplication:options[UIApplicationOpenURLOptionsSourceApplicationKey]]) {
     return YES;
   }
-
+  
   return NO;
 }
 

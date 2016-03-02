@@ -14,12 +14,13 @@
 //  limitations under the License.
 //
 
-@import Foundation;
+#import "KZPropertyMapper+Date.h"
 
-#import "STXComment.h"
-
-@interface STXPost : NSObject <STXPostItem>
-
-- (instancetype)initWithDictionary:(NSDictionary *)dictionary;
-
+@implementation KZPropertyMapper (Date)
++ (NSDate *)boxValueAsDate:(NSNumber*)value {
+  if (value == nil) {
+    return nil;
+  }
+  return [NSDate dateWithTimeIntervalSince1970:([value longValue] / 1000.0)];
+}
 @end

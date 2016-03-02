@@ -49,9 +49,9 @@
   [encoder encodeObject:_postDate forKey:@"postDate"];
   [encoder encodeObject:_imageURL forKey:@"imageURL"];
   [encoder encodeObject:_link forKey:@"link"];
-//  [encoder encodeObject:_caption forKey:@"caption"];
-//  [encoder encodeInteger:_likeCount forKey:@"likeCount"];
-//  [encoder encodeInteger:_commentCount forKey:@"commentCount"];
+  //  [encoder encodeObject:_caption forKey:@"caption"];
+  //  [encoder encodeInteger:_likeCount forKey:@"likeCount"];
+  //  [encoder encodeInteger:_commentCount forKey:@"commentCount"];
   [encoder encodeObject:_comments forKey:@"comments"];
   [encoder encodeObject:_likes forKey:@"likes"];
   [encoder encodeObject:_fromUser forKey:@"fromUser"];
@@ -66,9 +66,9 @@
     _postDate = [decoder decodeObjectForKey:@"postDate"];
     _imageURL = [decoder decodeObjectForKey:@"imageURL"];
     _link = [decoder decodeObjectForKey:@"link"];
-//    _caption = [decoder decodeObjectForKey:@"caption"];
-//    _likeCount = [decoder decodeIntegerForKey:@"likeCount"];
-//    _commentCount = [decoder decodeIntegerForKey:@"commentCount"];
+    //    _caption = [decoder decodeObjectForKey:@"caption"];
+    //    _likeCount = [decoder decodeIntegerForKey:@"likeCount"];
+    //    _commentCount = [decoder decodeIntegerForKey:@"commentCount"];
     _comments = [decoder decodeObjectForKey:@"comments"];
     _likes = [decoder decodeObjectForKey:@"likes"];
     _fromUser = [decoder decodeObjectForKey:@"fromUser"];
@@ -85,9 +85,9 @@
   [theCopy setPostDate:[_postDate copy]];
   [theCopy setImageURL:[_imageURL copy]];
   [theCopy setLink:[_link copy]];
-//  [theCopy setCaption:[_caption copy]];
-//  [theCopy setLikeCount:_likeCount];
-//  [theCopy setCommentCount:_commentCount];
+  //  [theCopy setCaption:[_caption copy]];
+  //  [theCopy setLikeCount:_likeCount];
+  //  [theCopy setCommentCount:_commentCount];
   [theCopy setComments:[_comments copy]];
   [theCopy setLikes:[_likes copy]];
   [theCopy setFromUser:_fromUser];
@@ -100,17 +100,17 @@
   self = [super init];
   if (self) {
     NSArray *errors;
-    NSDictionary *mappingDictionary = @{ @"link": KZBox(URL, link),
-                                         @"text": KZProperty(text),
-//                                         @"caption": KZProperty(caption),
-                                         @"user": KZProperty(fromUser),
-//                                         @"user_has_liked": KZProperty(liked),
-                                         @"image": KZBox(URL, imageURL),
-                                         @"likes": KZProperty(likes),
-//                                         @"like_count": KZProperty(likeCount),
-                                         @"created_time": KZBox(Date, postDate),
-//                                         @"comment_count": KZProperty(commentCount)
-                                         };
+    NSDictionary *mappingDictionary = @{ //@"url": KZBox(URL, link),
+                                        @"text": KZProperty(text),
+                                        //                                         @"caption": KZProperty(caption),
+                                        @"author": KZProperty(fromUser),
+                                        //                                         @"user_has_liked": KZProperty(liked),
+                                        @"url": KZBox(URL, imageURL),
+                                        @"likes": KZProperty(likes),
+                                        //                                         @"like_count": KZProperty(likeCount),
+                                        @"timestamp": KZBox(Date, postDate),
+                                        //                                         @"comment_count": KZProperty(commentCount)
+                                        };
 
     [KZPropertyMapper mapValuesFrom:dictionary toInstance:self usingMapping:mappingDictionary errors:&errors];
   }
@@ -118,10 +118,10 @@
   return self;
 }
 
-- (instancetype)initWithSnapshot:(FDataSnapshot *)snapshot {
+- (instancetype)initWithSnapshot:(FIRDataSnapshot *)snapshot andComments:(NSArray<FPComment *> *)comments {
   FPPost *post = [self initWithDictionary:snapshot.value];
   post.postID = snapshot.key;
-  _comments = [[NSMutableArray alloc] init];
+  _comments = comments;
   _liked = [_likes objectForKey:[FPAppState sharedInstance].currentUser.userID];
   return post;
 }
@@ -158,11 +158,6 @@
 
 #pragma mark - STXPostItem
 
-- (NSDate *)postDate {
-  return [[NSDate alloc] initWithTimeIntervalSince1970:1420973061];
-  //return self.postDate;
-}
-
 - (NSString *)captionText {
   return self.text;
 }
@@ -175,13 +170,13 @@
   return self.imageURL;
 }
 
-- (NSArray *)comments {
-  return [_comments copy];
-}
+//- (NSArray *)comments {
+//  return [_comments copy];
+//}
 
-- (NSArray *)mutableComments {
-  return _comments;
-}
+//- (NSArray *)mutableComments {
+//  return _comments;
+//}
 
 - (NSInteger)totalLikes {
   long totalLikes = [_likes count];
@@ -205,11 +200,6 @@
 
 - (NSDictionary *)caption {
   return @{@"text": self.text};
-}
-
-
--(void)addComment:(FPComment *)comment {
-  [_comments addObject:comment];
 }
 
 - (id<STXUserItem>)user {

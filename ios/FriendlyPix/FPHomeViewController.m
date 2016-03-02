@@ -18,22 +18,17 @@
 
 @implementation FPHomeViewController
 
-- (void)viewDidLoad {
-  [super viewDidLoad];
-  // TODO: Add your initialization code here.
-}
-
 - (void)loadFeed {
   // Listen for new messages in the Firebase database
 
-  [[super.ref childByAppendingPath: [NSString stringWithFormat:@"users/%@/feed", [FPAppState sharedInstance].currentUser.userID]]
-   observeEventType:FEventTypeChildAdded
-   withBlock:^(FDataSnapshot *feedSnapshot) {
-       [[super.ref childByAppendingPath:[@"posts/" stringByAppendingString:feedSnapshot.key]]
-        observeEventType:FEventTypeValue
-        withBlock:^(FDataSnapshot *postSnapshot) {
-          [super loadPost:postSnapshot];
-        }];
+  [[super.ref childByAppendingPath: [NSString stringWithFormat:@"feed/%@", [FPAppState sharedInstance].currentUser.userID]]
+   observeEventType:FIRDataEventTypeChildAdded
+   withBlock:^(FIRDataSnapshot *feedSnapshot) {
+     [[super.ref childByAppendingPath:[@"posts/" stringByAppendingString:feedSnapshot.key]]
+      observeEventType:FIRDataEventTypeValue
+      withBlock:^(FIRDataSnapshot *postSnapshot) {
+        [super loadPost:postSnapshot];
+      }];
    }];
 }
 

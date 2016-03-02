@@ -16,52 +16,60 @@
 
 
 #import "SignInViewController.h"
-#import "FirebaseAuthProviderGoogle/FIRGoogleSignInAuthProvider.h"
-#import "FirebaseAuth/FIRUser.h"
-#import "FirebaseApp/FIRFirebaseApp.h"
-#import "FirebaseApp/FIRFirebaseOptions.h"
-#import "FPUser.h"
-#import "FirebaseAuthUI/FIRAuthUI.h"
+@import FirebaseAuth;
+@import FirebaseApp;
+@import Firebase.Core;
 @import Firebase.AdMob;
 
-
-@interface SignInViewController : UIViewController <FIRAuthUIDelegate>
+@interface SignInViewController ()
+@property (weak, nonatomic) IBOutlet UITextField *emailField;
+@property (weak, nonatomic) IBOutlet UITextField *passwordField;
 @end
 
 @implementation SignInViewController
-
-- (IBAction)didTapSignIn:(UIButton *)sender {
-  FIRAuth *firebaseAuth = [FIRAuth auth];
-  FIRAuthUI *firebaseAuthUI =
-  [FIRAuthUI authUIWithAuth:firebaseAuth delegate:self];
-  [firebaseAuthUI presentSignInWithCallback:^(FIRUser *_Nullable user,
-                                              NSError *_Nullable error) {
+- (IBAction)didTapSignUp:(id)sender {
+  [[FIRAuth auth] createUserWithEmail:_emailField.text password:_passwordField.text callback:^(FIRUser * _Nullable user, NSError * _Nullable error) {
     if (error) {
-      NSLog(error.localizedDescription);
+      NSLog(@"%@", error.localizedDescription);
       return;
     }
-
-    Firebase *ref;
-    ref = [[Firebase alloc] initWithUrl:[FIRContext sharedInstance].serviceInfo.databaseURL];
-    Firebase *peopleRef = [ref childByAppendingPath: [NSString stringWithFormat:@"people/%@", user.userID]];
-    [peopleRef observeSingleEventOfType:FEventTypeValue withBlock:^(FDataSnapshot *peopleSnapshot) {
-      if (peopleSnapshot.exists) {
-        [FPAppState sharedInstance].currentUser = [[FPUser alloc] initWithSnapshot:peopleSnapshot];
-      } else {
-        NSDictionary *person = @{
-                                 @"username" : user.email ? user.email : @"",
-                                 @"full_name" : user.displayName ? user.displayName : @"",
-                                 @"profile_picture" : user.photoURL ? [user.photoURL absoluteString] : @""
-                                };
-
-        [peopleRef setValue:person];
-      }
-      [self signedIn];
-    }];
+    [self signedIn:user];
   }];
 }
 
-- (void)signedIn {
+- (IBAction)didTapSignIn:(UIButton *)sender {
+  //  FIRAuth *firebaseAuth = [FIRAuth auth];
+  //  FIRAuthUI *firebaseAuthUI = [FIRAuthUI authUIForApp:firebaseAuth.app];
+  //  [firebaseAuthUI presentSignInWithViewController:self callback:^(FIRUser *_Nullable user,
+  //                                                                  NSError *_Nullable error) {
+  [[FIRAuth auth] signInWithEmail:_emailField.text
+                         password:_passwordField.text
+                         callback:^(FIRUser *user, NSError *error) {
+                           if (error) {
+                             NSLog(@"%@", error.localizedDescription);
+                             return;
+                           }
+
+                           [self signedIn:user];
+                         }];
+}
+
+- (void)signedIn:(FIRUser *)user {
+  FIRDatabaseReference *ref;
+  ref = [FIRDatabase database].reference;
+  FIRDatabaseReference *peopleRef = [ref childByAppendingPath: [NSString stringWithFormat:@"people/%@", user.uid]];
+  [peopleRef observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot *peopleSnapshot) {
+    if (peopleSnapshot.exists) {
+      [FPAppState sharedInstance].currentUser = [[FPUser alloc] initWithSnapshot:peopleSnapshot];
+    } else {
+      NSDictionary *person = @{
+                               @"displayName" : user.displayName ? user.displayName : @"",
+                               @"photoUrl" : user.photoURL ? [user.photoURL absoluteString] : @""
+                               };
+      
+      [peopleRef setValue:person];
+    }
+  }];
   [self performSegueWithIdentifier:@"SignInToFP" sender:nil];
 }
 

@@ -21,7 +21,6 @@
 
 @property (copy, nonatomic) NSString *userID;
 @property (copy, nonatomic) NSString *username;
-@property (copy, nonatomic) NSString *fullname;
 @property (copy, nonatomic) NSURL *profilePictureURL;
 
 @end
@@ -33,9 +32,8 @@
   self = [super init];
   if (self) {
     NSArray *errors;
-    NSDictionary *mappingDictionary = @{ @"username": KZProperty(username),
-                                         @"full_name": KZProperty(fullname),
-                                         @"profile_picture": KZBox(URL, profilePictureURL) };
+    NSDictionary *mappingDictionary = @{ @"displayName": KZProperty(username),
+                                         @"photoUrl": KZBox(URL, profilePictureURL)};
 
     [KZPropertyMapper mapValuesFrom:dictionary toInstance:self usingMapping:mappingDictionary errors:&errors];
   }
@@ -43,7 +41,7 @@
   return self;
 }
 
-- (instancetype)initWithSnapshot:(FDataSnapshot *)snapshot
+- (instancetype)initWithSnapshot:(FIRDataSnapshot *)snapshot
 {
   FPUser *user = [self initWithDictionary:snapshot.value];
   user.userID = snapshot.key;
@@ -73,11 +71,15 @@
   return [self isEqualToUser:(FPUser *)object];
 }
 
+- (NSString *)fullname {
+  return _username;
+}
+
 - (NSString *)description
 {
   NSDictionary *dictionary = @{ @"userID": self.userID ? : @"",
                                 @"username": self.username ? : @"",
-                                @"fullname": self.fullname ? : @"",
+                                @"fullname": self.username ? : @"",
                                 @"profilePictureURL": self.profilePictureURL ? : @"" };
   return [NSString stringWithFormat:@"<%@: %p> %@", NSStringFromClass([self class]), self, dictionary];
 }

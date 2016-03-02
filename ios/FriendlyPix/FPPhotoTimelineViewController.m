@@ -23,6 +23,7 @@
 #import "FPAppState.h"
 #import "FPAccountViewController.h"
 #import "FPCommentViewController.h"
+@import Firebase.Core;
 
 #define PHOTO_CELL_ROW 0
 
@@ -37,14 +38,14 @@
 @end
 
 @implementation FPPhotoTimelineViewController
-@synthesize ref;
-@synthesize postsRef;
 
 - (void)viewDidLoad {
   [super viewDidLoad];
 
-  ref = [[Firebase alloc] initWithUrl:[FIRContext sharedInstance].serviceInfo.databaseURL];
-  postsRef = [ref childByAppendingPath:@"posts"];
+  _ref = [FIRDatabase database].reference;
+  _postsRef = [_ref childByAppendingPath:@"posts"];
+  _commentsRef = [_ref childByAppendingPath:@"comments"];
+  _usersRef = [_ref childByAppendingPath:@"users"];
 
   self.title = NSLocalizedString(@"Feed", nil);
     
@@ -86,69 +87,66 @@
 
 - (void)loadFeed {
   // Listen for new messages in the Firebase database
-  [postsRef observeEventType:FEventTypeChildAdded withBlock:^(FDataSnapshot *postSnapshot) {
+  [_postsRef observeEventType:FIRDataEventTypeChildAdded withBlock:^(FIRDataSnapshot *postSnapshot) {
     [self loadPost:postSnapshot];
   }];
 
-  [postsRef observeEventType:FEventTypeChildRemoved withBlock:^(FDataSnapshot *postSnapshot) {
-     FPPost *post = [[FPPost alloc] initWithSnapshot:postSnapshot];
+  [_postsRef observeEventType:FIRDataEventTypeChildRemoved withBlock:^(FIRDataSnapshot *postSnapshot) {
+     FPPost *post = [[FPPost alloc] initWithSnapshot:postSnapshot andComments:NULL];
      [self.tableViewDataSource.posts removeObject:post];
-     //[self.tableView deleteSections:[NSIndexSet
-     // indexSetWithIndex:[self.tableViewDataSource.posts count]-1]
-     // withRowAnimation:UITableViewRowAnimationNone];
+     [self.tableView deleteSections:[NSIndexSet
+      indexSetWithIndex:[self.tableViewDataSource.posts count]]
+      withRowAnimation:UITableViewRowAnimationNone];
      [self.tableView reloadData];
    }];
-
-
 }
 
-- (void)loadPost:(FDataSnapshot *)postSnapshot {
-  FPPost *post = [[FPPost alloc] initWithSnapshot:postSnapshot];
-
-  for (NSString *commentId in postSnapshot.value[@"comments"]) {
-    [[ref childByAppendingPath:[@"comments/" stringByAppendingString:commentId]]
-     observeEventType:FEventTypeValue
-     withBlock:^(FDataSnapshot *commentSnapshot) {
-       FPComment *comment = [[FPComment alloc] initWithSnapshot:commentSnapshot];
-       NSString *fromUser = commentSnapshot.value[@"from"];
-       if (![[FPAppState sharedInstance].users objectForKey:fromUser]) {
-         [[ref childByAppendingPath:[@"people/" stringByAppendingString:fromUser]]
-          observeEventType:FEventTypeValue
-          withBlock:^(FDataSnapshot *peopleSnapshot) {
-            [FPAppState sharedInstance].users[fromUser] = [[FPUser alloc]
-                                                           initWithSnapshot:peopleSnapshot];
-            [post addComment:comment];
+- (void)loadPost:(FIRDataSnapshot *)postSnapshot {
+  [[_commentsRef childByAppendingPath:postSnapshot.key] observeEventType:FIRDataEventTypeValue
+      withBlock:^(FIRDataSnapshot *commentsSnapshot) {
+        NSMutableArray *commentsArray = [[NSMutableArray alloc]
+            initWithCapacity:commentsSnapshot.childrenCount];
+        FPComment *comment;
+        for (FIRDataSnapshot *commentSnapshot in commentsSnapshot.children) {
+          comment = [[FPComment alloc] initWithSnapshot:commentSnapshot];
+          NSString *fromUser = commentSnapshot.value[@"author"];
+          if (![[FPAppState sharedInstance].users objectForKey:fromUser]) {
+            [[_ref childByAppendingPath:[@"people/" stringByAppendingString:fromUser]]
+                observeEventType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot *peopleSnapshot) {
+                  [FPAppState sharedInstance].users[fromUser] = [[FPUser alloc]
+                      initWithSnapshot:peopleSnapshot];
+                  [commentsArray addObject:comment];
+                  [self.tableView reloadData];
+                }
+            ];
+          } else {
+            [commentsArray addObject:comment];
             [self.tableView reloadData];
-          }];
-       } else {
-         [post addComment:comment];
-         [self.tableView reloadData];
-       }
-     }];
-  }
+          }
+        }
 
-  NSString *authorId = postSnapshot.value[@"user"];
-  if (![[FPAppState sharedInstance].users objectForKey:authorId]) {
-    [[ref childByAppendingPath:[@"people/" stringByAppendingString:authorId]]
-     observeEventType:FEventTypeValue
-     withBlock:^(FDataSnapshot *peopleSnapshot) {
-       [FPAppState sharedInstance].users[authorId] = [[FPUser alloc]
-                                                      initWithSnapshot:peopleSnapshot];
-       [self.tableViewDataSource.posts addObject:post];
-       [self.tableView insertSections:[NSIndexSet
-                                       indexSetWithIndex:[self.tableViewDataSource.posts count]-1]
-                     withRowAnimation:UITableViewRowAnimationNone];
-     }];
-  } else {
-    [self.tableViewDataSource.posts addObject:post];
-    [self.tableView insertSections:[NSIndexSet
-                                    indexSetWithIndex:[self.tableViewDataSource.posts count]-1]
-                  withRowAnimation:UITableViewRowAnimationNone];
-  }
+        FPPost *post = [[FPPost alloc] initWithSnapshot:postSnapshot andComments:commentsArray];
+        NSString *authorId = postSnapshot.value[@"author"];
+        if (![[FPAppState sharedInstance].users objectForKey:authorId]) {
+          [[_ref childByAppendingPath:[@"people/" stringByAppendingString:authorId]]
+              observeEventType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot *peopleSnapshot) {
+                [FPAppState sharedInstance].users[authorId] = [[FPUser alloc]
+                    initWithSnapshot:peopleSnapshot];
+                [self.tableViewDataSource.posts addObject:post];
+                [self.tableView insertSections:[NSIndexSet
+                             indexSetWithIndex:[self.tableViewDataSource.posts count]-1]
+                              withRowAnimation:UITableViewRowAnimationNone];
+       }];
+    } else {
+      [self.tableViewDataSource.posts addObject:post];
+      [self.tableView insertSections:[NSIndexSet indexSetWithIndex:[self.tableViewDataSource.posts count]-1]
+                                                  withRowAnimation:UITableViewRowAnimationNone];
+    }
+  }];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
-  [ref removeAllObservers];
+  [_ref removeAllObservers];
 }
 
 
@@ -168,103 +166,52 @@
     [self.tableView reloadData];
 }
 
-#pragma mark - Feed
-
-//- (void)loadFeed {
-//    NSString *feedPath = [[NSBundle mainBundle] pathForResource:@"instagram_media_popular"
-//          ofType:@"json"];
-//    
-//    NSError *error;
-//    NSData *jsonData = [NSData dataWithContentsOfFile:feedPath options:NSDataReadingMappedIfSafe error:&error];
-//    if (jsonData) {
-//        NSDictionary *jsonObject = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingAllowFragments error:&error];
-//        if (error) {
-//            UALog(@"%@", error);
-//        }
-//        
-//        NSDictionary *instagramPopularMediaDictionary = jsonObject;
-//        if (instagramPopularMediaDictionary) {
-//            NSArray *mediaDataArray = [instagramPopularMediaDictionary valueForKey:@"data"];
-//            
-//            NSMutableArray *posts = [NSMutableArray array];
-//            for (NSDictionary *mediaDictionary in mediaDataArray) {
-//                STXPost *post = [[STXPost alloc] initWithDictionary:mediaDictionary];
-//                [posts addObject:post];
-//            }
-//            
-//            self.tableViewDataSource.posts = [posts copy];
-//            
-//            [self.tableView reloadData];
-//            
-//        } else {
-//            if (error) {
-//                UALog(@"%@", error);
-//            }
-//        }
-//    } else {
-//        if (error) {
-//            UALog(@"%@", error);
-//        }
-//    }
-//    
-//}
-
 #pragma mark - User Action Cell
 
 - (void)userDidLike:(STXUserActionCell *)userActionCell {
   FPPost *postItem = userActionCell.postItem;
-  // user_has_liked ???
-  //++postItem.totalLikes;
-//  [[ref childByAppendingPath:[[@"posts/" stringByAppendingString:[postItem postID]]
-//         stringByAppendingString:@"/like_count"]] runTransactionBlock:^FTransactionResult
-//            *(FMutableData *currentData) {
-//    NSNumber *value = currentData.value;
-//    if (currentData.value == [NSNull null]) {
-//      value = 0;
-//    }
-//    [currentData setValue:[NSNumber numberWithInt:(1 + [value intValue])]];
-//    return [FTransactionResult successWithValue:currentData];
-//  }];
-  
-  [[postsRef childByAppendingPath:[NSString stringWithFormat:@"%@/likes/%@", [postItem postID],
+  [[_usersRef childByAppendingPath:[NSString stringWithFormat:@"%@/likes/%@",
+      [FPAppState sharedInstance].currentUser.userID, [postItem postID]]]
+          setValue:@YES withCompletionBlock:^(NSError *error, FIRDatabaseReference *ref) {
+            if (error) {
+              NSLog(@"error in syncing like");
+              return;
+            }
+  [[_postsRef childByAppendingPath:[NSString stringWithFormat:@"%@/likes/%@", [postItem postID],
                                    [FPAppState sharedInstance].currentUser.userID]]
-       setValue:[NSNumber numberWithBool:YES] withCompletionBlock:^(NSError *error, Firebase *ref) {
+       setValue:@YES withCompletionBlock:^(NSError *error, FIRDatabaseReference *ref) {
     if (error) {
       NSLog(@"error in syncing like");
-    } else {
-      postItem.liked = YES;
-      [self.tableView reloadRowsAtIndexPaths:@[userActionCell.indexPath]
-                            withRowAnimation:UITableViewRowAnimationNone];
+      return;
     }
+    postItem.liked = YES;
+    [self.tableView reloadRowsAtIndexPaths:@[userActionCell.indexPath]
+                            withRowAnimation:UITableViewRowAnimationNone];
+       }];
   }];
 }
 
 - (void)userDidUnlike:(STXUserActionCell *)userActionCell {
   FPPost *postItem = userActionCell.postItem;
-  // user_has_liked ???
-  //--postItem.totalLikes;
-//  [[ref childByAppendingPath:[[@"posts/" stringByAppendingString:[postItem postID]]
-//      stringByAppendingString:@"/like_count"]]
-//      runTransactionBlock:^FTransactionResult *(FMutableData *currentData) {
-//    NSNumber *value = currentData.value;
-//    if (currentData.value == [NSNull null] || currentData.value == 0) {
-//      value = 0;
-//    } else {
-//      [currentData setValue:[NSNumber numberWithInt:([value intValue] - 1)]];
-//    }
-//    return [FTransactionResult successWithValue:currentData];
-//  }];
-  [[postsRef childByAppendingPath:[NSString stringWithFormat:@"%@/likes/%@", [postItem postID],
+  [[_usersRef childByAppendingPath:[NSString stringWithFormat:@"%@/likes/%@",
+      [FPAppState sharedInstance].currentUser.userID, [postItem postID]]]
+          removeValueWithCompletionBlock:^(NSError *error, FIRDatabaseReference *ref) {
+            if (error) {
+              NSLog(@"error in syncing unlike");
+              return;
+            }
+  [[_postsRef childByAppendingPath:[NSString stringWithFormat:@"%@/likes/%@", [postItem postID],
                                    [FPAppState sharedInstance].currentUser.userID]]
-       removeValueWithCompletionBlock:^(NSError *error, Firebase *ref) {
+       removeValueWithCompletionBlock:^(NSError *error, FIRDatabaseReference *ref) {
     if (error) {
       NSLog(@"error in syncing unlike");
-    } else {
+      return;
+    }
       postItem.liked = NO;
       [self.tableView reloadRowsAtIndexPaths:@[userActionCell.indexPath]
                             withRowAnimation:UITableViewRowAnimationNone];
-    }
   }];
+          }];
 
 }
 
@@ -275,7 +222,7 @@
 }
 
 - (void)userWillShare:(STXUserActionCell *)userActionCell {
-    id<STXPostItem> postItem = userActionCell.postItem;
+  id<STXPostItem> postItem = userActionCell.postItem;
     
     NSIndexPath *photoCellIndexPath = [NSIndexPath
                                        indexPathForRow:PHOTO_CELL_ROW
@@ -304,22 +251,11 @@
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-  // Get reference to the destination view controller
-  UINavigationController *navController = [segue destinationViewController];
-
-  // Make sure your segue name in storyboard is the same as this line
-  if ([[segue identifier] isEqualToString:@"asd"])
-  {
-    FPAccountViewController *accountViewController =
-        (FPAccountViewController *)([navController viewControllers][0]);
-
-    // Pass any objects to the view controller here, like...
+  if ([[segue identifier] isEqualToString:@"asd"])  {
+    FPAccountViewController *accountViewController = segue.destinationViewController;
     [accountViewController setUser:sender];
   } else if ([[segue identifier] isEqualToString:@"comment"]) {
-    FPCommentViewController *commentViewController =
-        (FPCommentViewController *)([navController viewControllers][0]);
-
-    // Pass any objects to the view controller here, like...
+    FPCommentViewController *commentViewController = segue.destinationViewController;
     [commentViewController setPost:sender];
   }
 }
