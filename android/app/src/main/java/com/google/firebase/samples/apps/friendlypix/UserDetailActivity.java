@@ -1,0 +1,265 @@
+package com.google.firebase.samples.apps.friendlypix;
+
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
+import com.google.firebase.samples.apps.friendlypix.Models.Post;
+import com.google.firebase.samples.apps.friendlypix.Models.User;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import de.hdodenhof.circleimageview.CircleImageView;
+
+public class UserDetailActivity extends AppCompatActivity {
+    private final String TAG = "UserDetailActivity";
+    public static final String USER_ID_EXTRA_NAME = "user_name";
+    private RecyclerView mRecyclerGrid;
+    private GridAdapter mGridAdapter;
+    private ValueEventListener mFollowingListener;
+    private String mUserId;
+    private Firebase mUsersRef;
+    private static final int GRID_NUM_COLUMNS = 2;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_user_detail);
+
+        Intent intent = getIntent();
+        mUserId = intent.getStringExtra(USER_ID_EXTRA_NAME);
+
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        final CollapsingToolbarLayout collapsingToolbar =
+                (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+
+        mUsersRef = FirebaseUtil.getBaseRef().child("users");
+        final String currentUserId = FirebaseUtil.getCurrentUserId();
+        final FloatingActionButton followUserFab = (FloatingActionButton) findViewById(R.id
+                .follow_user_fab);
+        mFollowingListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    followUserFab.setImageDrawable(ContextCompat.getDrawable(
+                            UserDetailActivity.this, R.drawable.ic_done_24dp));
+                } else {
+                    followUserFab.setImageDrawable(ContextCompat.getDrawable(
+                            UserDetailActivity.this, R.drawable.ic_person_add_24dp));
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        };
+        mUsersRef.child(currentUserId).child("following").child(mUserId)
+                .addValueEventListener(mFollowingListener);
+        followUserFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mUsersRef.child(mUserId).child("followers").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Map<String, Object> updatedUserData = new HashMap<>();
+                        if (dataSnapshot.hasChild(currentUserId)) {
+                            // Already following, need to unfollow
+                            updatedUserData.put(mUserId + "/followers/" + currentUserId, null);
+                            updatedUserData.put(currentUserId + "/following/" + mUserId, null);
+                        } else {
+                            updatedUserData.put(mUserId + "/followers/" + currentUserId, true);
+                            updatedUserData.put(currentUserId + "/following/" + mUserId, true);
+                        }
+                        mUsersRef.updateChildren(updatedUserData, new Firebase.CompletionListener() {
+                            @Override
+                            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                                if (firebaseError != null) {
+                                    Toast.makeText(UserDetailActivity.this, R.string
+                                            .follow_user_error, Toast.LENGTH_LONG).show();
+                                    Log.d(TAG, getString(R.string.follow_user_error) + "\n" +
+                                            firebaseError.getMessage());
+                                }
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onCancelled(FirebaseError firebaseError) {
+
+                    }
+                });
+            }
+        });
+
+        mRecyclerGrid = (RecyclerView) findViewById(R.id.user_posts_grid);
+        mGridAdapter = new GridAdapter();
+        mRecyclerGrid.setAdapter(mGridAdapter);
+        mRecyclerGrid.setLayoutManager(new GridLayoutManager(this, GRID_NUM_COLUMNS));
+
+
+        Firebase userRef = FirebaseUtil.getBaseRef().child("users").child(mUserId);
+        userRef.addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        final User user = dataSnapshot.getValue(User.class);
+                        if (user.getFollowers() != null) {
+                            int numFollowers = user.getFollowers().size();
+                            ((TextView) findViewById(R.id.user_num_followers))
+                                    .setText(numFollowers + " follower" + (numFollowers == 1 ? "" : "s"));
+                        }
+                        if (user.getFollowing() != null) {
+                            int numFollowing = user.getFollowing().size();
+                            ((TextView) findViewById(R.id.user_num_following))
+                                    .setText(numFollowing + " following");
+                        }
+                        if (user.getLikes() != null) {
+                            int numLikes = user.getLikes().size();
+                            ((TextView) findViewById(R.id.user_num_likes))
+                                    .setText(numLikes + " like" + (numLikes == 1 ? "" : "s"));
+                        }
+
+                        List<String> paths = new ArrayList(user.getPosts().keySet());
+                        mGridAdapter.addPaths(paths);
+                        String firstPostKey = paths.get(0);
+
+                        FirebaseUtil.getBaseRef().child("posts").child(firstPostKey).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                Post post = dataSnapshot.getValue(Post.class);
+
+                                ImageView imageView = (ImageView) findViewById(R.id.backdrop);
+                                GlideUtil.loadImage(post.getUrl(), imageView);
+
+                                CircleImageView userPhoto = (CircleImageView) findViewById(R.id.user_detail_photo);
+                                GlideUtil.loadProfileIcon(user.getPhotoUrl(), userPhoto);
+                            }
+
+                            @Override
+                            public void onCancelled(FirebaseError firebaseError) {
+
+                            }
+                        });
+                        collapsingToolbar.setTitle(user.getDisplayName());
+                    }
+
+                    @Override
+                    public void onCancelled(FirebaseError firebaseError) {
+                        new RuntimeException("Couldn't get user.", firebaseError.toException());
+                    }
+                });
+
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        mUsersRef.child(FirebaseUtil.getCurrentUserId()).child("following").child(mUserId)
+                .removeEventListener(mFollowingListener);
+        super.onDestroy();
+    }
+
+    class GridAdapter extends RecyclerView.Adapter<GridImageHolder> {
+        private List<String> mPostPaths;
+
+        public GridAdapter() {
+            mPostPaths = new ArrayList<String>();
+        }
+
+        @Override
+        public GridImageHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            ImageView imageView = new ImageView(UserDetailActivity.this);
+            int tileDimPx = getPixelsFromDps(100);
+            imageView.setLayoutParams(new GridView.LayoutParams(tileDimPx, tileDimPx));
+            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            imageView.setPadding(8, 8, 8, 8);
+
+            return new GridImageHolder(imageView);
+        }
+
+        @Override
+        public void onBindViewHolder(final GridImageHolder holder, int position) {
+            final String mPrefix = FirebaseUtil.getFirebaseUrl().concat("/posts");
+            Uri prefixUri = Uri.parse(mPrefix);
+            Log.d(TAG, "Getting grid post: " + position);
+            String refString = Uri.withAppendedPath(prefixUri, mPostPaths.get(position)).toString();
+            Firebase ref = new Firebase(refString);
+            ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    Post post = dataSnapshot.getValue(Post.class);
+                    GlideUtil.loadImage(post.getUrl(), holder.imageView);
+                    holder.imageView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            // TODO: Implement go to post view.
+                            Toast.makeText(UserDetailActivity.this, "Selected: " + holder
+                                    .getAdapterPosition(),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+
+                @Override
+                public void onCancelled(FirebaseError firebaseError) {
+                    Log.e(TAG, "Unable to load grid image: " + firebaseError.getMessage());
+                }
+            });
+        }
+
+        public void addPath(String path) {
+            mPostPaths.add(path);
+            notifyItemInserted(mPostPaths.size());
+        }
+
+        public void addPaths(List<String> paths) {
+            int startIndex = mPostPaths.size();
+            mPostPaths.addAll(paths);
+            notifyItemRangeInserted(startIndex, mPostPaths.size());
+        }
+
+        @Override
+        public int getItemCount() {
+            return mPostPaths.size();
+        }
+
+        private int getPixelsFromDps(int dps) {
+            final float scale = UserDetailActivity.this.getResources().getDisplayMetrics().density;
+            return (int) (dps * scale + 0.5f);
+        }
+    }
+
+    private class GridImageHolder extends RecyclerView.ViewHolder {
+        public ImageView imageView;
+
+        public GridImageHolder(ImageView itemView) {
+            super(itemView);
+            imageView = itemView;
+        }
+    }
+}

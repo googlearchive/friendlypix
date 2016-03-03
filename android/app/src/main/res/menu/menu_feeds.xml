@@ -1,0 +1,16 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.google.firebase.samples.apps.friendlypix.FeedsActivity">
+    <item
+        android:id="@+id/action_profile"
+        android:title="Profile"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_person_outline_black_24dp">
+    </item>
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:title="@string/action_settings"
+        app:showAsAction="never" />
+</menu>
