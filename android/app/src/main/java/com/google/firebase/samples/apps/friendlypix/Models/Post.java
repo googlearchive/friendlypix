@@ -1,11 +1,13 @@
 package com.google.firebase.samples.apps.friendlypix.Models;
 
+import java.util.Map;
+
 public class Post {
     private String author;
     private String url;
     private String text;
     private Object timestamp;
-    private long likes;
+    private Map<String, Boolean> likes;
 
     public Post() {
         // empty default constructor, necessary for Firebase to be able to deserialize blog posts
@@ -34,7 +36,7 @@ public class Post {
         return timestamp;
     }
 
-    public long getLikes() {
+    public Map<String, Boolean> getLikes() {
         return likes;
     }
 }

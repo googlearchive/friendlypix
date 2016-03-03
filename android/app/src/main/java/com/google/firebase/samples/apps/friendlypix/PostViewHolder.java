@@ -61,6 +61,9 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void setAuthor(String author, final String authorId) {
+        if (author.isEmpty()) {
+            author = mView.getResources().getString(R.string.user_info_no_name);
+        }
         mAuthorView.setText(author);
         mAuthorView.setOnClickListener(new View.OnClickListener() {
             @Override

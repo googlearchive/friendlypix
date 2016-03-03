@@ -16,8 +16,8 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 import com.firebase.ui.FirebaseRecyclerAdapter;
+import com.google.firebase.samples.apps.friendlypix.Models.Person;
 import com.google.firebase.samples.apps.friendlypix.Models.Post;
-import com.google.firebase.samples.apps.friendlypix.Models.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -157,7 +157,7 @@ public class PostsFragment extends Fragment {
     private void setupPost(final PostViewHolder postViewHolder, final Post post, final int position, final String inPostKey) {
         postViewHolder.setPhoto(post.getUrl());
         postViewHolder.setText(post.getText());
-        postViewHolder.setNumLikes(post.getLikes());
+        postViewHolder.setNumLikes(post.getLikes() != null ? post.getLikes().size() : 0);
         postViewHolder.setTimestamp(DateUtils.getRelativeTimeSpanString(
                 (long) post.getTimestamp()).toString());
         final String postKey;
@@ -167,12 +167,12 @@ public class PostsFragment extends Fragment {
             postKey = inPostKey;
         }
         // TODO: Fix after duplicate data decision is made.
-        final Firebase authorRef = FirebaseUtil.getBaseRef().child("users").child(post.getAuthor());
+        final Firebase authorRef = FirebaseUtil.getBaseRef().child("people").child(post.getAuthor());
         authorRef.addListenerForSingleValueEvent(
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        User author = dataSnapshot.getValue(User.class);
+                        Person author = dataSnapshot.getValue(Person.class);
                         postViewHolder.setAuthor(author.getDisplayName(), authorRef.getKey());
                         postViewHolder.setIcon(author.getPhotoUrl(), authorRef.getKey());
                     }

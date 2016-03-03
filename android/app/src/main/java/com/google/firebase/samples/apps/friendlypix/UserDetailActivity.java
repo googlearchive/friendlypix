@@ -22,6 +22,7 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.google.firebase.samples.apps.friendlypix.Models.Person;
 import com.google.firebase.samples.apps.friendlypix.Models.Post;
 import com.google.firebase.samples.apps.friendlypix.Models.User;
 
@@ -38,8 +39,10 @@ public class UserDetailActivity extends AppCompatActivity {
     private RecyclerView mRecyclerGrid;
     private GridAdapter mGridAdapter;
     private ValueEventListener mFollowingListener;
+    private ValueEventListener mPersonInfoListener;
     private String mUserId;
     private Firebase mUsersRef;
+    private Firebase mPersonRef;
     private static final int GRID_NUM_COLUMNS = 2;
 
     @Override
@@ -56,9 +59,11 @@ public class UserDetailActivity extends AppCompatActivity {
 
         final CollapsingToolbarLayout collapsingToolbar =
                 (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        // TODO: Investigate why initial toolbar title is activity name instead of blank.
 
         mUsersRef = FirebaseUtil.getBaseRef().child("users");
         final String currentUserId = FirebaseUtil.getCurrentUserId();
+
         final FloatingActionButton followUserFab = (FloatingActionButton) findViewById(R.id
                 .follow_user_fab);
         mFollowingListener = new ValueEventListener() {
@@ -83,6 +88,8 @@ public class UserDetailActivity extends AppCompatActivity {
         followUserFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // TODO: Convert these to actually not be single value, for live updating when
+                // current user follows.
                 mUsersRef.child(mUserId).child("followers").addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -121,7 +128,6 @@ public class UserDetailActivity extends AppCompatActivity {
         mRecyclerGrid.setAdapter(mGridAdapter);
         mRecyclerGrid.setLayoutManager(new GridLayoutManager(this, GRID_NUM_COLUMNS));
 
-
         Firebase userRef = FirebaseUtil.getBaseRef().child("users").child(mUserId);
         userRef.addListenerForSingleValueEvent(
                 new ValueEventListener() {
@@ -139,12 +145,12 @@ public class UserDetailActivity extends AppCompatActivity {
                                     .setText(numFollowing + " following");
                         }
                         if (user.getLikes() != null) {
-                            int numLikes = user.getLikes().size();
+                            int numLikes = user.getLikes() == null ? 0 : user.getLikes().size();
                             ((TextView) findViewById(R.id.user_num_likes))
                                     .setText(numLikes + " like" + (numLikes == 1 ? "" : "s"));
                         }
 
-                        List<String> paths = new ArrayList(user.getPosts().keySet());
+                        List<String> paths = new ArrayList<String>(user.getPosts().keySet());
                         mGridAdapter.addPaths(paths);
                         String firstPostKey = paths.get(0);
 
@@ -155,9 +161,6 @@ public class UserDetailActivity extends AppCompatActivity {
 
                                 ImageView imageView = (ImageView) findViewById(R.id.backdrop);
                                 GlideUtil.loadImage(post.getUrl(), imageView);
-
-                                CircleImageView userPhoto = (CircleImageView) findViewById(R.id.user_detail_photo);
-                                GlideUtil.loadProfileIcon(user.getPhotoUrl(), userPhoto);
                             }
 
                             @Override
@@ -165,7 +168,6 @@ public class UserDetailActivity extends AppCompatActivity {
 
                             }
                         });
-                        collapsingToolbar.setTitle(user.getDisplayName());
                     }
 
                     @Override
@@ -173,14 +175,34 @@ public class UserDetailActivity extends AppCompatActivity {
                         new RuntimeException("Couldn't get user.", firebaseError.toException());
                     }
                 });
+        mPersonRef = FirebaseUtil.getBaseRef().child("people").child(mUserId);
+        mPersonInfoListener = mPersonRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Person person = dataSnapshot.getValue(Person.class);
+                CircleImageView userPhoto = (CircleImageView) findViewById(R.id.user_detail_photo);
+                GlideUtil.loadProfileIcon(person.getPhotoUrl(), userPhoto);
+                String name = person.getDisplayName();
+                if (name == null) {
+                    name = getString(R.string.user_info_no_name);
+                }
+                collapsingToolbar.setTitle(name);
+            }
 
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
 
+            }
+        });
     }
 
     @Override
     protected void onDestroy() {
         mUsersRef.child(FirebaseUtil.getCurrentUserId()).child("following").child(mUserId)
                 .removeEventListener(mFollowingListener);
+
+        mPersonRef.child(mUserId).removeEventListener(mPersonInfoListener);
+
         super.onDestroy();
     }
 

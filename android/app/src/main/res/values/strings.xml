@@ -36,4 +36,5 @@
     <string name="picture_chooser_title">Select or take picture to post</string>
     <string name="new_comment_hint">Enter new comment</string>
     <string name="new_post_location_placeholder">Getting location...</string>
+    <string name="user_info_no_name">Unknown user</string>
 </resources>

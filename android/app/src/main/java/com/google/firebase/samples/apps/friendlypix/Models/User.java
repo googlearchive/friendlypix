@@ -3,8 +3,6 @@ package com.google.firebase.samples.apps.friendlypix.Models;
 import java.util.Map;
 
 public class User {
-    private String displayName;
-    private String photoUrl;
     private Map<String, Boolean> posts;
     private Map<String, Boolean> likes;
     private Map<String, Boolean> followers;
@@ -12,20 +10,6 @@ public class User {
 
     public User() {
 
-    }
-
-    public User(String displayName, String photoUrl) {
-        this.displayName = displayName;
-        this.photoUrl = photoUrl;
-    }
-
-    public String getDisplayName() {
-
-        return displayName;
-    }
-
-    public String getPhotoUrl() {
-        return photoUrl;
     }
 
     public Map<String, Boolean> getPosts() {

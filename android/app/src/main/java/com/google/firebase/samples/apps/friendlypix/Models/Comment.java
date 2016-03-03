@@ -2,16 +2,16 @@ package com.google.firebase.samples.apps.friendlypix.Models;
 
 public class Comment {
     private String author;
-    private String content;
+    private String text;
     private Object timestamp;
 
     public Comment() {
         // empty default constructor, necessary for Firebase to be able to deserialize comments
     }
 
-    public Comment(String author, String content, Object timestamp) {
+    public Comment(String author, String text, Object timestamp) {
         this.author = author;
-        this.content = content;
+        this.text = text;
         this.timestamp = timestamp;
     }
 
@@ -19,8 +19,8 @@ public class Comment {
         return author;
     }
 
-    public String getContent() {
-        return content;
+    public String getText() {
+        return text;
     }
 
     public Object getTimestamp() {

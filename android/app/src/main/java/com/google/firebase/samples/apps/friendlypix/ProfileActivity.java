@@ -201,7 +201,7 @@ public class ProfileActivity extends AppCompatActivity implements
         updateValues.put("displayName", firebaseUser.getDisplayName());
         updateValues.put("photoUrl", firebaseUser.getPhotoUrl() != null ? firebaseUser.getPhotoUrl().toString() : null);
 
-        FirebaseUtil.getCurrentUserRef().updateChildren(
+        FirebaseUtil.getBaseRef().child("people").child(firebaseUser.getUserId()).updateChildren(
                 updateValues,
                 new Firebase.CompletionListener() {
                     @Override

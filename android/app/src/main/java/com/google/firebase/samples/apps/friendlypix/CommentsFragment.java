@@ -28,7 +28,7 @@ import com.firebase.client.ServerValue;
 import com.firebase.client.ValueEventListener;
 import com.firebase.ui.FirebaseRecyclerAdapter;
 import com.google.firebase.samples.apps.friendlypix.Models.Comment;
-import com.google.firebase.samples.apps.friendlypix.Models.User;
+import com.google.firebase.samples.apps.friendlypix.Models.Person;
 
 
 /**
@@ -92,12 +92,12 @@ public class CommentsFragment extends Fragment {
             protected void populateViewHolder(final CommentViewHolder viewHolder,
                                               Comment comment, int position) {
                 String authorId = comment.getAuthor(); // TODO: fix this to be comment.getUserId()
-                FirebaseUtil.getBaseRef().child("users").child(authorId)
+                FirebaseUtil.getBaseRef().child("people").child(authorId)
                         .addListenerForSingleValueEvent(
                         new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
-                                User author = dataSnapshot.getValue(User.class);
+                                Person author = dataSnapshot.getValue(Person.class);
                                 viewHolder.commentAuthor.setText(author.getDisplayName());
                                 GlideUtil.loadProfileIcon(author.getPhotoUrl(), viewHolder
                                         .commentPhoto);
@@ -114,7 +114,7 @@ public class CommentsFragment extends Fragment {
                 viewHolder.commentTime
                         .setText(DateUtils.getRelativeTimeSpanString((long) comment.getTimestamp
                                 ()));
-                viewHolder.commentText.setText(comment.getContent());
+                viewHolder.commentText.setText(comment.getText());
             }
         };
         sendButton.setEnabled(false);

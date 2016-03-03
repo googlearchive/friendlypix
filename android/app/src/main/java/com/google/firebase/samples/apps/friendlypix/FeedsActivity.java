@@ -15,7 +15,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -24,7 +26,9 @@ import com.firebase.client.Transaction;
 import com.firebase.client.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class FeedsActivity extends AppCompatActivity implements PostsFragment.OnPostSelectedListener {
     private static final String TAG = "FeedsActivity";
@@ -68,60 +72,37 @@ public class FeedsActivity extends AppCompatActivity implements PostsFragment.On
 
     @Override
     public void onPostLike(final String postKey) {
-        // TODO(gkal): Figure out how to do increment/decrement and add to user like list in one transaction.
-        // This method has the downside that two increment requests can be sent for the same user before
-        // the user like list is updated with the liked post key.
         final Firebase ref = FirebaseUtil.getBaseRef();
-        final Firebase userLikesRef = FirebaseUtil.getCurrentUserRef().child("likes");
-        userLikesRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        final String userKey = FirebaseUtil.getCurrentUserId();
+        final Firebase postLikesRef = ref.child("posts").child(postKey).child("likes");
+        postLikesRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Firebase likesRef = ref.child("posts").child(postKey).child("likes");
-                if (dataSnapshot.hasChild(postKey)) {
-//                    dataSnapshot.getRef().child(postKey).setValue(null);
-                    likesRef.runTransaction(new Transaction.Handler() {
+                if (dataSnapshot.hasChild(userKey)) {
+                    // User already liked this post, so we toggle like off.
+                    Map<String, Object> updatedUserData = new HashMap<>();
+                    updatedUserData.put("users/" + userKey + "/likes/" + postKey, null);
+                    updatedUserData.put("posts/" + postKey + "/likes/" + userKey, null);
+                    ref.updateChildren(updatedUserData, new Firebase.CompletionListener() {
                         @Override
-                        public Transaction.Result doTransaction(MutableData mutableData) {
-                            if (mutableData.getValue() != null && ((Long) mutableData.getValue()) == 0) {
-                                return Transaction.abort();
-                            } else {
-                                mutableData.setValue((Long) mutableData.getValue() - 1);
-                            }
-                            return Transaction.success(mutableData);
-                        }
-
-                        @Override
-                        public void onComplete(FirebaseError firebaseError, boolean b, DataSnapshot dataSnapshot) {
+                        public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                             if (firebaseError != null) {
-                                Log.e(TAG, "Error decrementing likes: " + firebaseError.getMessage());
-                            } else {
-                                userLikesRef.child(postKey).removeValue();
+                                Toast.makeText(FeedsActivity.this, "Error unliking post.", Toast.LENGTH_SHORT).show();
                             }
                         }
-
                     });
-
                 } else {
-                    likesRef.runTransaction(new Transaction.Handler() {
+                    Map<String, Object> updatedUserData = new HashMap<>();
+                    updatedUserData.put("users/" + userKey + "/likes/" + postKey, true);
+                    updatedUserData.put("posts/" + postKey + "/likes/" + userKey, true);
+                    ref.updateChildren(updatedUserData, new Firebase.CompletionListener() {
                         @Override
-                        public Transaction.Result doTransaction(MutableData mutableData) {
-                            if (mutableData.getValue() == null) {
-                                mutableData.setValue(1);
-                            } else {
-                                mutableData.setValue((Long) mutableData.getValue() + 1);
-                            }
-                            return Transaction.success(mutableData);
-                        }
-
-                        @Override
-                        public void onComplete(FirebaseError firebaseError, boolean b, DataSnapshot dataSnapshot) {
+                        public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                             if (firebaseError != null) {
-                                Log.e(TAG, "Error incrementing likes: " + firebaseError.getMessage());
-                            } else {
-                                userLikesRef.child(postKey).setValue(true);
+                                Toast.makeText(FeedsActivity.this, "Error liking post.", Toast.LENGTH_SHORT).show();
+
                             }
                         }
-
                     });
                 }
             }
