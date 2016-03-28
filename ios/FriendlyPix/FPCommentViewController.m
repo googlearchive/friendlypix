@@ -15,28 +15,16 @@
 //
 
 #import "FPCommentViewController.h"
-@import Firebase.AdMob;
+@import Firebase.Core;
 #import "FPComment.h"
+
+@interface FPCommentViewController () <STXCommentCellDelegate>
+@end
 
 @implementation FPCommentViewController
 NSMutableArray *comments;
 - (void)viewDidLoad {
-  self.navigationItem.titleView = [[UIImageView alloc]
-                                   initWithImage:[UIImage imageNamed:@"LogoNavigationBar.png"]];
-
-  if (self.navigationController.viewControllers[0] == self) {
-    UIBarButtonItem *dismissLeftBarButtonItem =
-    [[UIBarButtonItem alloc] initWithTitle:@"Back"
-                                     style:UIBarButtonItemStylePlain
-                                    target:self
-                                    action:@selector(dismissPresentingViewController)];
-
-    self.navigationItem.leftBarButtonItem = dismissLeftBarButtonItem;
-  }
-  else {
-    self.navigationItem.leftBarButtonItem = nil;
-  }
-  comments = [self.post mutableComments];
+  comments = [self.post comments];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView
@@ -64,24 +52,22 @@ NSMutableArray *comments;
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
-  NSDictionary *data = @{ @"created_time": @"123",
-                          @"from": [FPAppState sharedInstance].currentUser.userID,
+  NSDictionary *data = @{ @"timestamp": FIRServerValue.timestamp,
+                          @"author": [FPAppState sharedInstance].currentUser.userID,
                           @"text": textField.text
                           };
   // Push data to Firebase Database
-  Firebase *ref;
-  ref = [[Firebase alloc] initWithUrl:[FIRContext sharedInstance].serviceInfo.databaseURL];
-  Firebase *comment = [[ref childByAppendingPath:@"comments"] childByAutoId];
-  [comment setValue:data];
-  NSString *commentId = comment.key;
-  [[ref childByAppendingPath: [NSString stringWithFormat:@"posts/%@/comments/%@",
-                               self.post.postID, commentId]] setValue:[NSNumber numberWithBool:YES]
-                               withCompletionBlock:^(NSError *error, Firebase *ref) {
+  FIRDatabaseReference *ref;
+  ref = [FIRDatabase database].reference;
+  FIRDatabaseReference *comment = [[ref childByAppendingPath:[@"comments/" stringByAppendingString:self.post.postID]] childByAutoId];
+  [comment setValue:data withCompletionBlock:^(NSError *error, FIRDatabaseReference *ref) {
     if (error==nil) {
-      [comments addObject:[[FPComment alloc] initWithDictionary:data]];
-      [self.tableView insertRowsAtIndexPaths:@[[NSIndexPath
-                                                indexPathForRow:[comments count]-1 inSection:0]]
-                            withRowAnimation:UITableViewRowAnimationNone];
+      [ref observeEventType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot *snapshot) {
+        [comments addObject:[[FPComment alloc] initWithSnapshot:snapshot]];
+        [self.tableView insertRowsAtIndexPaths:@[[NSIndexPath
+                                                  indexPathForRow:[comments count]-1 inSection:0]]
+                              withRowAnimation:UITableViewRowAnimationNone];
+      }];
     } else {
       NSLog(@"comment push error");
     }

@@ -15,7 +15,7 @@
 //
 
 #import <UIKit/UIKit.h>
-@import Firebase.CloudMessaging;
+#import "GoogleCloudMessaging.h"
 @import Firebase.AppInvite;
 @import Firebase.AdMob;
 

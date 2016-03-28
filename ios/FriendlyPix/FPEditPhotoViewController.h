@@ -17,6 +17,6 @@
 
 @interface FPEditPhotoViewController : UIViewController <UITextFieldDelegate, UIScrollViewDelegate>
 
-- (id)initWithImage:(UIImage *)aImage;
+- (id)initWithImage:(UIImage *)aImage referenceUrl:(NSURL *)referenceUrl;
 
 @end

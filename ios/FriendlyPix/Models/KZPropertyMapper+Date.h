@@ -14,13 +14,9 @@
 //  limitations under the License.
 //
 
-@import Foundation;
-@import FirebaseDatabase;
+#import <UIKit/UIKit.h>
+#import <KZPropertyMapper.h>
 
-#import "STXUserItem.h"
-
-@interface STXUser : NSObject <STXUserItem>
-
-- (instancetype)initWithDictionary:(NSDictionary *)dictionary;
-
+@interface KZPropertyMapper (Date)
++ (NSDate *)boxValueAsDate:(long)value;
 @end

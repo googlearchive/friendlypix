@@ -27,10 +27,8 @@
 /**
  *  Initialize data model from snapshot
  */
-- (instancetype)initWithSnapshot:(FDataSnapshot *)snapshot;
+- (instancetype)initWithSnapshot:(FIRDataSnapshot *)snapshot andComments:(NSArray<FPComment *> *)comments;
 
-- (void)addComment:(FPComment *)comment;
-- (NSArray *)mutableComments;
 @property (nonatomic) BOOL liked;
 
 @end

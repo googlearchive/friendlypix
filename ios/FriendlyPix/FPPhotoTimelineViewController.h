@@ -19,7 +19,9 @@
 @import Firebase.AdMob;
 
 @interface FPPhotoTimelineViewController : UITableViewController
-@property Firebase *ref;
-@property Firebase *postsRef;
-- (void)loadPost:(FDataSnapshot *)postSnapshot;
+@property FIRDatabaseReference *ref;
+@property FIRDatabaseReference *postsRef;
+@property FIRDatabaseReference *commentsRef;
+@property FIRDatabaseReference *usersRef;
+- (void)loadPost:(FIRDataSnapshot *)postSnapshot;
 @end

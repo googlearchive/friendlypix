@@ -21,6 +21,4 @@
 
 @property (nonatomic, strong) FPUser *user;
 
-- (id)initWithUser:(FPUser *)aUser;
-
 @end
