@@ -27,6 +27,14 @@
 @end
 
 @implementation SignInViewController
+
+- (void)viewDidAppear:(BOOL)animated {
+  FIRUser *user = [FIRAuth auth].currentUser;
+  if (user) {
+    [self signedIn:user];
+  }
+}
+
 - (IBAction)didTapSignUp:(id)sender {
   [[FIRAuth auth] createUserWithEmail:_emailField.text password:_passwordField.text callback:^(FIRUser * _Nullable user, NSError * _Nullable error) {
     if (error) {
@@ -38,10 +46,6 @@
 }
 
 - (IBAction)didTapSignIn:(UIButton *)sender {
-  //  FIRAuth *firebaseAuth = [FIRAuth auth];
-  //  FIRAuthUI *firebaseAuthUI = [FIRAuthUI authUIForApp:firebaseAuth.app];
-  //  [firebaseAuthUI presentSignInWithViewController:self callback:^(FIRUser *_Nullable user,
-  //                                                                  NSError *_Nullable error) {
   [[FIRAuth auth] signInWithEmail:_emailField.text
                          password:_passwordField.text
                          callback:^(FIRUser *user, NSError *error) {

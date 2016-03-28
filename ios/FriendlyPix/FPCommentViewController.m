@@ -23,6 +23,7 @@
 
 @implementation FPCommentViewController
 NSMutableArray *comments;
+
 - (void)viewDidLoad {
   comments = [self.post comments];
 }

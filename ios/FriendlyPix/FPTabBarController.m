@@ -17,22 +17,7 @@
 #import "FPTabBarController.h"
 #import "FPEditPhotoViewController.h"
 
-@interface FPTabBarController ()
-@property (nonatomic,strong) UINavigationController *navController;
-@end
-
 @implementation FPTabBarController
-
-#pragma mark - UIViewController
-
-- (void)viewDidLoad {
-  [super viewDidLoad];
-  self.navController = [[UINavigationController alloc] init];
-}
-
-- (UIStatusBarStyle)preferredStatusBarStyle {
-  return UIStatusBarStyleLightContent;
-}
 
 #pragma mark - UITabBarController
 
@@ -61,16 +46,7 @@
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
   [self dismissViewControllerAnimated:NO completion:nil];
 
-  UIImage *image = info[UIImagePickerControllerEditedImage];
-  NSURL *referenceUrl = info[UIImagePickerControllerReferenceURL];
-
-  FPEditPhotoViewController *viewController = [[FPEditPhotoViewController alloc] initWithImage:image referenceUrl:referenceUrl];
-  [viewController setModalTransitionStyle:UIModalTransitionStyleCrossDissolve];
-
-  [self.navController setModalTransitionStyle:UIModalTransitionStyleCrossDissolve];
-  [self.navController pushViewController:viewController animated:NO];
-
-  [self presentViewController:self.navController animated:YES completion:nil];
+  [self performSegueWithIdentifier:@"edit" sender:info];
 }
 
 #pragma mark - UIActionSheetDelegate
@@ -178,6 +154,16 @@
 
 - (void)handleGesture:(UIGestureRecognizer *)gestureRecognizer {
   [self shouldPresentPhotoCaptureController];
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+  if ([[segue identifier] isEqualToString:@"edit"])  {
+    UINavigationController *navigationController = segue.destinationViewController;
+    FPEditPhotoViewController *viewController = (FPEditPhotoViewController *)navigationController.topViewController;
+//    FPEditPhotoViewController *viewController = segue.destinationViewController;
+    viewController.image = sender[UIImagePickerControllerEditedImage];
+    viewController.referenceURL = sender[UIImagePickerControllerReferenceURL];
+  }
 }
 
 @end

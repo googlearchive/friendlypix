@@ -15,8 +15,9 @@
 //
 
 
-@interface FPEditPhotoViewController : UIViewController <UITextFieldDelegate, UIScrollViewDelegate>
+@interface FPEditPhotoViewController : UIViewController <UITextFieldDelegate>
 
-- (id)initWithImage:(UIImage *)aImage referenceUrl:(NSURL *)referenceUrl;
+@property (nonatomic, strong) UIImage *image;
+@property (nonatomic, strong) NSURL *referenceURL;
 
 @end
