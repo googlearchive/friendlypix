@@ -60,7 +60,7 @@
   self.navigationItem.title = _user.username;
 
   [_photoCountLabel setText:[NSString
-                             stringWithFormat:@"%lu photo%@", _feedCount, _feedCount==1?@"":@"s"]];
+                             stringWithFormat:@"%lu post%@", _feedCount, _feedCount==1?@"":@"s"]];
 
   unsigned long followersCount = [_followers count];
   [_followerCountLabel setText:[NSString

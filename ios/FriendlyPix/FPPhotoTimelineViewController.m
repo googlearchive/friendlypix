@@ -47,8 +47,6 @@
   _commentsRef = [_ref childByAppendingPath:@"comments"];
   _usersRef = [_ref childByAppendingPath:@"users"];
 
-  self.title = NSLocalizedString(@"Feed", nil);
-    
   self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     
   STXFeedTableViewDataSource *dataSource = [[STXFeedTableViewDataSource alloc]
@@ -246,12 +244,12 @@
     anim.duration = 0.07f ;
     [self.view.layer addAnimation:anim forKey:nil];
   } else {
-    [self performSegueWithIdentifier:@"asd" sender:poster];
+    [self performSegueWithIdentifier:@"account" sender:poster];
   }
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-  if ([[segue identifier] isEqualToString:@"asd"])  {
+  if ([[segue identifier] isEqualToString:@"account"])  {
     FPAccountViewController *accountViewController = segue.destinationViewController;
     [accountViewController setUser:sender];
   } else if ([[segue identifier] isEqualToString:@"comment"]) {
