@@ -11,11 +11,15 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -24,30 +28,35 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.tasks.OnFailureListener;
-import com.google.android.gms.common.tasks.OnSuccessListener;
 import com.google.android.gms.location.LocationServices;
-import com.google.firebase.FirebaseError;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.samples.apps.friendlypix.Models.Post;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageException;
-import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.UUID;
 
 import pub.devrel.easypermissions.AfterPermissionGranted;
@@ -60,20 +69,24 @@ public class NewPostActivity extends AppCompatActivity implements
         GoogleApiClient.OnConnectionFailedListener {
     public static final String TAG = "NewPostActivity";
     private ProgressDialog mProgressDialog;
+    private Button mSubmitButton;
 
+    private ImageView mImageView;
     private TextView mLocationView;
     private GoogleApiClient mGoogleApiClient;
     private StorageReference mStorageRef;
     private Location mUserLocation;
     private Uri mFileUri;
+    private Bitmap mResizedBitmap;
+
+    private RetainedFragment retainedFragment;
 
     private static final int TC_PICK_IMAGE = 101;
     private static final int RC_CAMERA_PERMISSIONS = 102;
     private static final int RC_LOCATION_PERMISSIONS = 103;
 
-    private static final String KEY_FILE_URI = "key_file_uri";
     private static final String[] cameraPerms = new String[]{
-            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE
     };
     private static final String[] locationPerms = new String[]{
             Manifest.permission.ACCESS_COARSE_LOCATION
@@ -84,13 +97,33 @@ public class NewPostActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_post);
-        final ImageView postPhotoView = (ImageView) findViewById(R.id.new_post_picture);
-        postPhotoView.setOnClickListener(new View.OnClickListener() {
+
+        // find the retained fragment on activity restarts
+        FragmentManager fm = getSupportFragmentManager();
+        retainedFragment = (RetainedFragment) fm.findFragmentByTag("savedBitmapFragment");
+
+        // create the fragment and data the first time
+        if (retainedFragment == null) {
+            // add the fragment
+            retainedFragment = new RetainedFragment();
+            fm.beginTransaction().add(retainedFragment, "savedBitmapFragment").commit();
+        }
+
+        mImageView = (ImageView) findViewById(R.id.new_post_picture);
+        mLocationView = (TextView) findViewById(R.id.new_post_location);
+//        mLocationView.setText(R.string.new_post_location_placeholder);
+
+        mImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showImagePicker();
             }
         });
+        Bitmap selectedBitmap = retainedFragment.getSelectedBitmap();
+        if (selectedBitmap != null) {
+            mImageView.setImageBitmap(selectedBitmap);
+            mResizedBitmap = selectedBitmap;
+        }
         final EditText descriptionText = (EditText) findViewById(R.id.new_post_text);
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -104,51 +137,111 @@ public class NewPostActivity extends AppCompatActivity implements
         mStorageRef = FirebaseStorage.getInstance()
                 .getReference(getString(R.string.google_storage_bucket));
 
-        // Restore instance state
-        if (savedInstanceState != null) {
-            mFileUri = savedInstanceState.getParcelable(KEY_FILE_URI);
-            if (mFileUri != null) {
-                GlideUtil.loadImage(mFileUri.toString(), postPhotoView);
-            }
-        }
-
-        Button submitButton = (Button) findViewById(R.id.new_post_submit);
-        submitButton.setOnClickListener(new View.OnClickListener() {
+        mSubmitButton = (Button) findViewById(R.id.new_post_submit);
+        mSubmitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-                v.setEnabled(false);
-                showProgressDialog();
-                if (mFileUri == null) {
+                if (mResizedBitmap == null) {
+                    Toast.makeText(NewPostActivity.this, "Select an image first.",
+                            Toast.LENGTH_SHORT).show();
                     return;
                 }
+                String postText = descriptionText.getText().toString();
+                if (TextUtils.isEmpty(postText)) {
+                    descriptionText.setError(getString(R.string.error_required_field));
+                    return;
+                }
+                UploadImageTask uploadTask = new UploadImageTask(mResizedBitmap, mFileUri.getLastPathSegment(),
+                        postText);
+                uploadTask.execute();
+            }
+        });
+    }
 
+
+    class UploadImageTask extends AsyncTask<Void, Void, Void> {
+        private WeakReference<Bitmap> bitmapReference;
+        private String postText;
+        private String fileName;
+
+        public UploadImageTask(Bitmap bitmap, String inFileName, String inPostText) {
+            bitmapReference = new WeakReference<Bitmap>(bitmap);
+            postText = inPostText;
+            fileName = inFileName;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            showProgressDialog();
+            mSubmitButton.setEnabled(false);
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+                Bitmap bitmap = bitmapReference.get();
+                if (bitmap == null) {
+                    return null;
+                }
                 final StorageReference photoRef = mStorageRef.child("photos")
-                        .child(mFileUri.getLastPathSegment());
-
-                photoRef.putFile(mFileUri)
-                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    .child(fileName + ".jpg");
+                // TODO: Temporary code to randomly select one of three SDK upload methods for
+                // testing. Choose one before release.
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 70, stream);
+                byte[] bytes = stream.toByteArray();
+                UploadTask uploadTask = null;
+                int randomChoice = new Random().nextInt(3);
+                switch(randomChoice) {
+                    case 0:
+                        uploadTask = photoRef.putBytes(bytes);
+                        break;
+                    case 1:
+                        uploadTask = photoRef.putStream(new ByteArrayInputStream(bytes));
+                        break;
+                    case 2:
+                        File tmpImageFile = new File(getCacheDir(), "tmpimg.jpg");
+                        try {
+                            FileOutputStream fileOutputStream = new FileOutputStream(tmpImageFile);
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 70, fileOutputStream);
+                            fileOutputStream.flush();
+                            fileOutputStream.close();
+                            Uri tmpImgUri = Uri.fromFile(tmpImageFile);
+                            uploadTask = photoRef.putFile(tmpImgUri);
+                        }
+                        catch (FileNotFoundException e ) {
+                            Log.e(TAG, "Can't access temp image file");
+                            FirebaseCrash.report(e);
+                            exitFail("Unable to post.");
+                        } catch (IOException e) {
+                            Log.e(TAG, "Can't create temp image file");
+                            FirebaseCrash.report(e);
+                            exitFail("Unable to post.");
+                        }
+                }
+                if (uploadTask == null) {
+                    FirebaseCrash.log("Couldn't create upload task.");
+                    return null;
+                }
+                uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        Uri url = taskSnapshot.getMetadata().getDownloadUrl();
+                        Uri url = taskSnapshot.getDownloadUrl();
 
                         final DatabaseReference ref = FirebaseUtil.getBaseRef();
                         DatabaseReference postsRef = FirebaseUtil.getPostsRef();
                         final String newPostKey = postsRef.push().getKey();
 
                         String userId = FirebaseUtil.getCurrentUserId();
-                        Post newPost = new Post(userId, url.toString(),
-                                descriptionText.getText().toString(), ServerValue.TIMESTAMP);
+                        Post newPost = new Post(userId, url.toString(), postText, ServerValue.TIMESTAMP);
 
                         Map<String, Object> updatedUserData = new HashMap<>();
                         updatedUserData.put(FirebaseUtil.getUsersPath() + userId + "/posts/" + newPostKey, true);
                         updatedUserData.put(FirebaseUtil.getPostsPath() + newPostKey,
                                 new ObjectMapper().convertValue(newPost, Map.class));
-
                         ref.updateChildren(updatedUserData, new DatabaseReference.CompletionListener() {
                             @Override
                             public void onComplete(DatabaseError firebaseError, DatabaseReference databaseReference) {
                                 if (firebaseError == null) {
-                                    Toast.makeText(NewPostActivity.this, "Post created!", Toast.LENGTH_SHORT).show();
                                     if (mUserLocation != null) {
                                       //  TODO: Temporarily removing geofire until I fork it to include Firebase class name changes.
 //                                        GeoFire geoFire = new GeoFire(FirebaseUtil.getBaseRef());
@@ -157,29 +250,52 @@ public class NewPostActivity extends AppCompatActivity implements
                                     } else {
                                         Log.d(TAG, "Not tagging post because location data was not provided.");
                                     }
-                                    finish();
+                                    exitSuccess();
                                 } else {
                                     Log.e(TAG, "Unable to create new post: " + firebaseError.getMessage());
-                                    Toast.makeText(NewPostActivity.this, "Unable to post.", Toast.LENGTH_SHORT).show();
-                                    v.setEnabled(true);
+                                    FirebaseCrash.report(firebaseError.toException());
+                                    exitFail("Unable to post.");
                                 }
-                                dismissProgressDialog();
                             }
                         });
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Throwable throwable) {
-                        Toast.makeText(NewPostActivity.this, "Failed to upload post.", Toast.LENGTH_SHORT).show();
-                        dismissProgressDialog();
-                        v.setEnabled(true);
+                        FirebaseCrash.report(throwable);
+                        exitFail("Failed to upload post.");
                     }
                 });
-            }
-        });
-        // TODO: Refactor these insanely nested callbacks.
+            // TODO: Refactor these insanely nested callbacks.
+            return null;
+        }
+
+        private void exitSuccess() {
+            NewPostActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(NewPostActivity.this, "Post created!", Toast.LENGTH_SHORT).show();
+                    mSubmitButton.setEnabled(true);
+                    dismissProgressDialog();
+                    finish();
+                }
+            });
+        }
+
+        private void exitFail(final String error) {
+            NewPostActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(NewPostActivity.this, error, Toast.LENGTH_SHORT).show();
+                    mSubmitButton.setEnabled(true);
+                    dismissProgressDialog();
+                }
+            });
+        }
     }
 
+    // TODO: Centralize showProgressDialog and hideProgressDialog as they are shared with
+    // ProfileActivity.
     public void showProgressDialog() {
         if (mProgressDialog == null) {
             mProgressDialog = new ProgressDialog(this);
@@ -227,7 +343,7 @@ public class NewPostActivity extends AppCompatActivity implements
         }
 
         // Choose file storage location
-        File file = new File(getExternalCacheDir(), UUID.randomUUID().toString() + ".jpg");
+        File file = new File(getExternalCacheDir(), UUID.randomUUID().toString());
         mFileUri = Uri.fromFile(file);
 
         // Camera
@@ -276,27 +392,113 @@ public class NewPostActivity extends AppCompatActivity implements
                 } else {
                     isCamera = MediaStore.ACTION_IMAGE_CAPTURE.equals(data.getAction());
                 }
-                Bitmap bitmap = null;
-                if (isCamera) {
-                    BitmapFactory.Options options = new BitmapFactory.Options();
-                    options.inSampleSize = 8;
-                    bitmap = BitmapFactory.decodeFile(mFileUri.getPath(), options);
-                } else {
+                if (!isCamera) {
                     mFileUri = data.getData();
-                    // TODO: Implement bitmap resizing for fetch performance.
-                    try {
-                        bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), mFileUri);
-                    } catch (IOException e) {
-                        Log.e(TAG, "Counldn't fetch bitmap." + e.getMessage());
-                    }
                 }
-                ImageView imageView = (ImageView) findViewById(R.id.new_post_picture);
-                Glide.with(imageView.getContext())
-                .load(bitmap)
-                .crossFade()
-                .centerCrop()
-                .into(imageView);
+                Log.d(TAG, "Received file uri: " + mFileUri.getPath());
+
+                LoadResizedBitmapTask task = new LoadResizedBitmapTask(mImageView);
+                task.execute(mFileUri);
             }
+        }
+    }
+
+    public static int calculateInSampleSize(
+            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) > reqHeight
+                    && (halfWidth / inSampleSize) > reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
+    }
+
+    public Bitmap decodeSampledBitmapFromUri(Uri fileUri, int reqWidth, int reqHeight)
+            throws IOException {
+            InputStream stream = new BufferedInputStream(this.getContentResolver().openInputStream(fileUri));
+            stream.mark(stream.available());
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            // First decode with inJustDecodeBounds=true to check dimensions
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeStream(stream, null, options);
+            stream.reset();
+            options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+            options.inJustDecodeBounds = false;
+            BitmapFactory.decodeStream(stream, null, options);
+            // Decode bitmap with inSampleSize set
+            stream.reset();
+            return BitmapFactory.decodeStream(stream, null, options);
+    }
+
+    class LoadResizedBitmapTask extends AsyncTask<Uri, Void, Bitmap> {
+        private final WeakReference<ImageView> imageViewReference;
+
+        public LoadResizedBitmapTask(ImageView imageView) {
+            imageViewReference = new WeakReference<ImageView>(imageView);
+        }
+
+        // Decode image in background.
+        @Override
+        protected Bitmap doInBackground(Uri... params) {
+            Uri uri = params[0];
+            if (uri != null) {
+                // TODO: Currently making these very small to investigate modulefood bug.
+                // Implement thumbnail + fullsize later.
+                Bitmap bitmap = null;
+                try {
+                    bitmap = decodeSampledBitmapFromUri(uri, 640, 480);
+                } catch (FileNotFoundException e) {
+                    Log.e(TAG, "Can't find file to resize: " + e.getMessage());
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    Log.e(TAG, "Error occurred during resize: " + e.getMessage());
+                    e.printStackTrace();
+                }
+                return bitmap;
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            if (bitmap == null) {
+                Log.e(TAG, "Couldn't resize bitmap in background task.");
+                Toast.makeText(getApplicationContext(), "Couldn't resize bitmap.",
+                        Toast.LENGTH_SHORT).show();
+                return;
+            }
+            mResizedBitmap = bitmap;
+
+            Log.d(TAG, "resized bitmap: " + mResizedBitmap.toString());
+
+            final ImageView imageView = imageViewReference.get();
+            if (imageView != null) {
+                imageView.setImageBitmap(mResizedBitmap);
+            }
+            Log.d(TAG, "Resized bitmap bytes: " + mResizedBitmap.getByteCount());
+            mSubmitButton.setEnabled(true);
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        // store the data in the fragment
+        if (mResizedBitmap != null) {
+            retainedFragment.setSelectedBitmap(mResizedBitmap);
         }
     }
 
@@ -322,9 +524,29 @@ public class NewPostActivity extends AppCompatActivity implements
         mLocationView.setText("Failed to get location.");
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle out) {
-        super.onSaveInstanceState(out);
-        out.putParcelable(KEY_FILE_URI, mFileUri);
+    // TODO: Move this into own class, and use this to launch both async tasks.
+    /**
+     * Used to keep selected picture through orientation changes.
+     */
+    public static class RetainedFragment extends Fragment {
+
+        // data object we want to retain
+        private Bitmap selectedBitmap;
+
+        // this method is only called once for this fragment
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            // retain this fragment
+            setRetainInstance(true);
+        }
+
+        public void setSelectedBitmap(Bitmap bitmap) {
+            this.selectedBitmap = bitmap;
+        }
+
+        public Bitmap getSelectedBitmap() {
+            return selectedBitmap;
+        }
     }
 }

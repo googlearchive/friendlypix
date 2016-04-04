@@ -8,10 +8,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import com.google.android.gms.common.tasks.OnFailureListener;
-import com.google.android.gms.common.tasks.OnSuccessListener;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.FirebaseOptions;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
@@ -51,7 +49,7 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
                         Toast.makeText(WelcomeActivity.this, "Unable to sign in anonymously.",
                                 Toast.LENGTH_SHORT).show();
                         if (throwable instanceof FirebaseAuthException) {
-                            Log.e(TAG, ((FirebaseAuthException) throwable).getErrorMessage());
+                            Log.e(TAG, ((FirebaseAuthException) throwable).getMessage());
                         }
                     }
                 });
