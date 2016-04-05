@@ -15,8 +15,9 @@
 //
 
 #import "FPCommentViewController.h"
-@import Firebase.Core;
 #import "FPComment.h"
+#import "STXCommentCell.h"
+#import "FPAppState.h"
 
 @interface FPCommentViewController () <STXCommentCellDelegate>
 @end
@@ -60,7 +61,7 @@ NSMutableArray *comments;
   // Push data to Firebase Database
   FIRDatabaseReference *ref;
   ref = [FIRDatabase database].reference;
-  FIRDatabaseReference *comment = [[ref childByAppendingPath:[@"comments/" stringByAppendingString:self.post.postID]] childByAutoId];
+  FIRDatabaseReference *comment = [[ref child:[@"comments/" stringByAppendingString:self.post.postID]] childByAutoId];
   [comment setValue:data withCompletionBlock:^(NSError *error, FIRDatabaseReference *ref) {
     if (error==nil) {
       [ref observeEventType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot *snapshot) {

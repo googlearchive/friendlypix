@@ -14,6 +14,8 @@
 //  limitations under the License.
 //
 
+@import UIKit;
+
 @protocol FPTabBarControllerDelegate;
 
 @interface FPTabBarController : UITabBarController <UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIActionSheetDelegate>

@@ -17,6 +17,7 @@
 #import "FPPost.h"
 #import "FPUser.h"
 #import "FPAppState.h"
+#import <KZPropertyMapper/KZPropertyMapper.h>
 #define MAX_NUMBER_OF_COMMENTS 5
 
 
@@ -156,7 +157,7 @@
   return [NSString stringWithFormat:@"<%@: %p> %@", NSStringFromClass([self class]), self, dictionary];
 }
 
-#pragma mark - STXPostItem
+#pragma mark - FPPostItem
 
 - (NSString *)captionText {
   return self.text;

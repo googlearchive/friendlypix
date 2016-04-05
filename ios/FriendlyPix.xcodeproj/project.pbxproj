@@ -17,31 +17,12 @@
 		103FCF8A1C10F6E1002F7A61 /* FPHomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 103FCF891C10F6E1002F7A61 /* FPHomeViewController.swift */; };
 		104DECDD1C31E3680044430F /* FPAccountViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 104DECDC1C31E3680044430F /* FPAccountViewController.m */; };
 		104DECEB1C3334920044430F /* FPFeedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 104DECEA1C3334920044430F /* FPFeedViewController.m */; };
-		104DECF01C344F360044430F /* FPPhotoDetailsFooterView.m in Sources */ = {isa = PBXBuildFile; fileRef = 104DECEE1C344F360044430F /* FPPhotoDetailsFooterView.m */; };
 		10563BFE1C29EDFB00356685 /* FPCommentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 10563BFD1C29EDFB00356685 /* FPCommentViewController.m */; };
 		1061E4491C2211D700B3BD42 /* FPPhotoTimelineViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1061E4481C2211D700B3BD42 /* FPPhotoTimelineViewController.m */; };
 		1061E49A1C2238CC00B3BD42 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1061E4991C2238CC00B3BD42 /* UIKit.framework */; };
 		1061E49C1C2238D400B3BD42 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1061E49B1C2238D400B3BD42 /* Foundation.framework */; };
 		1061E49E1C2238E400B3BD42 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1061E49D1C2238E400B3BD42 /* CoreGraphics.framework */; };
 		1061E4A11C2280CA00B3BD42 /* SignInViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1061E4A01C2280CA00B3BD42 /* SignInViewController.m */; };
-		1061E5691C23552600B3BD42 /* STXButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 1061E53F1C23552500B3BD42 /* STXButton.m */; };
-		1061E56A1C23552600B3BD42 /* NSString+Emoji.m in Sources */ = {isa = PBXBuildFile; fileRef = 1061E5421C23552500B3BD42 /* NSString+Emoji.m */; };
-		1061E56B1C23552600B3BD42 /* UIButton+STXButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 1061E5441C23552500B3BD42 /* UIButton+STXButton.m */; };
-		1061E56C1C23552600B3BD42 /* UIImage+STXImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 1061E5461C23552500B3BD42 /* UIImage+STXImage.m */; };
-		1061E56D1C23552600B3BD42 /* UIImageView+Masking.m in Sources */ = {isa = PBXBuildFile; fileRef = 1061E5481C23552500B3BD42 /* UIImageView+Masking.m */; };
-		1061E56E1C23552600B3BD42 /* UIViewController+Indicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 1061E54A1C23552500B3BD42 /* UIViewController+Indicator.m */; };
-		1061E56F1C23552600B3BD42 /* UIViewController+Sharing.m in Sources */ = {isa = PBXBuildFile; fileRef = 1061E54C1C23552500B3BD42 /* UIViewController+Sharing.m */; };
-		1061E5701C23552600B3BD42 /* STXCaptionCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1061E54F1C23552500B3BD42 /* STXCaptionCell.m */; };
-		1061E5711C23552600B3BD42 /* STXCommentCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1061E5511C23552500B3BD42 /* STXCommentCell.m */; };
-		1061E5721C23552600B3BD42 /* STXFeedPhotoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1061E5531C23552500B3BD42 /* STXFeedPhotoCell.m */; };
-		1061E5731C23552600B3BD42 /* STXFeedPhotoCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1061E5541C23552500B3BD42 /* STXFeedPhotoCell.xib */; };
-		1061E5741C23552600B3BD42 /* STXLikesCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1061E5561C23552500B3BD42 /* STXLikesCell.m */; };
-		1061E5751C23552600B3BD42 /* STXUserActionCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1061E5581C23552500B3BD42 /* STXUserActionCell.m */; };
-		1061E5761C23552600B3BD42 /* STXUserActionCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1061E5591C23552500B3BD42 /* STXUserActionCell.xib */; };
-		1061E5771C23552600B3BD42 /* STXAttributedLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1061E5601C23552500B3BD42 /* STXAttributedLabel.m */; };
-		1061E5781C23552600B3BD42 /* STXLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1061E5621C23552500B3BD42 /* STXLabel.m */; };
-		1061E5791C23552600B3BD42 /* STXFeedTableViewDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 1061E5651C23552600B3BD42 /* STXFeedTableViewDataSource.m */; };
-		1061E57A1C23552600B3BD42 /* STXFeedTableViewDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1061E5671C23552600B3BD42 /* STXFeedTableViewDelegate.m */; };
 		1061E57D1C2359F400B3BD42 /* FPTabBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1061E57C1C2359F400B3BD42 /* FPTabBarController.m */; };
 		1061E5801C235A8D00B3BD42 /* FPEditPhotoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1061E57F1C235A8D00B3BD42 /* FPEditPhotoViewController.m */; };
 		1061E58E1C24B4EC00B3BD42 /* FPAppState.m in Sources */ = {isa = PBXBuildFile; fileRef = 1061E58D1C24B4EC00B3BD42 /* FPAppState.m */; };
@@ -86,8 +67,6 @@
 		104DECDC1C31E3680044430F /* FPAccountViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FPAccountViewController.m; sourceTree = "<group>"; };
 		104DECE91C3334920044430F /* FPFeedViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FPFeedViewController.h; sourceTree = "<group>"; };
 		104DECEA1C3334920044430F /* FPFeedViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FPFeedViewController.m; sourceTree = "<group>"; };
-		104DECEE1C344F360044430F /* FPPhotoDetailsFooterView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FPPhotoDetailsFooterView.m; sourceTree = "<group>"; };
-		104DECF11C344F810044430F /* FPPhotoDetailsFooterView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FPPhotoDetailsFooterView.h; sourceTree = "<group>"; };
 		10563BFC1C29EDFB00356685 /* FPCommentViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FPCommentViewController.h; sourceTree = "<group>"; };
 		10563BFD1C29EDFB00356685 /* FPCommentViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FPCommentViewController.m; sourceTree = "<group>"; };
 		1061E4471C2211D700B3BD42 /* FPPhotoTimelineViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FPPhotoTimelineViewController.h; sourceTree = "<group>"; };
@@ -97,45 +76,6 @@
 		1061E49D1C2238E400B3BD42 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		1061E49F1C2280CA00B3BD42 /* SignInViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SignInViewController.h; sourceTree = "<group>"; };
 		1061E4A01C2280CA00B3BD42 /* SignInViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SignInViewController.m; sourceTree = "<group>"; };
-		1061E5061C23481B00B3BD42 /* FriendlyPix-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "FriendlyPix-Prefix.pch"; sourceTree = "<group>"; };
-		1061E53E1C23552500B3BD42 /* STXButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STXButton.h; sourceTree = "<group>"; };
-		1061E53F1C23552500B3BD42 /* STXButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STXButton.m; sourceTree = "<group>"; };
-		1061E5411C23552500B3BD42 /* NSString+Emoji.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Emoji.h"; sourceTree = "<group>"; };
-		1061E5421C23552500B3BD42 /* NSString+Emoji.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Emoji.m"; sourceTree = "<group>"; };
-		1061E5431C23552500B3BD42 /* UIButton+STXButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIButton+STXButton.h"; sourceTree = "<group>"; };
-		1061E5441C23552500B3BD42 /* UIButton+STXButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIButton+STXButton.m"; sourceTree = "<group>"; };
-		1061E5451C23552500B3BD42 /* UIImage+STXImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+STXImage.h"; sourceTree = "<group>"; };
-		1061E5461C23552500B3BD42 /* UIImage+STXImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+STXImage.m"; sourceTree = "<group>"; };
-		1061E5471C23552500B3BD42 /* UIImageView+Masking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImageView+Masking.h"; sourceTree = "<group>"; };
-		1061E5481C23552500B3BD42 /* UIImageView+Masking.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+Masking.m"; sourceTree = "<group>"; };
-		1061E5491C23552500B3BD42 /* UIViewController+Indicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+Indicator.h"; sourceTree = "<group>"; };
-		1061E54A1C23552500B3BD42 /* UIViewController+Indicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+Indicator.m"; sourceTree = "<group>"; };
-		1061E54B1C23552500B3BD42 /* UIViewController+Sharing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+Sharing.h"; sourceTree = "<group>"; };
-		1061E54C1C23552500B3BD42 /* UIViewController+Sharing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+Sharing.m"; sourceTree = "<group>"; };
-		1061E54E1C23552500B3BD42 /* STXCaptionCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STXCaptionCell.h; sourceTree = "<group>"; };
-		1061E54F1C23552500B3BD42 /* STXCaptionCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STXCaptionCell.m; sourceTree = "<group>"; };
-		1061E5501C23552500B3BD42 /* STXCommentCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STXCommentCell.h; sourceTree = "<group>"; };
-		1061E5511C23552500B3BD42 /* STXCommentCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STXCommentCell.m; sourceTree = "<group>"; };
-		1061E5521C23552500B3BD42 /* STXFeedPhotoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STXFeedPhotoCell.h; sourceTree = "<group>"; };
-		1061E5531C23552500B3BD42 /* STXFeedPhotoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STXFeedPhotoCell.m; sourceTree = "<group>"; };
-		1061E5541C23552500B3BD42 /* STXFeedPhotoCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = STXFeedPhotoCell.xib; sourceTree = "<group>"; };
-		1061E5551C23552500B3BD42 /* STXLikesCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STXLikesCell.h; sourceTree = "<group>"; };
-		1061E5561C23552500B3BD42 /* STXLikesCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STXLikesCell.m; sourceTree = "<group>"; };
-		1061E5571C23552500B3BD42 /* STXUserActionCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STXUserActionCell.h; sourceTree = "<group>"; };
-		1061E5581C23552500B3BD42 /* STXUserActionCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STXUserActionCell.m; sourceTree = "<group>"; };
-		1061E5591C23552500B3BD42 /* STXUserActionCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = STXUserActionCell.xib; sourceTree = "<group>"; };
-		1061E55B1C23552500B3BD42 /* STXCommentItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STXCommentItem.h; sourceTree = "<group>"; };
-		1061E55C1C23552500B3BD42 /* STXPostItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STXPostItem.h; sourceTree = "<group>"; };
-		1061E55D1C23552500B3BD42 /* STXUserItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STXUserItem.h; sourceTree = "<group>"; };
-		1061E55F1C23552500B3BD42 /* STXAttributedLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STXAttributedLabel.h; sourceTree = "<group>"; };
-		1061E5601C23552500B3BD42 /* STXAttributedLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STXAttributedLabel.m; sourceTree = "<group>"; };
-		1061E5611C23552500B3BD42 /* STXLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STXLabel.h; sourceTree = "<group>"; };
-		1061E5621C23552500B3BD42 /* STXLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STXLabel.m; sourceTree = "<group>"; };
-		1061E5641C23552500B3BD42 /* STXFeedTableViewDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STXFeedTableViewDataSource.h; sourceTree = "<group>"; };
-		1061E5651C23552600B3BD42 /* STXFeedTableViewDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STXFeedTableViewDataSource.m; sourceTree = "<group>"; };
-		1061E5661C23552600B3BD42 /* STXFeedTableViewDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STXFeedTableViewDelegate.h; sourceTree = "<group>"; };
-		1061E5671C23552600B3BD42 /* STXFeedTableViewDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STXFeedTableViewDelegate.m; sourceTree = "<group>"; };
-		1061E5681C23552600B3BD42 /* STXDynamicTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STXDynamicTableView.h; sourceTree = "<group>"; };
 		1061E57B1C2359F400B3BD42 /* FPTabBarController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FPTabBarController.h; sourceTree = "<group>"; };
 		1061E57C1C2359F400B3BD42 /* FPTabBarController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FPTabBarController.m; sourceTree = "<group>"; };
 		1061E57E1C235A8D00B3BD42 /* FPEditPhotoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FPEditPhotoViewController.h; sourceTree = "<group>"; };
@@ -291,15 +231,6 @@
 			name = "Take Photo";
 			sourceTree = "<group>";
 		};
-		104DECEC1C344BC90044430F /* Views */ = {
-			isa = PBXGroup;
-			children = (
-				104DECF11C344F810044430F /* FPPhotoDetailsFooterView.h */,
-				104DECEE1C344F360044430F /* FPPhotoDetailsFooterView.m */,
-			);
-			name = Views;
-			sourceTree = "<group>";
-		};
 		104DECED1C344BDC0044430F /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
@@ -338,99 +269,6 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
-		1061E53C1C23552500B3BD42 /* STXDynamicTableView */ = {
-			isa = PBXGroup;
-			children = (
-				1061E53D1C23552500B3BD42 /* Buttons */,
-				1061E5401C23552500B3BD42 /* Categories */,
-				1061E54D1C23552500B3BD42 /* Cells */,
-				1061E55A1C23552500B3BD42 /* Items */,
-				1061E55E1C23552500B3BD42 /* Labels */,
-				1061E5631C23552500B3BD42 /* Protocols */,
-				1061E5681C23552600B3BD42 /* STXDynamicTableView.h */,
-			);
-			path = STXDynamicTableView;
-			sourceTree = "<group>";
-		};
-		1061E53D1C23552500B3BD42 /* Buttons */ = {
-			isa = PBXGroup;
-			children = (
-				1061E53E1C23552500B3BD42 /* STXButton.h */,
-				1061E53F1C23552500B3BD42 /* STXButton.m */,
-			);
-			path = Buttons;
-			sourceTree = "<group>";
-		};
-		1061E5401C23552500B3BD42 /* Categories */ = {
-			isa = PBXGroup;
-			children = (
-				1061E5411C23552500B3BD42 /* NSString+Emoji.h */,
-				1061E5421C23552500B3BD42 /* NSString+Emoji.m */,
-				1061E5431C23552500B3BD42 /* UIButton+STXButton.h */,
-				1061E5441C23552500B3BD42 /* UIButton+STXButton.m */,
-				1061E5451C23552500B3BD42 /* UIImage+STXImage.h */,
-				1061E5461C23552500B3BD42 /* UIImage+STXImage.m */,
-				1061E5471C23552500B3BD42 /* UIImageView+Masking.h */,
-				1061E5481C23552500B3BD42 /* UIImageView+Masking.m */,
-				1061E5491C23552500B3BD42 /* UIViewController+Indicator.h */,
-				1061E54A1C23552500B3BD42 /* UIViewController+Indicator.m */,
-				1061E54B1C23552500B3BD42 /* UIViewController+Sharing.h */,
-				1061E54C1C23552500B3BD42 /* UIViewController+Sharing.m */,
-			);
-			path = Categories;
-			sourceTree = "<group>";
-		};
-		1061E54D1C23552500B3BD42 /* Cells */ = {
-			isa = PBXGroup;
-			children = (
-				1061E54E1C23552500B3BD42 /* STXCaptionCell.h */,
-				1061E54F1C23552500B3BD42 /* STXCaptionCell.m */,
-				1061E5501C23552500B3BD42 /* STXCommentCell.h */,
-				1061E5511C23552500B3BD42 /* STXCommentCell.m */,
-				1061E5521C23552500B3BD42 /* STXFeedPhotoCell.h */,
-				1061E5531C23552500B3BD42 /* STXFeedPhotoCell.m */,
-				1061E5541C23552500B3BD42 /* STXFeedPhotoCell.xib */,
-				1061E5551C23552500B3BD42 /* STXLikesCell.h */,
-				1061E5561C23552500B3BD42 /* STXLikesCell.m */,
-				1061E5571C23552500B3BD42 /* STXUserActionCell.h */,
-				1061E5581C23552500B3BD42 /* STXUserActionCell.m */,
-				1061E5591C23552500B3BD42 /* STXUserActionCell.xib */,
-			);
-			path = Cells;
-			sourceTree = "<group>";
-		};
-		1061E55A1C23552500B3BD42 /* Items */ = {
-			isa = PBXGroup;
-			children = (
-				1061E55B1C23552500B3BD42 /* STXCommentItem.h */,
-				1061E55C1C23552500B3BD42 /* STXPostItem.h */,
-				1061E55D1C23552500B3BD42 /* STXUserItem.h */,
-			);
-			path = Items;
-			sourceTree = "<group>";
-		};
-		1061E55E1C23552500B3BD42 /* Labels */ = {
-			isa = PBXGroup;
-			children = (
-				1061E55F1C23552500B3BD42 /* STXAttributedLabel.h */,
-				1061E5601C23552500B3BD42 /* STXAttributedLabel.m */,
-				1061E5611C23552500B3BD42 /* STXLabel.h */,
-				1061E5621C23552500B3BD42 /* STXLabel.m */,
-			);
-			path = Labels;
-			sourceTree = "<group>";
-		};
-		1061E5631C23552500B3BD42 /* Protocols */ = {
-			isa = PBXGroup;
-			children = (
-				1061E5641C23552500B3BD42 /* STXFeedTableViewDataSource.h */,
-				1061E5651C23552600B3BD42 /* STXFeedTableViewDataSource.m */,
-				1061E5661C23552600B3BD42 /* STXFeedTableViewDelegate.h */,
-				1061E5671C23552600B3BD42 /* STXFeedTableViewDelegate.m */,
-			);
-			path = Protocols;
-			sourceTree = "<group>";
-		};
 		2C85627A1AFAB65F00F0B24B /* shared */ = {
 			isa = PBXGroup;
 			children = (
@@ -444,7 +282,6 @@
 		5F5A53431ADE670C00F81DF0 = {
 			isa = PBXGroup;
 			children = (
-				1061E53C1C23552500B3BD42 /* STXDynamicTableView */,
 				2C85627A1AFAB65F00F0B24B /* shared */,
 				5F5A534E1ADE670C00F81DF0 /* FriendlyPix */,
 				5F5A537A1ADE67D500F81DF0 /* FriendlyPixSwift */,
@@ -466,8 +303,6 @@
 			isa = PBXGroup;
 			children = (
 				104DECED1C344BDC0044430F /* Controllers */,
-				104DECEC1C344BC90044430F /* Views */,
-				1061E5061C23481B00B3BD42 /* FriendlyPix-Prefix.pch */,
 				1061E44A1C2211E100B3BD42 /* Models */,
 				5F5A53531ADE670C00F81DF0 /* AppDelegate.h */,
 				5F5A53541ADE670C00F81DF0 /* AppDelegate.m */,
@@ -614,8 +449,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				2C8562861AFAB65F00F0B24B /* LaunchScreen.xib in Resources */,
-				1061E5731C23552600B3BD42 /* STXFeedPhotoCell.xib in Resources */,
-				1061E5761C23552600B3BD42 /* STXUserActionCell.xib in Resources */,
 				2C8562841AFAB65F00F0B24B /* Images.xcassets in Resources */,
 				5F5A535B1ADE670C00F81DF0 /* Main.storyboard in Resources */,
 				2C8562821AFAB65F00F0B24B /* Icon@2x.png in Resources */,
@@ -735,36 +568,19 @@
 			buildActionMask = 2147483647;
 			files = (
 				5F5A53581ADE670C00F81DF0 /* FPHomeViewController.m in Sources */,
-				1061E56E1C23552600B3BD42 /* UIViewController+Indicator.m in Sources */,
-				1061E57A1C23552600B3BD42 /* STXFeedTableViewDelegate.m in Sources */,
-				1061E56A1C23552600B3BD42 /* NSString+Emoji.m in Sources */,
 				104DECEB1C3334920044430F /* FPFeedViewController.m in Sources */,
-				1061E5711C23552600B3BD42 /* STXCommentCell.m in Sources */,
 				1061E4491C2211D700B3BD42 /* FPPhotoTimelineViewController.m in Sources */,
-				1061E5791C23552600B3BD42 /* STXFeedTableViewDataSource.m in Sources */,
-				104DECF01C344F360044430F /* FPPhotoDetailsFooterView.m in Sources */,
 				1061E4A11C2280CA00B3BD42 /* SignInViewController.m in Sources */,
-				1061E5701C23552600B3BD42 /* STXCaptionCell.m in Sources */,
 				5F5A53551ADE670C00F81DF0 /* AppDelegate.m in Sources */,
 				1061E5951C24F59600B3BD42 /* FPUser.m in Sources */,
-				1061E56F1C23552600B3BD42 /* UIViewController+Sharing.m in Sources */,
 				104DECDD1C31E3680044430F /* FPAccountViewController.m in Sources */,
-				1061E56C1C23552600B3BD42 /* UIImage+STXImage.m in Sources */,
 				1061E57D1C2359F400B3BD42 /* FPTabBarController.m in Sources */,
-				1061E5781C23552600B3BD42 /* STXLabel.m in Sources */,
 				1061E5801C235A8D00B3BD42 /* FPEditPhotoViewController.m in Sources */,
-				1061E5751C23552600B3BD42 /* STXUserActionCell.m in Sources */,
-				1061E5691C23552600B3BD42 /* STXButton.m in Sources */,
 				5F5A53521ADE670C00F81DF0 /* main.m in Sources */,
-				1061E5721C23552600B3BD42 /* STXFeedPhotoCell.m in Sources */,
-				1061E5741C23552600B3BD42 /* STXLikesCell.m in Sources */,
 				1061E5921C24F2E300B3BD42 /* FPComment.m in Sources */,
 				10563BFE1C29EDFB00356685 /* FPCommentViewController.m in Sources */,
-				1061E5771C23552600B3BD42 /* STXAttributedLabel.m in Sources */,
 				1024C2E11C88C3FD00945A88 /* KZPropertyMapper+Date.m in Sources */,
 				2C595F051B34B73A00355AE7 /* FPConstants.swift in Sources */,
-				1061E56B1C23552600B3BD42 /* UIButton+STXButton.m in Sources */,
-				1061E56D1C23552600B3BD42 /* UIImageView+Masking.m in Sources */,
 				1061E58E1C24B4EC00B3BD42 /* FPAppState.m in Sources */,
 				1061E5981C24F68200B3BD42 /* FPPost.m in Sources */,
 			);
@@ -901,7 +717,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				ENABLE_BITCODE = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "FriendlyPix/FriendlyPix-Prefix.pch";
+				GCC_PREFIX_HEADER = "";
 				INFOPLIST_FILE = "$(SRCROOT)/FriendlyPix/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -922,7 +738,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				ENABLE_BITCODE = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "FriendlyPix/FriendlyPix-Prefix.pch";
+				GCC_PREFIX_HEADER = "";
 				INFOPLIST_FILE = "$(SRCROOT)/FriendlyPix/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

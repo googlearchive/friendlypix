@@ -15,16 +15,18 @@
 //
 
 #import "FPHomeViewController.h"
+#import "FPAppState.h"
+@import FirebaseAuth;
 
 @implementation FPHomeViewController
 
 - (void)loadFeed {
   // Listen for new messages in the Firebase database
 
-  [[super.ref childByAppendingPath: [NSString stringWithFormat:@"feed/%@", [FPAppState sharedInstance].currentUser.userID]]
+  [[super.ref child: [NSString stringWithFormat:@"feed/%@", [FPAppState sharedInstance].currentUser.userID]]
    observeEventType:FIRDataEventTypeChildAdded
    withBlock:^(FIRDataSnapshot *feedSnapshot) {
-     [[super.ref childByAppendingPath:[@"posts/" stringByAppendingString:feedSnapshot.key]]
+     [[super.ref child:[@"posts/" stringByAppendingString:feedSnapshot.key]]
       observeEventType:FIRDataEventTypeValue
       withBlock:^(FIRDataSnapshot *postSnapshot) {
         [super loadPost:postSnapshot];
@@ -32,4 +34,13 @@
    }];
 }
 
+- (IBAction)didTapSignOut:(id)sender {
+  NSError *signOutError;
+  BOOL status = [[FIRAuth auth] signOut:&signOutError];
+  if (!status) {
+    NSLog(@"Error signing out: %@", signOutError);
+    return;
+  }
+  [self.parentViewController dismissViewControllerAnimated:YES completion:nil];
+}
 @end

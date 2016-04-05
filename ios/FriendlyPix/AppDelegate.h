@@ -15,11 +15,8 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "GoogleCloudMessaging.h"
-@import Firebase.AppInvite;
-@import Firebase.AdMob;
 
-@interface AppDelegate : UIResponder <UIApplicationDelegate, GCMReceiverDelegate>
+@interface AppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (nonatomic, strong) UIWindow *window;
 

@@ -16,6 +16,7 @@
 
 #import "FPAccountViewController.h"
 #import "UIImageView+Masking.h"
+#import "FPAppState.h"
 
 @interface FPAccountViewController()
 @property (weak, nonatomic) IBOutlet UILabel *photoCountLabel;
@@ -31,7 +32,7 @@
 @implementation FPAccountViewController
 
 - (void)loadFeed {
-  [[super.ref childByAppendingPath:[@"users/" stringByAppendingString:_user.userID]]
+  [[super.ref child:[@"users/" stringByAppendingString:_user.userID]]
    observeEventType:FIRDataEventTypeValue
    withBlock:^(FIRDataSnapshot *userSnapshot) {
      NSArray *posts = [userSnapshot childSnapshotForPath:@"posts"].value;
@@ -42,13 +43,14 @@
      [self feedDidLoad];
      for (NSString *postId in posts) {
 
-       [[super.ref childByAppendingPath:[@"posts/" stringByAppendingString:postId]]
+       [[super.ref child:[@"posts/" stringByAppendingString:postId]]
         observeEventType:FIRDataEventTypeValue
         withBlock:^(FIRDataSnapshot *postSnapshot) {
           [super loadPost:postSnapshot];
         }];
      }
    }];
+  [_profilePictureImageView setCircleImageWithURL:_user.profilePictureURL placeholderImage:[UIImage imageNamed:@"PlaceholderPhoto"]];
 }
 
 
@@ -98,21 +100,21 @@
   self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]
                                             initWithCustomView:loadingActivityIndicatorView];
 
-  [[super.ref childByAppendingPath:
+  [[super.ref child:
     [NSString stringWithFormat:@"users/%@/followers/%@", _user.userID,
      [FPAppState sharedInstance].currentUser.userID]] setValue:[NSNumber numberWithBool:YES]];
-  [[super.ref childByAppendingPath:
+  [[super.ref child:
     [NSString stringWithFormat:@"users/%@/following/%@",
      [FPAppState sharedInstance].currentUser.userID, _user.userID]]
    setValue:[NSNumber numberWithBool:YES]];
 
-  FIRDatabaseReference *myFeed = [super.ref childByAppendingPath:
+  FIRDatabaseReference *myFeed = [super.ref child:
                       [NSString stringWithFormat:@"users/%@/feed", [FPAppState sharedInstance].currentUser.userID]];
-  [[super.ref childByAppendingPath:
+  [[super.ref child:
     [NSString stringWithFormat:@"users/%@/posts", _user.userID]]
    observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot *snapshot) {
      for (NSString *postId in [snapshot.value allKeys]) {
-       [[myFeed childByAppendingPath:postId] setValue:[NSNumber numberWithBool:YES]];
+       [[myFeed child:postId] setValue:[NSNumber numberWithBool:YES]];
      }
    }];
 
@@ -128,10 +130,10 @@
   self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]
                                             initWithCustomView:loadingActivityIndicatorView];
 
-  [[super.ref childByAppendingPath:
+  [[super.ref child:
     [NSString stringWithFormat:@"users/%@/followers/%@",
      _user.userID, [FPAppState sharedInstance].currentUser.userID]] removeValue];
-  [[super.ref childByAppendingPath:
+  [[super.ref child:
     [NSString stringWithFormat:@"users/%@/following/%@",
      [FPAppState sharedInstance].currentUser.userID, _user.userID]] removeValue];
 
