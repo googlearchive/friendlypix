@@ -18,7 +18,6 @@ import java.util.List;
 
 public class FirebasePostQueryAdapter extends RecyclerView.Adapter<PostViewHolder> {
     private final String TAG = "PostQueryAdapter";
-    private final String mPrefix = FirebaseUtil.getFirebaseUrl().concat("/posts");
     private List<String> mPostPaths;
     private OnSetupViewListener mOnSetupViewListener;
 
@@ -51,10 +50,7 @@ public class FirebasePostQueryAdapter extends RecyclerView.Adapter<PostViewHolde
 
     @Override
     public void onBindViewHolder(final PostViewHolder holder, int position) {
-        Uri prefixUri = Uri.parse(mPrefix);
-        String refString = Uri.withAppendedPath(prefixUri, mPostPaths.get(position)).toString();
-        Log.d(TAG, "url: " + refString);
-        DatabaseReference ref = FirebaseUtil.getBaseRef().child(refString);
+        DatabaseReference ref = FirebaseUtil.getPostsRef().child(mPostPaths.get(position));
         // TODO: Fix this so async event won't bind the wrong view post recycle.
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

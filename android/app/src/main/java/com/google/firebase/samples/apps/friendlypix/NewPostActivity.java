@@ -127,7 +127,7 @@ public class NewPostActivity extends AppCompatActivity implements
                         Uri url = taskSnapshot.getMetadata().getDownloadUrl();
 
                         final DatabaseReference ref = FirebaseUtil.getBaseRef();
-                        DatabaseReference postsRef = ref.child("posts");
+                        DatabaseReference postsRef = FirebaseUtil.getPostsRef();
                         final String newPostKey = postsRef.push().getKey();
 
                         String userId = FirebaseUtil.getCurrentUserId();
@@ -135,8 +135,9 @@ public class NewPostActivity extends AppCompatActivity implements
                                 descriptionText.getText().toString(), ServerValue.TIMESTAMP);
 
                         Map<String, Object> updatedUserData = new HashMap<>();
-                        updatedUserData.put("users/" + userId + "/posts/" + newPostKey, true);
-                        updatedUserData.put("posts/" + newPostKey, new ObjectMapper().convertValue(newPost, Map.class));
+                        updatedUserData.put(FirebaseUtil.getUsersPath() + userId + "/posts/" + newPostKey, true);
+                        updatedUserData.put(FirebaseUtil.getPostsPath() + newPostKey,
+                                new ObjectMapper().convertValue(newPost, Map.class));
 
                         ref.updateChildren(updatedUserData, new DatabaseReference.CompletionListener() {
                             @Override

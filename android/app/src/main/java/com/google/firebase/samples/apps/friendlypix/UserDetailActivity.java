@@ -62,7 +62,7 @@ public class UserDetailActivity extends AppCompatActivity {
                 (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         // TODO: Investigate why initial toolbar title is activity name instead of blank.
 
-        mUsersRef = FirebaseUtil.getBaseRef().child("users");
+        mUsersRef = FirebaseUtil.getUsersRef();
         final String currentUserId = FirebaseUtil.getCurrentUserId();
 
         final FloatingActionButton followUserFab = (FloatingActionButton) findViewById(R.id
@@ -129,7 +129,7 @@ public class UserDetailActivity extends AppCompatActivity {
         mRecyclerGrid.setAdapter(mGridAdapter);
         mRecyclerGrid.setLayoutManager(new GridLayoutManager(this, GRID_NUM_COLUMNS));
 
-        DatabaseReference userRef = FirebaseUtil.getBaseRef().child("users").child(mUserId);
+        DatabaseReference userRef = FirebaseUtil.getUsersRef().child(mUserId);
         userRef.addListenerForSingleValueEvent(
                 new ValueEventListener() {
                     @Override
@@ -155,7 +155,7 @@ public class UserDetailActivity extends AppCompatActivity {
                         mGridAdapter.addPaths(paths);
                         String firstPostKey = paths.get(0);
 
-                        FirebaseUtil.getBaseRef().child("posts").child(firstPostKey).addListenerForSingleValueEvent(new ValueEventListener() {
+                        FirebaseUtil.getPostsRef().child(firstPostKey).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 Post post = dataSnapshot.getValue(Post.class);
@@ -176,7 +176,7 @@ public class UserDetailActivity extends AppCompatActivity {
                         new RuntimeException("Couldn't get user.", firebaseError.toException());
                     }
                 });
-        mPersonRef = FirebaseUtil.getBaseRef().child("people").child(mUserId);
+        mPersonRef = FirebaseUtil.getPeopleRef().child(mUserId);
         mPersonInfoListener = mPersonRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -227,11 +227,7 @@ public class UserDetailActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(final GridImageHolder holder, int position) {
-            final String mPrefix = FirebaseUtil.getFirebaseUrl().concat("/posts");
-            Uri prefixUri = Uri.parse(mPrefix);
-            Log.d(TAG, "Getting grid post: " + position);
-            String refString = Uri.withAppendedPath(prefixUri, mPostPaths.get(position)).toString();
-            DatabaseReference ref = FirebaseUtil.getBaseRef().child(refString);
+            DatabaseReference ref = FirebaseUtil.getPostsRef().child(mPostPaths.get(position));
             ref.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {

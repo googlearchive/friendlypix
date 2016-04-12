@@ -85,7 +85,7 @@ public class PostsFragment extends Fragment {
         switch (getArguments().getInt(KEY_TYPE)) {
             case TYPE_RECOMMENDED:
                 Log.d(TAG, "Restoring recycler view position (recommended): " + mRecyclerViewPosition);
-                DatabaseReference postsRef = FirebaseUtil.getBaseRef().child("posts");
+                DatabaseReference postsRef = FirebaseUtil.getPostsRef();
                 mAdapter = new FirebaseRecyclerAdapter<Post, PostViewHolder>(
                         Post.class, R.layout.post_item, PostViewHolder.class, postsRef) {
                     @Override
@@ -107,7 +107,7 @@ public class PostsFragment extends Fragment {
                         setupPost(holder, post, position, postKey);
                     }
                 });
-                FirebaseUtil.getBaseRef().child("users").child(FirebaseUtil.getCurrentUserId()).child("following")
+                FirebaseUtil.getUsersRef().child(FirebaseUtil.getCurrentUserId()).child("following")
                         .addListenerForSingleValueEvent(new ValueEventListener() {
 
                             @Override
@@ -116,7 +116,7 @@ public class PostsFragment extends Fragment {
                                     String userKey = snapshot.getKey();
                                     final List<String> photoPaths = new ArrayList<>();
                                     // TODO: Decide whether to duplicate post data for speed.
-                                    FirebaseUtil.getBaseRef().child("users").child(userKey).child("posts")
+                                    FirebaseUtil.getUsersRef().child(userKey).child("posts")
                                             .addListenerForSingleValueEvent(new ValueEventListener() {
                                                 @Override
                                                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -167,7 +167,7 @@ public class PostsFragment extends Fragment {
             postKey = inPostKey;
         }
         // TODO: Fix after duplicate data decision is made.
-        final DatabaseReference authorRef = FirebaseUtil.getBaseRef().child("people").child(post.getAuthor());
+        final DatabaseReference authorRef = FirebaseUtil.getPeopleRef().child(post.getAuthor());
         authorRef.addListenerForSingleValueEvent(
                 new ValueEventListener() {
                     @Override

@@ -6,12 +6,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 class FirebaseUtil {
-    // TODO: Decide to standardize on one of getFirebaseUrl or GetBaseRef
-    // TODO: Add getPostsRef, getUsersRef, etc.
-    public static String getFirebaseUrl() {
-        return  "https://friendlypix-4fa22.firebaseio.com";
-    }
-
     public static DatabaseReference getBaseRef() {
         return FirebaseDatabase.getInstance().getReference();
     }
@@ -25,6 +19,38 @@ class FirebaseUtil {
     }
 
     public static DatabaseReference getCurrentUserRef() {
-        return getBaseRef().child("users").child(getCurrentUserId());
+        String uid = getCurrentUserId();
+        if (uid != null) {
+            return getBaseRef().child("users").child(getCurrentUserId());
+        }
+        return null;
+    }
+
+    public static DatabaseReference getPostsRef() {
+        return getBaseRef().child("posts");
+    }
+
+    public static String getPostsPath() {
+        return "posts/";
+    }
+
+    public static DatabaseReference getUsersRef() {
+        return getBaseRef().child("users");
+    }
+
+    public static String getUsersPath() {
+        return "users/";
+    }
+
+    public static DatabaseReference getPeopleRef() {
+        return getBaseRef().child("people");
+    }
+
+    public static DatabaseReference getCommentsRef() {
+        return getBaseRef().child("comments");
+    }
+
+    public static DatabaseReference getFeedsRef() {
+        return getBaseRef().child("feeds");
     }
 }

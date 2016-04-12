@@ -72,15 +72,15 @@ public class FeedsActivity extends AppCompatActivity implements PostsFragment.On
     public void onPostLike(final String postKey) {
         final DatabaseReference ref = FirebaseUtil.getBaseRef();
         final String userKey = FirebaseUtil.getCurrentUserId();
-        final DatabaseReference postLikesRef = ref.child("posts").child(postKey).child("likes");
+        final DatabaseReference postLikesRef = FirebaseUtil.getPostsRef().child(postKey).child("likes");
         postLikesRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.hasChild(userKey)) {
                     // User already liked this post, so we toggle like off.
                     Map<String, Object> updatedUserData = new HashMap<>();
-                    updatedUserData.put("users/" + userKey + "/likes/" + postKey, null);
-                    updatedUserData.put("posts/" + postKey + "/likes/" + userKey, null);
+                    updatedUserData.put(FirebaseUtil.getUsersPath() + userKey + "/likes/" + postKey, null);
+                    updatedUserData.put(FirebaseUtil.getPostsPath() + postKey + "/likes/" + userKey, null);
                     ref.updateChildren(updatedUserData, new DatabaseReference.CompletionListener() {
                         @Override
                         public void onComplete(DatabaseError firebaseError, DatabaseReference firebase) {
@@ -91,8 +91,8 @@ public class FeedsActivity extends AppCompatActivity implements PostsFragment.On
                     });
                 } else {
                     Map<String, Object> updatedUserData = new HashMap<>();
-                    updatedUserData.put("users/" + userKey + "/likes/" + postKey, true);
-                    updatedUserData.put("posts/" + postKey + "/likes/" + userKey, true);
+                    updatedUserData.put(FirebaseUtil.getUsersPath() + userKey + "/likes/" + postKey, true);
+                    updatedUserData.put(FirebaseUtil.getPostsPath() + postKey + "/likes/" + userKey, true);
                     ref.updateChildren(updatedUserData, new DatabaseReference.CompletionListener() {
                         @Override
                         public void onComplete(DatabaseError firebaseError, DatabaseReference firebase) {

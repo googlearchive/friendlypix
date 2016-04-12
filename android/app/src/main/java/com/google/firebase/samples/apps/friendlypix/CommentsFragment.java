@@ -85,14 +85,14 @@ public class CommentsFragment extends Fragment {
         mEditText = (EditText) rootView.findViewById(R.id.editText);
         final Button sendButton = (Button) rootView.findViewById(R.id.send_comment);
 
-        final DatabaseReference commentsRef = FirebaseUtil.getBaseRef().child("comments").child(mPostRef);
+        final DatabaseReference commentsRef = FirebaseUtil.getCommentsRef().child(mPostRef);
         mAdapter = new FirebaseRecyclerAdapter<Comment, CommentViewHolder>(
                 Comment.class, R.layout.comment_item, CommentViewHolder.class, commentsRef) {
             @Override
             protected void populateViewHolder(final CommentViewHolder viewHolder,
                                               Comment comment, int position) {
                 String authorId = comment.getAuthor(); // TODO: fix this to be comment.getUserId()
-                FirebaseUtil.getBaseRef().child("people").child(authorId)
+                FirebaseUtil.getPeopleRef().child(authorId)
                         .addListenerForSingleValueEvent(
                         new ValueEventListener() {
                             @Override
