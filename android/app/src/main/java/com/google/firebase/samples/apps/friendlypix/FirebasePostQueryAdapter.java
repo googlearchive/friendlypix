@@ -7,10 +7,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.samples.apps.friendlypix.Models.Post;
 
 import java.util.ArrayList;
@@ -54,7 +54,7 @@ public class FirebasePostQueryAdapter extends RecyclerView.Adapter<PostViewHolde
         Uri prefixUri = Uri.parse(mPrefix);
         String refString = Uri.withAppendedPath(prefixUri, mPostPaths.get(position)).toString();
         Log.d(TAG, "url: " + refString);
-        Firebase ref = new Firebase(refString);
+        DatabaseReference ref = FirebaseUtil.getBaseRef().child(refString);
         // TODO: Fix this so async event won't bind the wrong view post recycle.
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -65,7 +65,7 @@ public class FirebasePostQueryAdapter extends RecyclerView.Adapter<PostViewHolde
             }
 
             @Override
-            public void onCancelled(FirebaseError firebaseError) {
+            public void onCancelled(DatabaseError firebaseError) {
                 Log.e(TAG, "Error occurred: " + firebaseError.getMessage());
             }
         });

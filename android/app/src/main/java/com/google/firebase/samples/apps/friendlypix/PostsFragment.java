@@ -11,11 +11,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
 import com.firebase.ui.FirebaseRecyclerAdapter;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.samples.apps.friendlypix.Models.Person;
 import com.google.firebase.samples.apps.friendlypix.Models.Post;
 
@@ -85,7 +85,7 @@ public class PostsFragment extends Fragment {
         switch (getArguments().getInt(KEY_TYPE)) {
             case TYPE_RECOMMENDED:
                 Log.d(TAG, "Restoring recycler view position (recommended): " + mRecyclerViewPosition);
-                Firebase postsRef = new Firebase("https://friendlypix-4fa22.firebaseio.com/posts");
+                DatabaseReference postsRef = FirebaseUtil.getBaseRef().child("posts");
                 mAdapter = new FirebaseRecyclerAdapter<Post, PostViewHolder>(
                         Post.class, R.layout.post_item, PostViewHolder.class, postsRef) {
                     @Override
@@ -127,7 +127,7 @@ public class PostsFragment extends Fragment {
                                                 }
 
                                                 @Override
-                                                public void onCancelled(FirebaseError firebaseError) {
+                                                public void onCancelled(DatabaseError firebaseError) {
 
                                                 }
                                             });
@@ -135,7 +135,7 @@ public class PostsFragment extends Fragment {
                             }
 
                             @Override
-                            public void onCancelled(FirebaseError firebaseError) {
+                            public void onCancelled(DatabaseError firebaseError) {
 
                             }
                         });
@@ -167,7 +167,7 @@ public class PostsFragment extends Fragment {
             postKey = inPostKey;
         }
         // TODO: Fix after duplicate data decision is made.
-        final Firebase authorRef = FirebaseUtil.getBaseRef().child("people").child(post.getAuthor());
+        final DatabaseReference authorRef = FirebaseUtil.getBaseRef().child("people").child(post.getAuthor());
         authorRef.addListenerForSingleValueEvent(
                 new ValueEventListener() {
                     @Override
@@ -178,7 +178,7 @@ public class PostsFragment extends Fragment {
                     }
 
                     @Override
-                    public void onCancelled(FirebaseError firebaseError) {
+                    public void onCancelled(DatabaseError firebaseError) {
                         new RuntimeException("Couldn't get comment username.", firebaseError.toException());
                     }
                 }
@@ -193,7 +193,7 @@ public class PostsFragment extends Fragment {
             }
 
             @Override
-            public void onCancelled(FirebaseError firebaseError) {
+            public void onCancelled(DatabaseError firebaseError) {
 
             }
         });

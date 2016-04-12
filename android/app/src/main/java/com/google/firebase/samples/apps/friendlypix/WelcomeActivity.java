@@ -2,15 +2,24 @@ package com.google.firebase.samples.apps.friendlypix;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
+import com.google.android.gms.common.tasks.OnFailureListener;
+import com.google.android.gms.common.tasks.OnSuccessListener;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
 
 public class WelcomeActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private static final String TAG = "WelcomeActivity";
+    private FirebaseAuth mAuth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -19,10 +28,8 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
         findViewById(R.id.sign_in_button).setOnClickListener(this);
         findViewById(R.id.explore_button).setOnClickListener(this);
 
-        FirebaseApp firebaseApp = FirebaseApp.initializeApp(this,
-                                                            getString(R.string.google_app_id),
-                                                            new FirebaseOptions(getString(R.string.google_crash_reporting_api_key)));
-        if (FirebaseAuth.getAuth().getCurrentUser() != null) {
+        mAuth = FirebaseAuth.getInstance();
+        if (FirebaseUtil.getCurrentUserId() != null) {
             startActivity(new Intent(this, ProfileActivity.class));
         }
     }
@@ -32,8 +39,22 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
         int id = v.getId();
         switch (id) {
             case R.id.explore_button:
-                Intent feedsIntent = new Intent(this, FeedsActivity.class);
-                startActivity(feedsIntent);
+                mAuth.signInAnonymously().addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                    @Override
+                    public void onSuccess(AuthResult authResult) {
+                        Intent feedsIntent = new Intent(WelcomeActivity.this, FeedsActivity.class);
+                        startActivity(feedsIntent);
+                    }
+                }).addOnFailureListener( new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Throwable throwable) {
+                        Toast.makeText(WelcomeActivity.this, "Unable to sign in anonymously.",
+                                Toast.LENGTH_SHORT).show();
+                        if (throwable instanceof FirebaseAuthException) {
+                            Log.e(TAG, ((FirebaseAuthException) throwable).getErrorMessage());
+                        }
+                    }
+                });
                 break;
             case R.id.sign_in_button:
                 Intent signInIntent = new Intent(this, ProfileActivity.class);

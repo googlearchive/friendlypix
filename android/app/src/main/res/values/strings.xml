@@ -5,8 +5,6 @@
     <string name="server_client_id">85010793512-5t8ejsijkp68vgudb9jn00ct1tnrgoac.apps.googleusercontent.com</string>
     <string name="server_widget_url">http://www.google.com</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_feeds">FeedsActivity</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="title_activity_main2">Main2Activity</string>

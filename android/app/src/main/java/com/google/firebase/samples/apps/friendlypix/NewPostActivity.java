@@ -24,17 +24,19 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ServerValue;
-import com.firebase.geofire.GeoFire;
-import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.tasks.OnSuccessListener;
 import com.google.android.gms.location.LocationServices;
+import com.google.firebase.FirebaseError;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.samples.apps.friendlypix.Models.Post;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageException;
 import com.google.firebase.storage.StorageMetadata;
+import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
@@ -57,7 +59,7 @@ public class NewPostActivity extends AppCompatActivity implements
 
     private TextView mLocationView;
     private GoogleApiClient mGoogleApiClient;
-    private FirebaseStorage mStorageRef;
+    private StorageReference mStorageRef;
     private Location mUserLocation;
     private Uri mFileUri;
 
@@ -67,8 +69,7 @@ public class NewPostActivity extends AppCompatActivity implements
 
     private static final String KEY_FILE_URI = "key_file_uri";
     private static final String[] cameraPerms = new String[]{
-            Manifest.permission.CAMERA,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
     };
     private static final String[] locationPerms = new String[]{
             Manifest.permission.ACCESS_COARSE_LOCATION
@@ -96,8 +97,8 @@ public class NewPostActivity extends AppCompatActivity implements
         mLocationView = (TextView) findViewById(R.id.new_post_location);
         mLocationView.setText(R.string.new_post_location_placeholder);
 
-        String bucketName = "gs://" + getString(R.string.project_id) + ".storage.firebase.com";
-        mStorageRef = new FirebaseStorage(bucketName);
+        mStorageRef = FirebaseStorage.getInstance()
+                .getReference(getString(R.string.google_storage_bucket));
 
         // Restore instance state
         if (savedInstanceState != null) {
@@ -117,47 +118,42 @@ public class NewPostActivity extends AppCompatActivity implements
                     return;
                 }
 
-                final FirebaseStorage photoRef = mStorageRef.getChild("photos")
-                        .getChild(mFileUri.getLastPathSegment());
+                final StorageReference photoRef = mStorageRef.child("photos")
+                        .child(mFileUri.getLastPathSegment());
 
-                photoRef.putFile(mFileUri).addCallback(new UploadTask.Callback() {
+                photoRef.putFile(mFileUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
-                    protected void onCompleted(UploadTask uploadTask) {
-                        // TODO: Remove this callback once API changes to pass metadata to onComplete.
-                        photoRef.getMetadata(new FirebaseStorage.MetadataCallback() {
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        Uri url = taskSnapshot.getMetadata().getDownloadUrl();
+
+                        final DatabaseReference ref = FirebaseUtil.getBaseRef();
+                        DatabaseReference postsRef = ref.child("posts");
+                        final String newPostKey = postsRef.push().getKey();
+
+                        String userId = FirebaseUtil.getCurrentUserId();
+                        Post newPost = new Post(userId, url.toString(),
+                                descriptionText.getText().toString(), ServerValue.TIMESTAMP);
+
+                        Map<String, Object> updatedUserData = new HashMap<>();
+                        updatedUserData.put("users/" + userId + "/posts/" + newPostKey, true);
+                        updatedUserData.put("posts/" + newPostKey, new ObjectMapper().convertValue(newPost, Map.class));
+
+                        ref.updateChildren(updatedUserData, new DatabaseReference.CompletionListener() {
                             @Override
-                            protected void onComplete(@NonNull StorageMetadata metadata) {
-                                Uri url = metadata.getDownloadUrl();
-
-                                final Firebase ref = FirebaseUtil.getBaseRef();
-                                Firebase postsRef = ref.child("posts");
-                                final String newPostKey = postsRef.push().getKey();
-
-                                String userId = FirebaseUtil.getCurrentUserId();
-                                Post newPost = new Post(userId, url.toString(),
-                                        descriptionText.getText().toString(), ServerValue.TIMESTAMP);
-
-                                Map<String, Object> updatedUserData = new HashMap<>();
-                                updatedUserData.put("users/" + userId + "/posts/" + newPostKey, true);
-                                updatedUserData.put("posts/" + newPostKey, new ObjectMapper().convertValue(newPost, Map.class));
-
-                                ref.updateChildren(updatedUserData, new Firebase.CompletionListener() {
-                                    @Override
-                                    public void onComplete(FirebaseError firebaseError, Firebase firebase) {
-                                        if (firebaseError == null) {
-                                            if (mUserLocation != null) {
-                                                GeoFire geoFire = new GeoFire(FirebaseUtil.getBaseRef());
-                                                geoFire.setLocation(newPostKey,
-                                                        new GeoLocation(mUserLocation.getLatitude(), mUserLocation.getLongitude()));
-                                            } else {
-                                                Log.d(TAG, "Not tagging post because location data was not provided.");
-                                            }
-                                            finish();
-                                        } else {
-                                            Log.e(TAG, "Unable to store geoFire geolocation: " + firebaseError.getMessage());
-                                        }
+                            public void onComplete(DatabaseError firebaseError, DatabaseReference databaseReference) {
+                                if (firebaseError == null) {
+                                    if (mUserLocation != null) {
+                                      //  TODO: Temporarily removing geofire until I fork it to include Firebase class name changes.
+//                                        GeoFire geoFire = new GeoFire(FirebaseUtil.getBaseRef());
+//                                        geoFire.setLocation(newPostKey,
+//                                                new GeoLocation(mUserLocation.getLatitude(), mUserLocation.getLongitude()));
+                                    } else {
+                                        Log.d(TAG, "Not tagging post because location data was not provided.");
                                     }
-                                });
+                                    finish();
+                                } else {
+                                    Log.e(TAG, "Unable to store geoFire geolocation: " + firebaseError.getMessage());
+                                }
                             }
                         });
                     }

@@ -18,12 +18,10 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.MutableData;
-import com.firebase.client.Transaction;
-import com.firebase.client.ValueEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -72,9 +70,9 @@ public class FeedsActivity extends AppCompatActivity implements PostsFragment.On
 
     @Override
     public void onPostLike(final String postKey) {
-        final Firebase ref = FirebaseUtil.getBaseRef();
+        final DatabaseReference ref = FirebaseUtil.getBaseRef();
         final String userKey = FirebaseUtil.getCurrentUserId();
-        final Firebase postLikesRef = ref.child("posts").child(postKey).child("likes");
+        final DatabaseReference postLikesRef = ref.child("posts").child(postKey).child("likes");
         postLikesRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -83,9 +81,9 @@ public class FeedsActivity extends AppCompatActivity implements PostsFragment.On
                     Map<String, Object> updatedUserData = new HashMap<>();
                     updatedUserData.put("users/" + userKey + "/likes/" + postKey, null);
                     updatedUserData.put("posts/" + postKey + "/likes/" + userKey, null);
-                    ref.updateChildren(updatedUserData, new Firebase.CompletionListener() {
+                    ref.updateChildren(updatedUserData, new DatabaseReference.CompletionListener() {
                         @Override
-                        public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                        public void onComplete(DatabaseError firebaseError, DatabaseReference firebase) {
                             if (firebaseError != null) {
                                 Toast.makeText(FeedsActivity.this, "Error unliking post.", Toast.LENGTH_SHORT).show();
                             }
@@ -95,9 +93,9 @@ public class FeedsActivity extends AppCompatActivity implements PostsFragment.On
                     Map<String, Object> updatedUserData = new HashMap<>();
                     updatedUserData.put("users/" + userKey + "/likes/" + postKey, true);
                     updatedUserData.put("posts/" + postKey + "/likes/" + userKey, true);
-                    ref.updateChildren(updatedUserData, new Firebase.CompletionListener() {
+                    ref.updateChildren(updatedUserData, new DatabaseReference.CompletionListener() {
                         @Override
-                        public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                        public void onComplete(DatabaseError firebaseError, DatabaseReference firebase) {
                             if (firebaseError != null) {
                                 Toast.makeText(FeedsActivity.this, "Error liking post.", Toast.LENGTH_SHORT).show();
 
@@ -108,7 +106,7 @@ public class FeedsActivity extends AppCompatActivity implements PostsFragment.On
             }
 
             @Override
-            public void onCancelled(FirebaseError firebaseError) {
+            public void onCancelled(DatabaseError firebaseError) {
 
             }
         });

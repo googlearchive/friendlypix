@@ -85,13 +85,6 @@
                 android:text="@string/show_feed_button_text"
                 style="@style/Widget.AppCompat.Button.Colored"/>
             <Button
-                android:id="@+id/invite_friends_button"
-                android:layout_width="200dp"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:text="@string/invite_friends_button_text"
-                style="@style/Widget.AppCompat.Button.Colored"/>
-            <Button
                 android:id="@+id/sign_out_button"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"

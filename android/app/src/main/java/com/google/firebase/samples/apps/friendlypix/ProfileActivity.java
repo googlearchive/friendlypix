@@ -1,9 +1,11 @@
 package com.google.firebase.samples.apps.friendlypix;
 
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -15,23 +17,23 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.firebase.client.Firebase;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInApi;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.firebase.FirebaseApp;
+import com.google.android.gms.common.tasks.OnFailureListener;
+import com.google.android.gms.common.tasks.OnSuccessListener;
 import com.google.firebase.FirebaseError;
-import com.google.firebase.FirebaseOptions;
-import com.google.firebase.FirebaseUser;
-import com.google.firebase.UserProfileChangeRequest;
-import com.google.firebase.UserProfileChangeResult;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -48,6 +50,7 @@ public class ProfileActivity extends AppCompatActivity implements
     private CircleImageView mProfilePhoto;
     private TextView mProfileUsername;
     private GoogleApiClient mGoogleApiClient;
+    private ProgressDialog mProgressDialog;
 
     private static final int RC_SIGN_IN = 103;
 
@@ -58,12 +61,8 @@ public class ProfileActivity extends AppCompatActivity implements
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FirebaseApp firebaseApp = FirebaseApp.initializeApp(this,
-                getString(R.string.google_app_id),
-                new FirebaseOptions(getString(R.string.google_crash_reporting_api_key)));
-
         // Initialize authentication and set up callbacks
-        mAuth = FirebaseAuth.getAuth();
+        mAuth = FirebaseAuth.getInstance();
 
         // GoogleApiClient with Sign In
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -91,81 +90,17 @@ public class ProfileActivity extends AppCompatActivity implements
         int id = v.getId();
         switch(id) {
             case R.id.launch_sign_in:
-                mAuth.addAuthResultCallback(new FirebaseAuth.AuthResultCallbacks() {
-                    @Override
-                    public void onAuthenticated(@NonNull FirebaseUser firebaseUser) {
-                        Log.d(TAG, "onAuthenticated:" + firebaseUser);
-                        mAuth.removeAuthResultCallback(this);
-                        showSignedInUI(firebaseUser);
-                    }
-
-                    @Override
-                    public void onAuthenticationError(@NonNull FirebaseError firebaseError) {
-                        Log.d(TAG, "onAuthenticationError:" + firebaseError.getErrorCode());
-                        Log.e(TAG, "auth error: " + firebaseError.toString());
-                        mAuth.removeAuthResultCallback(this);
-                        showSignedOutUI();
-                    }
-                });
                 launchSignInIntent();
                 break;
             case R.id.sign_out_button:
-                mAuth.signOut(this);
+                mAuth.signOut();
+                Auth.GoogleSignInApi.signOut(mGoogleApiClient);
                 showSignedOutUI();
                 break;
             case R.id.show_feeds_button:
                 Intent feedsIntent = new Intent(this, FeedsActivity.class);
                 startActivity(feedsIntent);
                 break;
-        }
-    }
-
-    private void handleGoogleSignInResult(GoogleSignInResult result) {
-        Log.d(TAG, "handleGoogleSignInResult:" + result.getStatus());
-        if (result.isSuccess() && result.getSignInAccount() != null) {
-            GoogleSignInAccount account = result.getSignInAccount();
-            String idToken = account.getIdToken();
-            final Uri photoUrl = account.getPhotoUrl();
-            final String displayName = account.getDisplayName();
-            mAuth.signInWithCredential(
-                    GoogleAuthProvider.getCredential(idToken, null))
-                    .setResultCallback(new ResultCallback<AuthResult>() {
-                        @Override
-                        public void onResult(@NonNull AuthResult result) {
-                            Log.d(TAG, "onResult:" + result);
-                            final FirebaseUser firebaseUser = result.getUser();
-                            boolean updateRequired = false;
-                            UserProfileChangeRequest.Builder profileChangeBuilder =
-                                    new UserProfileChangeRequest.Builder();
-                            if (firebaseUser.getDisplayName() == null ||
-                                    !firebaseUser.getDisplayName().equals(displayName)) {
-                                updateRequired = true;
-                                profileChangeBuilder.setDisplayName(displayName);
-                            }
-                            if (firebaseUser.getPhotoUrl() == null ||
-                                    !firebaseUser.getPhotoUrl().equals(photoUrl)) {
-                                updateRequired = true;
-                                profileChangeBuilder.setPhotoUri(photoUrl);
-                            }
-                            if (updateRequired) {
-                                firebaseUser.updateProfile(profileChangeBuilder.build())
-                                        .setResultCallback(new ResultCallback<UserProfileChangeResult>() {
-                                            @Override
-                                            public void onResult(@NonNull UserProfileChangeResult userProfileChangeResult) {
-                                                if (userProfileChangeResult.getStatus().isSuccess()) {
-                                                    mProfileUsername.setText(firebaseUser.getDisplayName());
-                                                    GlideUtil.loadProfileIcon(
-                                                            firebaseUser.getPhotoUrl().toString(),
-                                                            mProfilePhoto);
-                                                }
-                                            }
-                                        });
-                            }
-                            showSignedInUI(firebaseUser);
-                        }
-                    });
-        } else {
-            showSignedOutUI();
         }
     }
 
@@ -184,6 +119,51 @@ public class ProfileActivity extends AppCompatActivity implements
         }
     }
 
+    private void handleGoogleSignInResult(GoogleSignInResult result) {
+        Log.d(TAG, "handleSignInResult:" + result.getStatus());
+        if (result.isSuccess()) {
+            // Successful Google sign in, authenticate with Firebase.
+            GoogleSignInAccount acct = result.getSignInAccount();
+            firebaseAuthWithGoogle(acct);
+        } else {
+            // Unsuccessful Google Sign In, show signed-out UI
+            Log.d(TAG, "Google Sign-In failed.");
+        }
+    }
+
+    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
+        Log.d(TAG, "firebaseAuthWithGooogle:" + acct.getId());
+        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+        showProgressDialog();
+        mAuth.signInWithCredential(credential)
+                .addOnSuccessListener(this, new OnSuccessListener<AuthResult>() {
+                    @Override
+                    public void onSuccess(AuthResult result) {
+                        dismissProgressDialog();
+                        handleFirebaseAuthResult(result);
+                    }
+                })
+                .addOnFailureListener(this, new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Throwable throwable) {
+                        Log.e(TAG, "auth:onFailure:" + throwable.getMessage(), throwable);
+                        dismissProgressDialog();
+                        handleFirebaseAuthResult(null);
+                    }
+                });
+    }
+
+    private void handleFirebaseAuthResult(AuthResult result) {
+        if (result.getStatus().isSuccess()) {
+            Log.d(TAG, "handleFirebaseAuthResult:SUCCESS");
+            showSignedInUI(result.getUser());
+        } else {
+            Log.d(TAG, "handleFirebaseAuthResult:ERROR:" + result.getStatus().toString());
+            Toast.makeText(this, "Authentication failed.", Toast.LENGTH_SHORT).show();
+            showSignedOutUI();
+            // ...
+        }
+    }
     private void showSignedInUI(FirebaseUser firebaseUser) {
         Log.d(TAG, "Showing signed in UI");
         mSignInUi.setVisibility(View.GONE);
@@ -198,14 +178,14 @@ public class ProfileActivity extends AppCompatActivity implements
             GlideUtil.loadProfileIcon(firebaseUser.getPhotoUrl().toString(), mProfilePhoto);
         }
         Map<String, Object> updateValues = new HashMap<>();
-        updateValues.put("displayName", firebaseUser.getDisplayName());
+        updateValues.put("displayName", firebaseUser.getDisplayName() != null ? firebaseUser.getDisplayName() : "Anonymous");
         updateValues.put("photoUrl", firebaseUser.getPhotoUrl() != null ? firebaseUser.getPhotoUrl().toString() : null);
 
-        FirebaseUtil.getBaseRef().child("people").child(firebaseUser.getUserId()).updateChildren(
+        FirebaseUtil.getBaseRef().child("people").child(firebaseUser.getUid()).updateChildren(
                 updateValues,
-                new Firebase.CompletionListener() {
+                new DatabaseReference.CompletionListener() {
                     @Override
-                    public void onComplete(com.firebase.client.FirebaseError firebaseError, Firebase firebase) {
+                    public void onComplete(DatabaseError firebaseError, DatabaseReference databaseReference) {
                         if (firebaseError != null) {
                             Toast.makeText(ProfileActivity.this,
                                     "Couldn't save user data: " + firebaseError.getMessage(),
@@ -217,11 +197,28 @@ public class ProfileActivity extends AppCompatActivity implements
 
     private void showSignedOutUI() {
         Log.d(TAG, "Showing signed out UI");
+        mProfileUsername.setText("");
         mSignInUi.setVisibility(View.VISIBLE);
         mProfileUi.setVisibility(View.GONE);
+    }
 
-        mProfileUsername.setText("");
-//        mProfilePhoto.set
+    public void showProgressDialog() {
+        if (mProgressDialog == null) {
+            mProgressDialog = new ProgressDialog(this);
+            mProgressDialog.setMessage("Signing in...");
+            mProgressDialog.setIndeterminate(true);
+            mProgressDialog.setCancelable(false);
+            mProgressDialog.setCanceledOnTouchOutside(false);
+        }
+        if (!mProgressDialog.isShowing()) {
+            mProgressDialog.show();
+        }
+    }
+
+    public void dismissProgressDialog() {
+        if (mProgressDialog != null && mProgressDialog.isShowing()) {
+            mProgressDialog.dismiss();
+        }
     }
 
     @Override
@@ -250,7 +247,7 @@ public class ProfileActivity extends AppCompatActivity implements
     protected void onStart() {
         super.onStart();
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser != null) {
+        if (currentUser != null && !currentUser.isAnonymous()) {
             showSignedInUI(currentUser);
         } else {
             showSignedOutUI();

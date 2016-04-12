@@ -1,1 +1,2 @@
-include ':app'
+include ':app', ':firebaseui'
+project(':firebaseui').projectDir = new File('firebaseui')

@@ -7,6 +7,9 @@ public class User {
     private Map<String, Boolean> likes;
     private Map<String, Boolean> followers;
     private Map<String, Boolean> following;
+    private Map<String, Boolean> feed;
+    private String displayName;
+    private String photoUrl;
 
     public User() {
 
@@ -27,4 +30,6 @@ public class User {
     public Map<String, Boolean> getFollowing() {
         return following;
     }
+
+    public Map<String, Boolean> getFeed() { return feed; }
 }

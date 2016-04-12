@@ -23,6 +23,9 @@ android {
         exclude 'META-INF/LICENSE-FIREBASE.txt'
         exclude 'META-INF/NOTICE'
     }
+    lintOptions {
+        abortOnError false
+    }
 }
 
 dependencies {
@@ -36,22 +39,26 @@ dependencies {
     compile 'com.android.support:design:23.1.1'
     compile 'com.android.support:percent:23.1.1'
 
-    compile 'com.google.android.gms:firebase-database:8.5.3'
-    compile 'com.google.android.gms:firebase-auth:8.5.3'
-    compile 'com.google.android.gms:firebase-storage:8.5.3'
-    compile 'com.google.android.gms:play-services-auth:8.5.3'
-    compile 'com.google.android.gms:play-services-location:8.5.3'
+    compile 'com.google.android.gms:play-services-auth-api:8.5.6'
+    compile 'com.google.android.gms:play-services-location:8.5.6'
+    compile 'com.google.firebase:firebase-storage-api:8.5.6'
+    compile 'com.google.firebase:firebase-common:8.5.6'
+    compile 'com.google.firebase:firebase-auth-api:8.5.6'
+    compile 'com.google.firebase:firebase-database:8.5.6'
 
+    // Note: The FirebaseUI library has not yet been updated to support the new Firebase class
+    // structure. A small fork of the classes necessary for this sample has been provided
+    // as a separate module.
+    // compile 'com.firebaseui:firebase-ui:0.2.2'
+    compile project(':firebaseui')
     compile 'pub.devrel:easypermissions:0.1.5'
-    compile 'com.firebaseui:firebase-ui:0.3.0'
     compile 'com.firebase:geofire:1.1.1'
-    compile 'com.mcxiaoke.volley:library:1.0.18'
     compile 'com.github.bumptech.glide:glide:3.6.0'
     compile 'de.hdodenhof:circleimageview:2.0.0'
     compile 'com.facebook.android:facebook-android-sdk:4.6.0'
-    compile 'org.twitter4j:twitter4j-core:4.0.2'
     compile 'org.apache.httpcomponents:httpcore:4.3.1'
     compile 'org.apache.httpcomponents:httpmime:4.3.1'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.7.3'
 }
 
 apply plugin: 'com.google.gms.google-services'

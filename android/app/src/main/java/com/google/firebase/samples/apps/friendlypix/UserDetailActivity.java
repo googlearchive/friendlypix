@@ -18,10 +18,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.samples.apps.friendlypix.Models.Person;
 import com.google.firebase.samples.apps.friendlypix.Models.Post;
 import com.google.firebase.samples.apps.friendlypix.Models.User;
@@ -41,8 +42,8 @@ public class UserDetailActivity extends AppCompatActivity {
     private ValueEventListener mFollowingListener;
     private ValueEventListener mPersonInfoListener;
     private String mUserId;
-    private Firebase mUsersRef;
-    private Firebase mPersonRef;
+    private DatabaseReference mUsersRef;
+    private DatabaseReference mPersonRef;
     private static final int GRID_NUM_COLUMNS = 2;
 
     @Override
@@ -79,7 +80,7 @@ public class UserDetailActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onCancelled(FirebaseError firebaseError) {
+            public void onCancelled(DatabaseError firebaseError) {
 
             }
         };
@@ -102,9 +103,9 @@ public class UserDetailActivity extends AppCompatActivity {
                             updatedUserData.put(mUserId + "/followers/" + currentUserId, true);
                             updatedUserData.put(currentUserId + "/following/" + mUserId, true);
                         }
-                        mUsersRef.updateChildren(updatedUserData, new Firebase.CompletionListener() {
+                        mUsersRef.updateChildren(updatedUserData, new DatabaseReference.CompletionListener() {
                             @Override
-                            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                            public void onComplete(DatabaseError firebaseError, DatabaseReference firebase) {
                                 if (firebaseError != null) {
                                     Toast.makeText(UserDetailActivity.this, R.string
                                             .follow_user_error, Toast.LENGTH_LONG).show();
@@ -116,7 +117,7 @@ public class UserDetailActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onCancelled(FirebaseError firebaseError) {
+                    public void onCancelled(DatabaseError firebaseError) {
 
                     }
                 });
@@ -128,7 +129,7 @@ public class UserDetailActivity extends AppCompatActivity {
         mRecyclerGrid.setAdapter(mGridAdapter);
         mRecyclerGrid.setLayoutManager(new GridLayoutManager(this, GRID_NUM_COLUMNS));
 
-        Firebase userRef = FirebaseUtil.getBaseRef().child("users").child(mUserId);
+        DatabaseReference userRef = FirebaseUtil.getBaseRef().child("users").child(mUserId);
         userRef.addListenerForSingleValueEvent(
                 new ValueEventListener() {
                     @Override
@@ -164,14 +165,14 @@ public class UserDetailActivity extends AppCompatActivity {
                             }
 
                             @Override
-                            public void onCancelled(FirebaseError firebaseError) {
+                            public void onCancelled(DatabaseError firebaseError) {
 
                             }
                         });
                     }
 
                     @Override
-                    public void onCancelled(FirebaseError firebaseError) {
+                    public void onCancelled(DatabaseError firebaseError) {
                         new RuntimeException("Couldn't get user.", firebaseError.toException());
                     }
                 });
@@ -190,7 +191,7 @@ public class UserDetailActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onCancelled(FirebaseError firebaseError) {
+            public void onCancelled(DatabaseError firebaseError) {
 
             }
         });
@@ -230,7 +231,7 @@ public class UserDetailActivity extends AppCompatActivity {
             Uri prefixUri = Uri.parse(mPrefix);
             Log.d(TAG, "Getting grid post: " + position);
             String refString = Uri.withAppendedPath(prefixUri, mPostPaths.get(position)).toString();
-            Firebase ref = new Firebase(refString);
+            DatabaseReference ref = FirebaseUtil.getBaseRef().child(refString);
             ref.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -248,7 +249,7 @@ public class UserDetailActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void onCancelled(FirebaseError firebaseError) {
+                public void onCancelled(DatabaseError firebaseError) {
                     Log.e(TAG, "Unable to load grid image: " + firebaseError.getMessage());
                 }
             });

@@ -21,12 +21,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ServerValue;
-import com.firebase.client.ValueEventListener;
 import com.firebase.ui.FirebaseRecyclerAdapter;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ServerValue;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.samples.apps.friendlypix.Models.Comment;
 import com.google.firebase.samples.apps.friendlypix.Models.Person;
 
@@ -85,7 +85,7 @@ public class CommentsFragment extends Fragment {
         mEditText = (EditText) rootView.findViewById(R.id.editText);
         final Button sendButton = (Button) rootView.findViewById(R.id.send_comment);
 
-        final Firebase commentsRef = FirebaseUtil.getBaseRef().child("comments").child(mPostRef);
+        final DatabaseReference commentsRef = FirebaseUtil.getBaseRef().child("comments").child(mPostRef);
         mAdapter = new FirebaseRecyclerAdapter<Comment, CommentViewHolder>(
                 Comment.class, R.layout.comment_item, CommentViewHolder.class, commentsRef) {
             @Override
@@ -104,7 +104,7 @@ public class CommentsFragment extends Fragment {
                             }
 
                             @Override
-                            public void onCancelled(FirebaseError firebaseError) {
+                            public void onCancelled(DatabaseError firebaseError) {
                                 new RuntimeException("Couldn't get comment username.",
                                         firebaseError.toException());
                             }
@@ -154,9 +154,9 @@ public class CommentsFragment extends Fragment {
 
                 Comment comment = new Comment(FirebaseUtil.getCurrentUserId(),
                         commentText.toString(), ServerValue.TIMESTAMP);
-                commentsRef.push().setValue(comment, new Firebase.CompletionListener() {
+                commentsRef.push().setValue(comment, new DatabaseReference.CompletionListener() {
                     @Override
-                    public void onComplete(FirebaseError error, Firebase firebase) {
+                    public void onComplete(DatabaseError error, DatabaseReference firebase) {
                         if (error != null) {
                             Log.w(TAG, "Error posting comment: " + error.getMessage());
                             Toast.makeText(getActivity(), "Error posting comment.", Toast
