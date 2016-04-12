@@ -84,11 +84,18 @@ public class UserDetailActivity extends AppCompatActivity {
 
             }
         };
-        mUsersRef.child(currentUserId).child("following").child(mUserId)
-                .addValueEventListener(mFollowingListener);
+        if (currentUserId != null) {
+            mUsersRef.child(currentUserId).child("following").child(mUserId)
+                    .addValueEventListener(mFollowingListener);
+        }
         followUserFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (currentUserId == null) {
+                    Toast.makeText(UserDetailActivity.this, "You need to sign in to follow someone.",
+                            Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 // TODO: Convert these to actually not be single value, for live updating when
                 // current user follows.
                 mUsersRef.child(mUserId).child("followers").addListenerForSingleValueEvent(new ValueEventListener() {
@@ -199,8 +206,10 @@ public class UserDetailActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        mUsersRef.child(FirebaseUtil.getCurrentUserId()).child("following").child(mUserId)
-                .removeEventListener(mFollowingListener);
+        if (FirebaseUtil.getCurrentUserId() != null) {
+            mUsersRef.child(FirebaseUtil.getCurrentUserId()).child("following").child(mUserId)
+                    .removeEventListener(mFollowingListener);
+        }
 
         mPersonRef.child(mUserId).removeEventListener(mPersonInfoListener);
 
@@ -280,5 +289,11 @@ public class UserDetailActivity extends AppCompatActivity {
             super(itemView);
             imageView = itemView;
         }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return super.onSupportNavigateUp();
     }
 }

@@ -18,6 +18,8 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.DatabaseError;
@@ -42,10 +44,12 @@ public class FeedsActivity extends AppCompatActivity implements PostsFragment.On
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.feeds_view_pager);
         FeedsPagerAdapter adapter = new FeedsPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(PostsFragment.newInstance(PostsFragment.TYPE_RECOMMENDED), "RECOMMENDED");
-        adapter.addFragment(PostsFragment.newInstance(PostsFragment.TYPE_HOT), "HOT");
-        adapter.addFragment(PostsFragment.newInstance(PostsFragment.TYPE_NEARBY), "NEARBY");
-        adapter.addFragment(PostsFragment.newInstance(PostsFragment.TYPE_FOLLOWING), "FOLLOWING");
+        adapter.addFragment(PostsFragment.newInstance(PostsFragment.TYPE_RECENT), "RECENT");
+        adapter.addFragment(PostsFragment.newInstance(PostsFragment.TYPE_HOT_ALL), "TOP");
+        adapter.addFragment(PostsFragment.newInstance(PostsFragment.TYPE_ALL), "ALL");
+        // TODO: Re-implement these later.
+//        adapter.addFragment(PostsFragment.newInstance(PostsFragment.TYPE_NEARBY), "NEARBY");
+//        adapter.addFragment(PostsFragment.newInstance(PostsFragment.TYPE_FOLLOWING), "FOLLOWING");
         viewPager.setAdapter(adapter);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.feeds_tab_layout);
@@ -55,6 +59,11 @@ public class FeedsActivity extends AppCompatActivity implements PostsFragment.On
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                if (user == null || user.isAnonymous()) {
+                    Toast.makeText(FeedsActivity.this, "You must sign-in to post.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 Intent newPostIntent = new Intent(FeedsActivity.this, NewPostActivity.class);
                 startActivity(newPostIntent);
             }

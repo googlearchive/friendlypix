@@ -2,6 +2,7 @@ package com.google.firebase.samples.apps.friendlypix;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -21,11 +22,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.tasks.OnFailureListener;
 import com.google.android.gms.common.tasks.OnSuccessListener;
 import com.google.android.gms.location.LocationServices;
 import com.google.firebase.FirebaseError;
@@ -56,6 +59,7 @@ public class NewPostActivity extends AppCompatActivity implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
     public static final String TAG = "NewPostActivity";
+    private ProgressDialog mProgressDialog;
 
     private TextView mLocationView;
     private GoogleApiClient mGoogleApiClient;
@@ -95,7 +99,7 @@ public class NewPostActivity extends AppCompatActivity implements
                 .build();
 
         mLocationView = (TextView) findViewById(R.id.new_post_location);
-        mLocationView.setText(R.string.new_post_location_placeholder);
+//        mLocationView.setText(R.string.new_post_location_placeholder);
 
         mStorageRef = FirebaseStorage.getInstance()
                 .getReference(getString(R.string.google_storage_bucket));
@@ -113,7 +117,7 @@ public class NewPostActivity extends AppCompatActivity implements
             @Override
             public void onClick(final View v) {
                 v.setEnabled(false);
-
+                showProgressDialog();
                 if (mFileUri == null) {
                     return;
                 }
@@ -121,7 +125,8 @@ public class NewPostActivity extends AppCompatActivity implements
                 final StorageReference photoRef = mStorageRef.child("photos")
                         .child(mFileUri.getLastPathSegment());
 
-                photoRef.putFile(mFileUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                photoRef.putFile(mFileUri)
+                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         Uri url = taskSnapshot.getMetadata().getDownloadUrl();
@@ -143,6 +148,7 @@ public class NewPostActivity extends AppCompatActivity implements
                             @Override
                             public void onComplete(DatabaseError firebaseError, DatabaseReference databaseReference) {
                                 if (firebaseError == null) {
+                                    Toast.makeText(NewPostActivity.this, "Post created!", Toast.LENGTH_SHORT).show();
                                     if (mUserLocation != null) {
                                       //  TODO: Temporarily removing geofire until I fork it to include Firebase class name changes.
 //                                        GeoFire geoFire = new GeoFire(FirebaseUtil.getBaseRef());
@@ -153,15 +159,44 @@ public class NewPostActivity extends AppCompatActivity implements
                                     }
                                     finish();
                                 } else {
-                                    Log.e(TAG, "Unable to store geoFire geolocation: " + firebaseError.getMessage());
+                                    Log.e(TAG, "Unable to create new post: " + firebaseError.getMessage());
+                                    Toast.makeText(NewPostActivity.this, "Unable to post.", Toast.LENGTH_SHORT).show();
+                                    v.setEnabled(true);
                                 }
+                                dismissProgressDialog();
                             }
                         });
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Throwable throwable) {
+                        Toast.makeText(NewPostActivity.this, "Failed to upload post.", Toast.LENGTH_SHORT).show();
+                        dismissProgressDialog();
+                        v.setEnabled(true);
                     }
                 });
             }
         });
         // TODO: Refactor these insanely nested callbacks.
+    }
+
+    public void showProgressDialog() {
+        if (mProgressDialog == null) {
+            mProgressDialog = new ProgressDialog(this);
+            mProgressDialog.setMessage("Uploading...");
+            mProgressDialog.setIndeterminate(true);
+            mProgressDialog.setCancelable(false);
+            mProgressDialog.setCanceledOnTouchOutside(false);
+        }
+        if (!mProgressDialog.isShowing()) {
+            mProgressDialog.show();
+        }
+    }
+
+    public void dismissProgressDialog() {
+        if (mProgressDialog != null && mProgressDialog.isShowing()) {
+            mProgressDialog.dismiss();
+        }
     }
 
 

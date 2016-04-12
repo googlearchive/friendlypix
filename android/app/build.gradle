@@ -8,8 +8,8 @@ android {
         applicationId "com.google.firebase.samples.apps.friendlypix"
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 1
-        versionName "1.0"
+        versionCode 3
+        versionName "20160401.02"
     }
     signingConfigs {
         release {

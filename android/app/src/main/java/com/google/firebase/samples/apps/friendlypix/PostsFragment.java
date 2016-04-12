@@ -15,11 +15,13 @@ import com.firebase.ui.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.samples.apps.friendlypix.Models.Person;
 import com.google.firebase.samples.apps.friendlypix.Models.Post;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -35,6 +37,13 @@ public class PostsFragment extends Fragment {
     public static final int TYPE_HOT = 1002;
     public static final int TYPE_FOLLOWING = 1003;
     public static final int TYPE_YOUR_POSTS = 1004;
+    public static final int TYPE_FEED = 1005;
+    public static final int TYPE_EXPLORE = 1006;
+    public static final int TYPE_RECENT = 1007;
+    public static final int TYPE_POPULAR = 1008;
+    public static final int TYPE_HOT_TODAY = 1009;
+    public static final int TYPE_HOT_ALL = 1010;
+    public static final int TYPE_ALL = 1011;
     private int mRecyclerViewPosition = 0;
     private OnPostSelectedListener mListener;
 
@@ -72,7 +81,8 @@ public class PostsFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        mRecyclerView.setLayoutManager(linearLayoutManager);
 
         if (savedInstanceState != null) {
             // Restore saved layout manager type.
@@ -83,17 +93,31 @@ public class PostsFragment extends Fragment {
         }
 
         switch (getArguments().getInt(KEY_TYPE)) {
-            case TYPE_RECOMMENDED:
-                Log.d(TAG, "Restoring recycler view position (recommended): " + mRecyclerViewPosition);
-                DatabaseReference postsRef = FirebaseUtil.getPostsRef();
-                mAdapter = new FirebaseRecyclerAdapter<Post, PostViewHolder>(
-                        Post.class, R.layout.post_item, PostViewHolder.class, postsRef) {
-                    @Override
-                    public void populateViewHolder(final PostViewHolder postViewHolder,
-                                                   final Post post, final int position) {
-                        setupPost(postViewHolder, post, position, null);
-                    }
-                };
+            case TYPE_RECENT:
+                Log.d(TAG, "Restoring recycler view position (recent): " + mRecyclerViewPosition);
+                Query recentPostsQuery = FirebaseUtil.getPostsRef().limitToLast(25);
+                mAdapter = getFirebaseRecyclerAdapter(recentPostsQuery);
+                break;
+            case TYPE_ALL:
+                Log.d(TAG, "Restoring recycler view position (all): " + mRecyclerViewPosition);
+                Query allPostsQuery = FirebaseUtil.getPostsRef();
+                mAdapter = getFirebaseRecyclerAdapter(allPostsQuery);
+                break;
+            case TYPE_HOT_TODAY:
+                // TODO: Fix this and HOT_ALL to put new stuff at top (reverse list order).
+                Log.d(TAG, "Restoring recycler view position (hot today): " + mRecyclerViewPosition);
+                Calendar c = Calendar.getInstance();
+                c.add(Calendar.DATE, -1);
+                long startTimestamp = c.getTimeInMillis();
+                Log.d(TAG, "timestamp: " + startTimestamp);
+                Query hotTodayPostsQuery = FirebaseUtil.getPostsRef().orderByChild("timestamp").startAt(startTimestamp);
+                mAdapter = getFirebaseRecyclerAdapter(hotTodayPostsQuery);
+                break;
+            case TYPE_HOT_ALL:
+                Log.d(TAG, "Restoring recycler view position (hot all): " + mRecyclerViewPosition);
+                // TODO: This doesn't currently work to only show posts with >= 5 likes (shows everything >= 1 like).
+                Query hotAllPostsQuery = FirebaseUtil.getPostsRef().orderByChild("likes").startAt(5).limitToLast(50);
+                mAdapter = getFirebaseRecyclerAdapter(hotAllPostsQuery);
                 break;
             case TYPE_NEARBY:
                 Log.d(TAG, "Restoring recycler view position (nearby): " + mRecyclerViewPosition);
@@ -140,11 +164,7 @@ public class PostsFragment extends Fragment {
                             }
                         });
                 break;
-            case TYPE_HOT:
-                Log.d(TAG, "Restoring recycler view position (hot): " + mRecyclerViewPosition);
-                // stuff
-                break;
-            case TYPE_YOUR_POSTS:
+            case TYPE_EXPLORE:
                 Log.d(TAG, "Restoring recycler view position (your posts): " + mRecyclerViewPosition);
                 // stuff
                 break;
@@ -152,6 +172,17 @@ public class PostsFragment extends Fragment {
                 throw new RuntimeException("Illegal post fragment type specified.");
         }
         mRecyclerView.setAdapter(mAdapter);
+    }
+
+    private FirebaseRecyclerAdapter<Post, PostViewHolder> getFirebaseRecyclerAdapter(Query query) {
+        return new FirebaseRecyclerAdapter<Post, PostViewHolder>(
+                Post.class, R.layout.post_item, PostViewHolder.class, query) {
+            @Override
+            public void populateViewHolder(final PostViewHolder postViewHolder,
+                                           final Post post, final int position) {
+                setupPost(postViewHolder, post, position, null);
+            }
+        };
     }
 
     private void setupPost(final PostViewHolder postViewHolder, final Post post, final int position, final String inPostKey) {
