@@ -16,6 +16,7 @@
 
 #import "FPTabBarController.h"
 #import "FPEditPhotoViewController.h"
+@import MobileCoreServices;
 
 @implementation FPTabBarController
 
@@ -23,7 +24,7 @@
 
 - (void)viewWillAppear:(BOOL)animated {
   UIButton *cameraButton = [UIButton buttonWithType:UIButtonTypeCustom];
-  cameraButton.frame = CGRectMake( 94.0f, 0.0f, 131.0f, self.tabBar.bounds.size.height);
+  cameraButton.frame = CGRectMake( (self.tabBar.bounds.size.width)/3, 0.0f, (self.tabBar.bounds.size.width)/3, self.tabBar.bounds.size.height);
   [cameraButton setImage:[UIImage imageNamed:@"ButtonCamera.png"] forState:UIControlStateNormal];
   [cameraButton setImage:[UIImage imageNamed:@"ButtonCameraSelected.png"] forState:UIControlStateHighlighted];
   [cameraButton addTarget:self action:@selector(photoCaptureButtonAction:) forControlEvents:UIControlEventTouchUpInside];

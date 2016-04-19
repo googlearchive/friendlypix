@@ -16,7 +16,7 @@
 
 @import UIKit;
 @import FirebaseDatabase;
-@import Firebase.AdMob;
+@import GoogleMobileAds;
 
 @interface FPPhotoTimelineViewController : UITableViewController
 @property FIRDatabaseReference *ref;

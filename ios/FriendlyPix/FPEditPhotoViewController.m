@@ -14,13 +14,12 @@
 //  limitations under the License.
 //
 
-
 #import "FPEditPhotoViewController.h"
+#import "FPAppState.h"
 
-#import "FirebaseStorage.h"
-@import Firebase.Core;
-@import FirebaseApp;
 @import Photos;
+
+@import FirebaseStorage;
 
 @interface FPEditPhotoViewController ()
 //@property (nonatomic, strong) PFFile *photoFile;
@@ -48,8 +47,7 @@
 
   [_imageView initWithImage:_image];
 
-  FIRFirebaseApp *app = [FIRFirebaseApp app];
-  _storageRef = [[FIRStorage storageForApp:app] reference];
+  _storageRef = [[FIRStorage storage] reference];
 
   [self shouldUploadImage:self.referenceURL];
 }
@@ -90,13 +88,13 @@
   PHAsset *asset = [assets firstObject];
   [asset requestContentEditingInputWithOptions:nil
                              completionHandler:^(PHContentEditingInput *contentEditingInput, NSDictionary *info) {
-                               NSString *imageFile = [contentEditingInput.fullSizeImageURL absoluteString];
+                               NSURL *imageFile = contentEditingInput.fullSizeImageURL;
                                NSString *filePath = [NSString stringWithFormat:@"%@/%lld/%@", [FPAppState sharedInstance].currentUser.userID, (long long)([[NSDate date] timeIntervalSince1970] * 1000.0), [_referenceURL lastPathComponent]];
                                FIRStorageMetadata *metadata = [FIRStorageMetadata new];
                                metadata.contentType = @"image/jpeg";
-                               [[_storageRef childByAppendingPath:filePath]
+                               [[_storageRef child:filePath]
                                 putFile:imageFile metadata:metadata
-                                withCompletion:^(FIRStorageMetadata *metadata, NSError *error) {
+                                completion:^(FIRStorageMetadata *metadata, NSError *error) {
                                   if (error) {
                                     NSLog(@"Error uploading: %@", error);
                                     return;
@@ -120,17 +118,17 @@
 
   FIRDatabaseReference *ref;
   ref = [FIRDatabase database].reference;
-  FIRDatabaseReference *photo = [[ref childByAppendingPath:@"posts"] childByAutoId];
+  FIRDatabaseReference *photo = [[ref child:@"posts"] childByAutoId];
   [photo setValue:data];
   NSString *postId = photo.key;
-  [[ref childByAppendingPath: [NSString stringWithFormat:@"users/%@/posts/%@", [FPAppState sharedInstance].currentUser.userID, postId]] setValue:@YES];
-  [[ref childByAppendingPath: [NSString stringWithFormat:@"feed/%@/%@", [FPAppState sharedInstance].currentUser.userID, postId]] setValue:@YES];
+  [[ref child: [NSString stringWithFormat:@"users/%@/posts/%@", [FPAppState sharedInstance].currentUser.userID, postId]] setValue:@YES];
+  [[ref child: [NSString stringWithFormat:@"feed/%@/%@", [FPAppState sharedInstance].currentUser.userID, postId]] setValue:@YES];
 
-  [[ref childByAppendingPath: [NSString stringWithFormat:@"users/%@/followers", [FPAppState sharedInstance].currentUser.userID]] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot *snapshot) {
+  [[ref child: [NSString stringWithFormat:@"users/%@/followers", [FPAppState sharedInstance].currentUser.userID]] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot *snapshot) {
     if (snapshot.exists) {
       NSDictionary *followers = snapshot.value;
       for (NSString *follower in followers.allKeys) {
-        [[ref childByAppendingPath: [NSString stringWithFormat:@"feed/%@/%@", follower, postId]] setValue:@YES];
+        [[ref child: [NSString stringWithFormat:@"feed/%@/%@", follower, postId]] setValue:@YES];
       }
     }
   }];

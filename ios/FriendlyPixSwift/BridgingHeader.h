@@ -22,18 +22,18 @@
 #import "FirebaseApp/FIRFirebaseApp.h"
 #import "FirebaseApp/FIRFirebaseOptions.h"
 
-#import "STXUserItem.h"
-#import "STXPostItem.h"
-#import "STXCommentItem.h"
+#import "FPUserItem.h"
+#import "FPPostItem.h"
+#import "FPCommentItem.h"
 
-#import "STXFeedTableViewDelegate.h"
-#import "STXFeedTableViewDataSource.h"
+#import "FPFeedTableViewDelegate.h"
+#import "FPFeedTableViewDataSource.h"
 
 #import "UIViewController+Indicator.h"
 #import "UIViewController+Sharing.h"
 
-#import "STXFeedPhotoCell.h"
-#import "STXLikesCell.h"
-#import "STXCaptionCell.h"
-#import "STXCommentCell.h"
-#import "STXUserActionCell.h"
+#import "FPFeedPhotoCell.h"
+#import "FPLikesCell.h"
+#import "FPCaptionCell.h"
+#import "FPCommentCell.h"
+#import "FPUserActionCell.h"

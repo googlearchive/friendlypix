@@ -16,6 +16,7 @@
 
 #import "FPComment.h"
 #import "FPAppState.h"
+#import <KZPropertyMapper/KZPropertyMapper.h>
 
 @interface FPComment ()
 

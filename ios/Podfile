@@ -1,26 +1,16 @@
 # FriendlyChat Codelab
 
-source 'sso://cpdc-eap/spec.git'
+source 'https://cpdc-eap.googlesource.com/spec.git'
 source 'https://github.com/CocoaPods/Specs.git'
 
 pod 'Firebase/Auth'
-pod 'Firebase/AuthUI'
-pod 'Firebase/GoogleAuthProvider'
-pod 'FirebaseDatabase'
-pod 'FirebaseStorage'
+pod 'Firebase/Database'
+pod 'Firebase/Storage'
 pod 'Firebase/RemoteConfig'
 pod 'Firebase/AdMob'
 pod 'Firebase/AppInvites'
-pod 'Firebase/CloudMessaging'
-  pod 'TTTAttributedLabel'
-  pod 'PureLayout'
-  pod 'KZPropertyMapper'
-  pod 'MHPrettyDate'
-  pod 'AFNetworking', '~> 2.5.0'
-  pod 'UALogger'
-pod 'FormatterKit'
-
-
+pod 'Firebase/Messaging'
+pod 'STXDynamicTableView'
 
 platform :ios, '8.0'
 target 'FriendlyPix'

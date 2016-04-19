@@ -16,10 +16,10 @@
 
 
 #import "SignInViewController.h"
+#import "FPAppState.h"
 @import FirebaseAuth;
-@import FirebaseApp;
-@import Firebase.Core;
-@import Firebase.AdMob;
+@import GoogleMobileAds;
+@import FirebaseDatabase;
 
 @interface SignInViewController ()
 @property (weak, nonatomic) IBOutlet UITextField *emailField;
@@ -36,7 +36,7 @@
 }
 
 - (IBAction)didTapSignUp:(id)sender {
-  [[FIRAuth auth] createUserWithEmail:_emailField.text password:_passwordField.text callback:^(FIRUser * _Nullable user, NSError * _Nullable error) {
+  [[FIRAuth auth] createUserWithEmail:_emailField.text password:_passwordField.text completion:^(FIRUser * _Nullable user, NSError * _Nullable error) {
     if (error) {
       NSLog(@"%@", error.localizedDescription);
       return;
@@ -48,7 +48,7 @@
 - (IBAction)didTapSignIn:(UIButton *)sender {
   [[FIRAuth auth] signInWithEmail:_emailField.text
                          password:_passwordField.text
-                         callback:^(FIRUser *user, NSError *error) {
+                         completion:^(FIRUser *user, NSError *error) {
                            if (error) {
                              NSLog(@"%@", error.localizedDescription);
                              return;
@@ -61,7 +61,7 @@
 - (void)signedIn:(FIRUser *)user {
   FIRDatabaseReference *ref;
   ref = [FIRDatabase database].reference;
-  FIRDatabaseReference *peopleRef = [ref childByAppendingPath: [NSString stringWithFormat:@"people/%@", user.uid]];
+  FIRDatabaseReference *peopleRef = [ref child: [NSString stringWithFormat:@"people/%@", user.uid]];
   [peopleRef observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot *peopleSnapshot) {
     if (peopleSnapshot.exists) {
       [FPAppState sharedInstance].currentUser = [[FPUser alloc] initWithSnapshot:peopleSnapshot];
@@ -70,7 +70,7 @@
                                @"displayName" : user.displayName ? user.displayName : @"",
                                @"photoUrl" : user.photoURL ? [user.photoURL absoluteString] : @""
                                };
-      
+
       [peopleRef setValue:person];
     }
   }];
