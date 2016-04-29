@@ -1,18 +1,18 @@
 {
-  "firebase": "fborange",
   "rules": "security-rules.json",
-  "public": "./",
-  "ignore": [
-    "firebase.json",
-    "**/.*",
-    "**/node_modules/**",
-    "security-rules.json",
-    "bower.json",
-    "package.json"
-  ],
-  "functions": {
-    ".source": "functions",
-    ".credentials": "secrets.json"
+  "hosting": {
+    "public": "./",
+    "rewrites": [{
+      "source": "**",
+      "destination": "/index.html"
+    }],
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "node_modules/**",
+      "security-rules.json",
+      "bower.json",
+      "package.json"
+    ]
   }
-
 }

@@ -1,8 +1,58 @@
 {
-  // Firechat sample security rules
   "rules": {
-    // By default, make all data private unless specified otherwise.
-    ".read": true,
-    ".write": true
+    "feed": {
+      "$uid": {
+        ".read": "auth.uid === $uid",
+        ".write": "auth.uid === $uid"
+      }
+    },
+    "posts": {
+      ".read": true,
+      "$postId": {
+        ".write": "(auth.uid === newData.child('author').child('uid').val()) || (!newData.exists() && auth.uid === data.child('author').child('uid').val())" // Allow Writes and deletes
+      }
+    },
+    "comments": {
+      ".read": true,
+      "$postId": {
+        ".write": "!newData.exists() && auth.uid === root.child('posts').child($postId).child('author').child('uid').val() && !newData.parent().parent().child('posts').child($postId).exists()", // Allow deletes from the post owner
+        ".validate": "root.child('posts').child($postId).exists()", // Check that the post exists
+        "$commentId": {
+          ".write": "auth.uid === newData.child('author').child('uid').val()"  // Can only write comments if you are the author
+        }
+      }
+    },
+    "likes": {
+      ".read": true,
+      "$postId": {
+        ".write": "!newData.exists() && auth.uid === root.child('posts').child($postId).child('author').child('uid').val() && !newData.parent().parent().child('posts').child($postId).exists()", // Allow deletes from the post owner
+        ".validate": "root.child('posts').child($postId).exists()", // Check that the post exists
+        "$uid": {
+          ".write": "auth.uid === $uid",
+          ".validate": "newData.val() === true"
+        }
+      }
+    },
+    "followers": {
+      ".read": true,
+      "$followedUid": {
+        "$followerUid": {
+          ".write": "auth.uid === $followerUid", // Can only add yourself as a follower
+          ".validate": "newData.val() === true && newData.parent().parent().parent().child('people').child($followerUid).child('following').child($followedUid).exists()" // Makes sure /people/.../following is in sync
+        }
+      }
+    },
+    "people": {
+      ".indexOn": "_search_index",
+      ".read": true,
+      "$uid": {
+        ".write": "auth.uid === $uid",
+        "following": {
+          "$followedUid": {
+            ".validate": "newData.parent().parent().parent().parent().child('followers').child($followedUid).child($uid).val() === true" // Makes sure /followers is in sync
+          }
+        }
+      }
+    }
   }
 }

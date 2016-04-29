@@ -15,73 +15,79 @@
  */
 'use strict';
 
-//Firebase.INTERNAL.setAuthenticationServer('https://staging-auth.firebase.com');
-//var firebase = new Firebase('https://friendlypix-js-dev-44faa.firebaseio-staging.com');
-var firebase = new Firebase('https://fborange.firebaseio.com');
-var userId;
+window.friendlyPix = window.friendlyPix || {};
 
-// DOM Elements
-var signInButton = $('.fp-sign-in-button');
-var signedInUserContainer = $('.fp-signed-in-user-container');
-var signedInUserAvatar = $('.fp-avatar', signedInUserContainer);
-var signedInUsername = $('.fp-username', signedInUserContainer);
-var signOutButton = $('.fp-sign-out');
-var signedOutOnlyElements = $('.fp-signed-out-only');
-var signedInOnlyElements = $('.fp-signed-in-only');
-var usernameLink = $('.fp-usernamelink');
+/**
+ * Handles the user auth flows and updating the UI depending on the auth state.
+ */
+friendlyPix.Auth = class {
 
-// Starts the auth popup flow.
-function startAuth() {
-  firebase.authWithOAuthPopup('google', function(error) {
-    if (error) {
-      console.log('Login Failed!', error);
-    }
-  });
-}
-
-// Displays the User information in the UI or hides it and displays the
-// "Sign-In" button if the user isn't signed-in.
-function displayUserInfo(authData) {
-  if (!authData) {
-    signedOutOnlyElements.show();
-    signedInOnlyElements.hide();
-    userId = undefined;
-    signedInUserAvatar.css('background-image', '');
-  } else {
-    signedOutOnlyElements.hide();
-    signedInOnlyElements.show();
-    userId = authData.uid;
-    signedInUserAvatar.css('background-image', 'url("' +
-      fixGoogleProfileImageUrl(authData.google.profileImageURL, 50) + '")');
-    signedInUsername.text(authData.google.displayName);
-    usernameLink.attr('href', '/users/' + authData.uid);
-    saveUserData(fixGoogleProfileImageUrl(authData.google.profileImageURL, 30),
-      fixGoogleProfileImageUrl(authData.google.profileImageURL, 300),
-      authData.google.displayName, authData.uid);
+  /**
+   * Returns a Promise that completes when auth is ready.
+   * @return Promise
+   */
+  get waitForAuth() {
+    return this._waitForAuthPromiseResolver.promise();
   }
-}
 
-// Trick to fix the Google profile Image URL so that it displays properly
-// instead of showing a negative of the image.
-function fixGoogleProfileImageUrl(url, size) {
-  var splittedUrl = url.split('/');
-  splittedUrl.splice(splittedUrl.length - 1, 0, 's' + size);
-  return splittedUrl.join('/');
-}
+  /**
+   * Initializes Friendly Pix's auth.
+   * Binds the auth related UI components and handles the auth flow.
+   * @constructor
+   */
+  constructor() {
+    // Firebase SDK
+    this.database = firebase.app().database();
+    this.auth = firebase.app().auth();
+    this._waitForAuthPromiseResolver = new $.Deferred();
 
-// Saves or Update user data to Firebase.
-function saveUserData(smallAvatarUrl, largeAvatarUrl, displayName, userid) {
-  var usersRef = firebase.child('users');
-  usersRef.child(userid).update({
-    smallAvatarUrl: smallAvatarUrl,
-    largeAvatarUrl: largeAvatarUrl,
-    displayName: displayName
-  });
-}
+    $(document).ready(() => {
+      // Pointers to DOM Elements
+      this.signInButton = $('.fp-sign-in-button');
+      let signedInUserContainer = $('.fp-signed-in-user-container');
+      this.signedInUserAvatar = $('.fp-avatar', signedInUserContainer);
+      this.signedInUsername = $('.fp-username', signedInUserContainer);
+      this.signOutButton = $('.fp-sign-out');
+      this.signedOutOnlyElements = $('.fp-signed-out-only');
+      this.signedInOnlyElements = $('.fp-signed-in-only');
+      this.usernameLink = $('.fp-usernamelink');
 
-// Bindings on load.
-$(document).ready(function() {
-  signInButton.click(startAuth);
-  firebase.onAuth(displayUserInfo);
-  signOutButton.click(function() {firebase.unauth(function() {});});
-});
+      // Event bindings
+      this.signInButton.click(
+          () => this.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()));
+      this.signOutButton.click(() => this.auth.signOut());
+      this.signedInOnlyElements.hide();
+    });
+
+    this.auth.onAuthStateChanged(user => this.onAuthStateChanged(user));
+  }
+
+  /**
+   * Displays the signed-in user information in the UI or hides it and displays the
+   * "Sign-In" button if the user isn't signed-in.
+   */
+  onAuthStateChanged(user) {
+    if (window.friendlyPix.router) {
+      window.friendlyPix.router.reloadPage();
+    }
+    this._waitForAuthPromiseResolver.resolve();
+    $(document).ready(() => {
+      if (!user) {
+        this.signedOutOnlyElements.show();
+        this.signedInOnlyElements.hide();
+        this.userId = undefined;
+        this.signedInUserAvatar.css('background-image', '');
+      } else {
+        this.signedOutOnlyElements.hide();
+        this.signedInOnlyElements.show();
+        this.userId = user.uid;
+        this.signedInUserAvatar.css('background-image', `url("${user.photoURL}")`);
+        this.signedInUsername.text(user.displayName);
+        this.usernameLink.attr('href', '/users/' + user.uid);
+        friendlyPix.firebase.saveUserData(user.photoURL, user.displayName);
+      }
+    });
+  }
+};
+
+friendlyPix.auth = new friendlyPix.Auth();
