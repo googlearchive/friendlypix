@@ -35,4 +35,5 @@
     <string name="new_comment_hint">Enter new comment</string>
     <string name="new_post_location_placeholder">Getting location...</string>
     <string name="user_info_no_name">Unknown user</string>
+    <string name="error_required_field">Required</string>
 </resources>
