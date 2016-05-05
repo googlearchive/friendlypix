@@ -15,92 +15,116 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="description" content="A front-end template that helps you build fast, modern mobile web apps.">
+  <meta name="description" content="Share your pics. Powered by Firebase.">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Friendly Pix</title>
+  <link rel="shortcut icon" href="/images/favicon.png">
 
   <!-- Disable tap highlight on IE -->
   <meta name="msapplication-tap-highlight" content="no">
 
   <!-- Web Application Manifest -->
-  <link rel="manifest" href="manifest.json">
+  <link rel="manifest" href="/manifest.json">
 
   <!-- Add to homescreen for Chrome on Android -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="application-name" content="Friendly Pix">
   <meta name="theme-color" content="#303F9F">
-  <link rel="icon" sizes="192x192" href="images/touch/touch-icon-192x192.png">
-  <link rel="icon" sizes="128x128" href="images/touch/touch-icon-128x128.png">
+  <link rel="icon" sizes="192x192" href="/images/touch/touch-icon-192x192.png">
+  <link rel="icon" sizes="128x128" href="/images/touch/touch-icon-128x128.png">
 
   <!-- Add to homescreen for Safari on iOS -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Web Starter Kit">
-  <link rel="apple-touch-icon" href="images/touch/touch-icon-180x180.png">
-  <link rel="apple-touch-icon-precomposed" href="images/touch/touch-icon-180x180.png">
+  <link rel="apple-touch-icon" href="/images/touch/touch-icon-180x180.png">
+  <link rel="apple-touch-icon-precomposed" href="/images/touch/touch-icon-180x180.png">
   <meta name="apple-mobile-web-app-status-bar-style" content="#303F9F">
 
   <!-- Tile icon for Win8 -->
-  <meta name="msapplication-TileImage" content="images/touch/touch-icon-144x144.png">
+  <meta name="msapplication-TileImage" content="/images/touch/touch-icon-144x144.png">
   <meta name="msapplication-TileColor" content="#3372DF">
   <meta name="msapplication-navbutton-color" content="#303F9F">
 
-  <link rel="shortcut icon" href="images/favicon.png">
-
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
+  <!-- Material Design Lite imports -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.indigo-amber.min.css">
+  <script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
+
+  <!-- Styling -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Amaranth:700">
-  <link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.indigo-amber.min.css">
-  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="/styles/main.css">
 </head>
 <body>
-<div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-header">
+
+<!-- Splash screen -->
+<section id="page-splash">
+  <h3 class="fp-logo"><i class="material-icons">photo</i> Friendly Pix</h3>
+  <div class="fp-caption">The friendliest way to share your pics</div>
+  <div class="fp-signed-out-only fp-initially-hidden">
+    <button class="fp-sign-in-button mdl-button--raised mdl-button mdl-js-button mdl-js-ripple-effect"><i class="material-icons">account_circle</i> Sign in with Google</button>
+    <a class="fp-skip" href="/feed">skip</a>
+  </div>
+</section>
+
+<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
 
   <!-- Header section containing logo and menu -->
-  <header class="fp-header mdl-layout__header mdl-color-text--white mdl-color--primary">
+  <header class="fp-header mdl-layout__header mdl-color-text--white mdl-color--primary mdl-layout__header--scroll">
     <div class="mdl-layout__header-row fp-titlebar">
-      <h3><i class="material-icons">photo</i> Friendly Pix</h3>
+
+      <!-- Logo -->
+      <h3 class="fp-logo"><i class="material-icons">photo</i> Friendly Pix</h3>
       <div class="mdl-layout-spacer"></div>
+
+      <!-- Search bar -->
       <div class="fp-searchcontainer mdl-textfield mdl-js-textfield mdl-textfield--expandable">
         <label class="mdl-button mdl-js-button mdl-button--icon" for="searchQuery">
           <i class="material-icons">search</i>
         </label>
         <div class="mdl-textfield__expandable-holder">
-          <form id="searchForm" action="#">
-            <input class="mdl-textfield__input" type="text" id="searchQuery">
-          </form>
+          <input class="mdl-textfield__input" type="text" id="searchQuery">
           <label class="mdl-textfield__label" for="searchQuery">Enter your query...</label>
         </div>
+        <div id="fp-searchResults" class="mdl-card mdl-shadow--2dp"></div>
       </div>
-      <button class="fp-sign-in-button fp-signed-out-only mdl-button mdl-js-button mdl-js-ripple-effect"><i class="material-icons">account_circle</i> Sign in</button>
+
+      <!-- Singed-in User Info -->
+      <button class="fp-sign-in-button fp-signed-out-only mdl-button mdl-js-button mdl-js-ripple-effect"><i class="material-icons">account_circle</i> Sign in with Google</button>
       <div class="fp-signed-in-user-container mdl-cell--hide-phone fp-signed-in-only">
         <a class="fp-usernamelink mdl-button mdl-js-button">
           <div class="fp-avatar"></div>
           <div class="fp-username mdl-color-text--white"></div>
         </a>
       </div>
+
+      <!-- Drop Down Menu -->
       <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon mdl-cell--hide-phone" id="fp-menu">
         <i class="material-icons">more_vert</i>
       </button>
       <ul class="fp-menu-list mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right" for="fp-menu">
         <a href="/about">
-          <li class="mdl-menu__item"><i class="material-icons">perm_contact_calendar</i> About</li>
+          <li class="mdl-menu__item"><i class="material-icons">perm_contact_calendar</i> About - Help - Contact</li>
         </a>
         <li class="fp-sign-out mdl-menu__item fp-signed-in-only"><i class="material-icons">exit_to_app</i> Sign out</li>
       </ul>
     </div>
+
+    <!-- Navigation Bar -->
     <div class="fp-tab mdl-layout__header-row mdl-cell--hide-phone mdl-color--primary-dark">
       <div class="mdl-tab">
-        <a href="/" class="mdl-layout__tab is-active mdl-button mdl-js-button mdl-js-ripple-effect">Home</a>
-        <a href="/recent" class="mdl-layout__tab mdl-button mdl-js-button mdl-js-ripple-effect">Recent</a>
-        <a href="/popular" class="mdl-layout__tab mdl-button mdl-js-button mdl-js-ripple-effect">Popular</a>
+        <a href="/" id="fp-menu-home" class="mdl-layout__tab fp-signed-in-only is-active mdl-button mdl-js-button mdl-js-ripple-effect"><i class="material-icons">home</i> Home</a>
+        <div class="mdl-tooltip mdl-tooltip--large" for="fp-menu-home">People you are following</div>
+        <a href="/feed" id="fp-menu-feed" class="mdl-layout__tab mdl-button mdl-js-button mdl-js-ripple-effect"><i class="material-icons">trending_up</i> Feed</a>
+        <div class="mdl-tooltip mdl-tooltip--large" for="fp-menu-feed">All the Pics!</div>
         <input id="fp-mediacapture" type="file" accept="image/*;capture=camera">
-        <button class="mdl-button mdl-js-button mdl-button--fab mdl-cell--hide-tablet mdl-button--colored mdl-shadow--4dp mdl-js-ripple-effect" id="add">
+        <button class="fp-signed-in-only mdl-button mdl-js-button mdl-button--fab mdl-cell--hide-tablet mdl-button--colored mdl-shadow--4dp mdl-js-ripple-effect" id="add">
           <i class="material-icons">file_upload</i>
         </button>
       </div>
     </div>
-    <button class="mdl-cell--hide-desktop mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored mdl-shadow--4dp" id="add-floating">
+    <button class="fp-signed-in-only mdl-cell--hide-desktop mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored mdl-shadow--4dp" id="add-floating">
       <i class="material-icons">photo_camera</i>
     </button>
   </header>
@@ -115,11 +139,10 @@
       </a>
     </div>
     <nav class="mdl-navigation">
-      <a class="mdl-navigation__link is-active" href="/"><i class="material-icons">home</i> Home</a>
-      <a class="mdl-navigation__link" href="/recent"><i class="material-icons">new_releases</i> Recent</a>
-      <a class="mdl-navigation__link" href="/popular"><i class="material-icons">trending_up</i> Popular</a>
+      <a class="mdl-navigation__link is-active fp-signed-in-only" href="/"><i class="material-icons">home</i> Home</a>
+      <a class="mdl-navigation__link" href="/feed"><i class="material-icons">trending_up</i> Feed</a>
       <hr />
-      <a class="mdl-navigation__link" href="/about"><i class="material-icons">perm_contact_calendar</i> About / Contact</a>
+      <a class="mdl-navigation__link" href="/about"><i class="material-icons">perm_contact_calendar</i> About - Help - Contact</a>
       <hr class="fp-signed-in-only"/>
       <a class="fp-sign-out mdl-navigation__link fp-signed-in-only"><i class="material-icons">exit_to_app</i> Sign Out</a>
     </nav>
@@ -127,57 +150,163 @@
 
   <main class="mdl-layout__content mdl-color--grey-100">
 
-    <!-- Home section displaying a random selection of images -->
-    <section id="page-home" class="mdl-grid fp-content">
-      <div class="demo-cards mdl-cell mdl-cell--4-col mdl-cell--8-col-tablet mdl-grid mdl-grid--no-spacing">
-        <div class="demo-updates mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--4-col-tablet mdl-cell--12-col-desktop">
-          <div class="mdl-card__title mdl-card--expand mdl-color--teal-300">
-            <h2 class="mdl-card__title-text">Updates</h2>
-          </div>
-          <div class="mdl-card__supporting-text mdl-color-text--grey-600">
-            Non dolore elit adipisicing ea reprehenderit consectetur culpa.
-          </div>
-          <div class="mdl-card__actions mdl-card--border">
-            <a href="#" class="mdl-button mdl-js-button mdl-js-ripple-effect">Read More</a>
+    <!-- Show a feed of posts -->
+    <section id="page-feed" class="mdl-grid fp-content" style="display: none;">
+      <div class="fp-new-posts-button">
+        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+          Show new posts...
+        </button>
+      </div>
+      <div class="fp-image-container mdl-cell mdl-cell--12-col mdl-grid">
+        <div class="fp-no-posts fp-help mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet
+                    mdl-cell--8-col-desktop mdl-grid mdl-grid--no-spacing">
+           <div class="mdl-card__supporting-text mdl-color-text--grey-600">
+             <i class="fp-info material-icons">help</i>
+             <div>
+               <p>Start following people to see their posts!</p>
+               <p>
+                 Use the <strong><i class="material-icons">search</i> search bar</strong> to find people you know and have
+                 a look at the <a href="/feed"><i class="material-icons">trending_up</i> feed</a> to discover interesting people.
+               </p>
+               <p>Then <i class="material-icons">favorite</i> like and comment their posts!</p>
+               </div>
+           </div>
+        </div>
+      </div>
+      <div class="fp-next-page-button">
+        <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--fab">
+          <i class="material-icons">expand_more</i>
+        </button>
+      </div>
+    </section>
+
+    <!-- Show a single post with comments -->
+    <section id="page-post" class="mdl-grid fp-content" style="display: none;">
+      <div class="fp-image-container mdl-cell mdl-cell--12-col mdl-grid">
+        <div class="fp-post mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet
+                    mdl-cell--8-col-desktop mdl-grid mdl-grid--no-spacing">
+          <div class="mdl-card mdl-shadow--2dp mdl-cell
+                        mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-desktop">
+            <div class="fp-header">
+              <a class="fp-usernamelink mdl-button mdl-js-button" href="/users/">
+                <div class="fp-avatar"></div>
+                <div class="fp-username mdl-color-text--black"></div>
+              </a>
+              <!-- Delete button -->
+              <button class="fp-delete-post mdl-button mdl-js-button">
+                Delete
+              </button>
+              <a href="/post/" class="fp-time">now</a>
+            </div>
+            <div class="fp-image"></div>
+            <div class="fp-likes">0 likes</div>
+            <div class="fp-first-comment"></div>
+            <div class="fp-morecomments">View more comments...</div>
+            <div class="fp-comments"></div>
+            <div class="fp-action">
+                     <span class="fp-like">
+                         <div class="fp-not-liked material-icons">favorite_border</div>
+                         <div class="fp-liked material-icons">favorite</div>
+                     </span>
+              <form class="fp-add-comment" action="#">
+                <div class="mdl-textfield mdl-js-textfield">
+                  <input class="mdl-textfield__input" type="text">
+                  <label class="mdl-textfield__label">Comment...</label>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
     <!-- About & Contact page -->
-    <section id="page-about" class="mdl-grid fp-content">
-      <div class="mdl-cell mdl-cell--4-col mdl-cell--8-col-tablet mdl-grid mdl-grid--no-spacing">
-        <div class="mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--4-col-tablet mdl-cell--12-col-desktop">
-          <div class="mdl-card__title mdl-card--expand mdl-color--teal-300">
-            <h2 class="mdl-card__title-text">About</h2>
+    <section id="page-about" class="mdl-grid fp-content" style="display: none;">
+      <div class="fp-help mdl-card mdl-shadow--2dp mdl-cell
+                  mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--8-col-desktop">
+        <div class="mdl-card__supporting-text mdl-color-text--grey-600">
+          <i class="fp-info material-icons">info</i>
+          <div>
+            <p>Friendly Pix is a photo sharing app showcasing the use of the <a href="firebase.google.com">Firebase Platform</a>.</p>
           </div>
-          <div class="mdl-card__supporting-text mdl-color-text--grey-600">
-            This app has been built with Firebase.
+        </div>
+      </div>
+      <div class="fp-help mdl-card mdl-shadow--2dp mdl-cell
+                  mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--8-col-desktop">
+        <div class="mdl-card__supporting-text mdl-color-text--grey-600">
+          <i class="fp-info material-icons">help</i>
+          <div>
+            <p>Start following people to see their posts in your <a href="/"><i class="material-icons">home</i> home</a>!</p>
+            <p>
+              Use the <strong><i class="material-icons">search</i> search bar</strong> to find people you know and have
+              a look at the <a href="/feed"><i class="material-icons">trending_up</i> feed</a> to discover interesting people.
+            </p>
+            <p>Then <i class="material-icons">favorite</i> like and comment their posts!</p>
+            <p>
+              Share your pics with your friends using the <i class="material-icons">file_upload</i>
+              or <i class="material-icons">photo_camera</i> buttons.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="fp-help mdl-card mdl-shadow--2dp mdl-cell
+                  mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--8-col-desktop">
+        <div class="mdl-card__supporting-text mdl-color-text--grey-600">
+          <i class="fp-info material-icons">contacts</i>
+          <div>
+            <p>Feel free to file issues on our <a href="https://github.com/firebase">GitHub repo</a>.</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- user page -->
-    <section id="page-user-info" class="mdl-grid fp-content">
-      <div class="fp-image-container mdl-cell mdl-cell--12-col mdl-grid">
-        <div class="fp-user-container mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col">
-          <div class="fp-user-avatar"></div>
-          <div class="fp-name-follow-container mdl-cell mdl-cell--5-col">
-            <div class="fp-user-username"></div>
-            <label class="fp-follow fp-signed-in-only mdl-switch mdl-js-switch mdl-js-ripple-effect" for="follow">
-              <input type="checkbox" id="follow" class="mdl-switch__input">
+    <!-- User Profile page -->
+    <section id="page-user-info" class="mdl-grid fp-content" style="display: none;">
+      <div class="fp-user-container mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col">
+        <div class="fp-user-avatar"></div>
+        <div class="fp-name-follow-container mdl-cell mdl-cell--5-col">
+          <div class="fp-user-username"></div>
+          <div class="fp-signed-in-only">
+            <label class="fp-follow mdl-switch mdl-js-switch mdl-js-ripple-effect" for="follow">
+              <input type="checkbox" id="follow" class="mdl-switch__input" value="true">
               <span class="mdl-switch__label">Follow</span>
             </label>
           </div>
+          <div class="fp-user-detail-container">
+            <div class="fp-user-detail"><span class="fp-user-nbposts">0</span> posts</div>
+            <div class="fp-user-detail"><span class="fp-user-nbfollowers">0</span> followers</div>
+            <div class="fp-user-detail fp-user-nbfollowing-container"><span class="fp-user-nbfollowing">0</span> following</div>
+          </div>
         </div>
+      </div>
+      <div class="fp-user-following mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col">
+        <button class="fp-close-following  mdl-button mdl-js-button mdl-button--raised mdl-button--fab">
+          <i class="material-icons">expand_less</i>
+        </button>
+        <div class="fp-following-title">Following</div>
+      </div>
+      <div class="fp-image-container mdl-cell mdl-cell--12-col mdl-grid">
+        <div class="fp-no-posts mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-desktop mdl-grid mdl-grid--no-spacing">
+          <div class="mdl-card mdl-shadow--2dp mdl-cell
+                  mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--8-col-desktop">
+            No posts yet.
+          </div>
+        </div>
+      </div>
+      <div class="fp-next-page-button">
+        <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--fab">
+          <i class="material-icons">expand_more</i>
+        </button>
       </div>
     </section>
 
-    <!-- Add page -->
-    <section id="page-add" class="mdl-grid fp-content">
+    <!-- Post new pic page -->
+    <section id="page-add" class="mdl-grid fp-content" style="display: none;">
       <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-grid mdl-grid--no-spacing">
         <div class="fp-addcontainer mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-desktop">
+          <div class="fp-overlay">
+            <i class="material-icons">hourglass_full</i>
+          </div>
           <img id="newPictureContainer" src="">
           <div class="mdl-card__supporting-text mdl-color-text--grey-600">
             <form id="uploadPicForm" action="#">
@@ -194,17 +323,45 @@
         </div>
       </div>
     </section>
+
+    <!-- Toast -->
+    <div aria-live="assertive" aria-atomic="true" aria-relevant="text" class="mdl-snackbar mdl-js-snackbar">
+      <div class="mdl-snackbar__text"></div>
+      <button type="button" class="mdl-snackbar__action"></button>
+    </div>
   </main>
 </div>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-<script src="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.min.js"></script>
-<script src="bower_components/page/page.js"></script>
-<script src="bower_components/firebase/firebase.js"></script>
-<script src="scripts/auth.js"></script>
-<script src="scripts/search.js"></script>
-<script src="scripts/photo.js"></script>
-<script src="scripts/userpage.js"></script>
-<script src="scripts/routing.js"></script>
+<!-- Page.js -->
+<script src="/bower_components/page/page.js"></script>
+
+<!-- jQuery -->
+<script src="/bower_components/jquery/dist/jquery.min.js"></script>
+
+<!-- Firebase -->
+<!-- TODO(DEVELOPER): Paste the initialization snippet from: Firebase Console > Add Firebase to your web app. -->
+
+<!-- Friendly Pix ES5 scripts -->
+<script src="/lib/utils.js"></script>
+<script src="/lib/firebase.js"></script>
+<script src="/lib/auth.js"></script>
+<script src="/lib/search.js"></script>
+<script src="/lib/uploader.js"></script>
+<script src="/lib/userpage.js"></script>
+<script src="/lib/post.js"></script>
+<script src="/lib/feed.js"></script>
+<script src="/lib/routing.js"></script>
+
+<!-- Friendly Pix ES2015 scripts -->
+<!-- Uncomment and replace scripts above to serve ES2015 scripts directly -->
+<!-- <script src="/scripts/utils.js"></script>
+<script src="/scripts/firebase.js"></script>
+<script src="/scripts/auth.js"></script>
+<script src="/scripts/search.js"></script>
+<script src="/scripts/uploader.js"></script>
+<script src="/scripts/userpage.js"></script>
+<script src="/scripts/post.js"></script>
+<script src="/scripts/feed.js"></script>
+<script src="/scripts/routing.js"></script> -->
 </body>
 </html>
