@@ -7,14 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		101464531C06C34D000194E7 /* FPProfileImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 101464521C06C34D000194E7 /* FPProfileImageView.swift */; };
-		101464551C06C4E6000194E7 /* FPPhotoHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 101464541C06C4E6000194E7 /* FPPhotoHeaderView.swift */; };
-		1014645B1C076AF1000194E7 /* FPPhotoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1014645A1C076AF1000194E7 /* FPPhotoCell.swift */; };
-		101464601C0CBAB9000194E7 /* FPPhotoTimelineViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1014645F1C0CBAB9000194E7 /* FPPhotoTimelineViewController.swift */; };
 		1024C2E11C88C3FD00945A88 /* KZPropertyMapper+Date.m in Sources */ = {isa = PBXBuildFile; fileRef = 1024C2E01C88C3FD00945A88 /* KZPropertyMapper+Date.m */; };
-		102C8D961C0E26630083E4F3 /* FPTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 102C8D951C0E26630083E4F3 /* FPTabBarController.swift */; };
-		102C8D991C0E33480083E4F3 /* FPEditPhotoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 102C8D981C0E33480083E4F3 /* FPEditPhotoViewController.swift */; };
-		103FCF8A1C10F6E1002F7A61 /* FPHomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 103FCF891C10F6E1002F7A61 /* FPHomeViewController.swift */; };
 		104DECDD1C31E3680044430F /* FPAccountViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 104DECDC1C31E3680044430F /* FPAccountViewController.m */; };
 		104DECEB1C3334920044430F /* FPFeedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 104DECEA1C3334920044430F /* FPFeedViewController.m */; };
 		10563BFE1C29EDFB00356685 /* FPCommentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 10563BFD1C29EDFB00356685 /* FPCommentViewController.m */; };
@@ -29,40 +22,19 @@
 		1061E5921C24F2E300B3BD42 /* FPComment.m in Sources */ = {isa = PBXBuildFile; fileRef = 1061E5911C24F2E300B3BD42 /* FPComment.m */; };
 		1061E5951C24F59600B3BD42 /* FPUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1061E5941C24F59600B3BD42 /* FPUser.m */; };
 		1061E5981C24F68200B3BD42 /* FPPost.m in Sources */ = {isa = PBXBuildFile; fileRef = 1061E5971C24F68200B3BD42 /* FPPost.m */; };
-		1088F8591C20B83E00467D36 /* FPPhotoFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1088F8571C20B83E00467D36 /* FPPhotoFooterView.swift */; };
-		1088F85A1C20B83E00467D36 /* FPPhotoFooterView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1088F8581C20B83E00467D36 /* FPPhotoFooterView.xib */; };
-		109F8CE71C03AD7000831B94 /* FPActivityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 109F8CE61C03AD7000831B94 /* FPActivityViewController.swift */; };
-		2C595F051B34B73A00355AE7 /* FPConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C595F041B34B73A00355AE7 /* FPConstants.swift */; };
-		2C595F061B34B73A00355AE7 /* FPConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C595F041B34B73A00355AE7 /* FPConstants.swift */; };
 		2C8562821AFAB65F00F0B24B /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2C85627D1AFAB65F00F0B24B /* Icon@2x.png */; };
-		2C8562831AFAB65F00F0B24B /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2C85627D1AFAB65F00F0B24B /* Icon@2x.png */; };
 		2C8562841AFAB65F00F0B24B /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2C85627E1AFAB65F00F0B24B /* Images.xcassets */; };
-		2C8562851AFAB65F00F0B24B /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2C85627E1AFAB65F00F0B24B /* Images.xcassets */; };
 		2C8562861AFAB65F00F0B24B /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2C85627F1AFAB65F00F0B24B /* LaunchScreen.xib */; };
-		2C8562871AFAB65F00F0B24B /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2C85627F1AFAB65F00F0B24B /* LaunchScreen.xib */; };
-		2C8E6C2B1B16875B0073CE3D /* SignInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C8E6C2A1B16875B0073CE3D /* SignInViewController.swift */; };
-		2CA807BC1B21702E009AD7F2 /* FPMeasurementHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CA807BB1B21702E009AD7F2 /* FPMeasurementHelper.swift */; };
-		2CA807BE1B217B21009AD7F2 /* FPAppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CA807BD1B217B21009AD7F2 /* FPAppState.swift */; };
 		5F5A53521ADE670C00F81DF0 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F5A53511ADE670C00F81DF0 /* main.m */; };
 		5F5A53551ADE670C00F81DF0 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F5A53541ADE670C00F81DF0 /* AppDelegate.m */; };
 		5F5A53581ADE670C00F81DF0 /* FPHomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F5A53571ADE670C00F81DF0 /* FPHomeViewController.m */; };
 		5F5A535B1ADE670C00F81DF0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5F5A53591ADE670C00F81DF0 /* Main.storyboard */; };
-		5F5A537E1ADE67D500F81DF0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F5A537D1ADE67D500F81DF0 /* AppDelegate.swift */; };
-		5F5A53801ADE67D500F81DF0 /* FPTryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F5A537F1ADE67D500F81DF0 /* FPTryController.swift */; };
-		5F5A539C1ADE69AA00F81DF0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5F5A53591ADE670C00F81DF0 /* Main.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		101464521C06C34D000194E7 /* FPProfileImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FPProfileImageView.swift; sourceTree = "<group>"; };
-		101464541C06C4E6000194E7 /* FPPhotoHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FPPhotoHeaderView.swift; sourceTree = "<group>"; };
-		1014645A1C076AF1000194E7 /* FPPhotoCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FPPhotoCell.swift; sourceTree = "<group>"; };
-		1014645F1C0CBAB9000194E7 /* FPPhotoTimelineViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FPPhotoTimelineViewController.swift; sourceTree = "<group>"; };
 		1024C2DF1C88C3FD00945A88 /* KZPropertyMapper+Date.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "KZPropertyMapper+Date.h"; sourceTree = "<group>"; };
 		1024C2E01C88C3FD00945A88 /* KZPropertyMapper+Date.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "KZPropertyMapper+Date.m"; sourceTree = "<group>"; };
-		102C8D951C0E26630083E4F3 /* FPTabBarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FPTabBarController.swift; sourceTree = "<group>"; };
-		102C8D981C0E33480083E4F3 /* FPEditPhotoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FPEditPhotoViewController.swift; sourceTree = "<group>"; };
 		1037935F1BF4256400C88958 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; name = module.modulemap; path = Pods/Firebase/Headers/module.modulemap; sourceTree = "<group>"; };
-		103FCF891C10F6E1002F7A61 /* FPHomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FPHomeViewController.swift; sourceTree = "<group>"; };
 		104DECDB1C31E3680044430F /* FPAccountViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FPAccountViewController.h; sourceTree = "<group>"; };
 		104DECDC1C31E3680044430F /* FPAccountViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FPAccountViewController.m; sourceTree = "<group>"; };
 		104DECE91C3334920044430F /* FPFeedViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FPFeedViewController.h; sourceTree = "<group>"; };
@@ -88,16 +60,9 @@
 		1061E5941C24F59600B3BD42 /* FPUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FPUser.m; sourceTree = "<group>"; };
 		1061E5961C24F68200B3BD42 /* FPPost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FPPost.h; sourceTree = "<group>"; };
 		1061E5971C24F68200B3BD42 /* FPPost.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FPPost.m; sourceTree = "<group>"; };
-		1088F8571C20B83E00467D36 /* FPPhotoFooterView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FPPhotoFooterView.swift; sourceTree = "<group>"; };
-		1088F8581C20B83E00467D36 /* FPPhotoFooterView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FPPhotoFooterView.xib; sourceTree = "<group>"; };
-		109F8CE61C03AD7000831B94 /* FPActivityViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FPActivityViewController.swift; sourceTree = "<group>"; };
-		2C595F041B34B73A00355AE7 /* FPConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FPConstants.swift; sourceTree = "<group>"; };
 		2C85627D1AFAB65F00F0B24B /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
 		2C85627E1AFAB65F00F0B24B /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		2C85627F1AFAB65F00F0B24B /* LaunchScreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LaunchScreen.xib; sourceTree = "<group>"; };
-		2C8E6C2A1B16875B0073CE3D /* SignInViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignInViewController.swift; sourceTree = "<group>"; };
-		2CA807BB1B21702E009AD7F2 /* FPMeasurementHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FPMeasurementHelper.swift; sourceTree = "<group>"; };
-		2CA807BD1B217B21009AD7F2 /* FPAppState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FPAppState.swift; sourceTree = "<group>"; };
 		5F5A534C1ADE670C00F81DF0 /* FriendlyPix.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FriendlyPix.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F5A53501ADE670C00F81DF0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5F5A53511ADE670C00F81DF0 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -106,10 +71,6 @@
 		5F5A53561ADE670C00F81DF0 /* FPHomeViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FPHomeViewController.h; sourceTree = "<group>"; };
 		5F5A53571ADE670C00F81DF0 /* FPHomeViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FPHomeViewController.m; sourceTree = "<group>"; };
 		5F5A535A1ADE670C00F81DF0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		5F5A53791ADE67D500F81DF0 /* FriendlyPix.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FriendlyPix.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		5F5A537D1ADE67D500F81DF0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		5F5A537F1ADE67D500F81DF0 /* FPTryController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FPTryController.swift; sourceTree = "<group>"; };
-		5F5A539B1ADE695B00F81DF0 /* BridgingHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BridgingHeader.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -123,114 +84,9 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		5F5A53761ADE67D500F81DF0 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		101464421C04EDDF000194E7 /* Controllers */ = {
-			isa = PBXGroup;
-			children = (
-				102C8D971C0E332D0083E4F3 /* Take Photo */,
-				101464481C04EE80000194E7 /* Activity */,
-				101464471C04EE72000194E7 /* Settings */,
-				101464461C04EE5F000194E7 /* Detail */,
-				101464451C04EE4C000194E7 /* Take Photo */,
-				101464441C04EE43000194E7 /* Home */,
-				101464431C04EE34000194E7 /* Login */,
-				102C8D951C0E26630083E4F3 /* FPTabBarController.swift */,
-			);
-			name = Controllers;
-			sourceTree = "<group>";
-		};
-		101464431C04EE34000194E7 /* Login */ = {
-			isa = PBXGroup;
-			children = (
-				2C8E6C2A1B16875B0073CE3D /* SignInViewController.swift */,
-			);
-			name = Login;
-			sourceTree = "<group>";
-		};
-		101464441C04EE43000194E7 /* Home */ = {
-			isa = PBXGroup;
-			children = (
-				5F5A537F1ADE67D500F81DF0 /* FPTryController.swift */,
-				103FCF891C10F6E1002F7A61 /* FPHomeViewController.swift */,
-				1014645F1C0CBAB9000194E7 /* FPPhotoTimelineViewController.swift */,
-			);
-			name = Home;
-			sourceTree = "<group>";
-		};
-		101464451C04EE4C000194E7 /* Take Photo */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = "Take Photo";
-			sourceTree = "<group>";
-		};
-		101464461C04EE5F000194E7 /* Detail */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Detail;
-			sourceTree = "<group>";
-		};
-		101464471C04EE72000194E7 /* Settings */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Settings;
-			sourceTree = "<group>";
-		};
-		101464481C04EE80000194E7 /* Activity */ = {
-			isa = PBXGroup;
-			children = (
-				109F8CE61C03AD7000831B94 /* FPActivityViewController.swift */,
-			);
-			name = Activity;
-			sourceTree = "<group>";
-		};
-		101464491C06B4D6000194E7 /* Views */ = {
-			isa = PBXGroup;
-			children = (
-				101464521C06C34D000194E7 /* FPProfileImageView.swift */,
-				1014644B1C06BD4D000194E7 /* TimelineViews */,
-				1014644A1C06B501000194E7 /* UITableViewCells */,
-			);
-			name = Views;
-			sourceTree = "<group>";
-		};
-		1014644A1C06B501000194E7 /* UITableViewCells */ = {
-			isa = PBXGroup;
-			children = (
-				1014645A1C076AF1000194E7 /* FPPhotoCell.swift */,
-			);
-			name = UITableViewCells;
-			sourceTree = "<group>";
-		};
-		1014644B1C06BD4D000194E7 /* TimelineViews */ = {
-			isa = PBXGroup;
-			children = (
-				101464541C06C4E6000194E7 /* FPPhotoHeaderView.swift */,
-				1088F8571C20B83E00467D36 /* FPPhotoFooterView.swift */,
-				1088F8581C20B83E00467D36 /* FPPhotoFooterView.xib */,
-			);
-			name = TimelineViews;
-			sourceTree = "<group>";
-		};
-		102C8D971C0E332D0083E4F3 /* Take Photo */ = {
-			isa = PBXGroup;
-			children = (
-				102C8D981C0E33480083E4F3 /* FPEditPhotoViewController.swift */,
-			);
-			name = "Take Photo";
-			sourceTree = "<group>";
-		};
 		104DECED1C344BDC0044430F /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
@@ -284,7 +140,6 @@
 			children = (
 				2C85627A1AFAB65F00F0B24B /* shared */,
 				5F5A534E1ADE670C00F81DF0 /* FriendlyPix */,
-				5F5A537A1ADE67D500F81DF0 /* FriendlyPixSwift */,
 				5F5A534D1ADE670C00F81DF0 /* Products */,
 				AD1F1C80A93A096F652504F5 /* Frameworks */,
 			);
@@ -294,7 +149,6 @@
 			isa = PBXGroup;
 			children = (
 				5F5A534C1ADE670C00F81DF0 /* FriendlyPix.app */,
-				5F5A53791ADE67D500F81DF0 /* FriendlyPix.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -323,28 +177,6 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		5F5A537A1ADE67D500F81DF0 /* FriendlyPixSwift */ = {
-			isa = PBXGroup;
-			children = (
-				101464491C06B4D6000194E7 /* Views */,
-				101464421C04EDDF000194E7 /* Controllers */,
-				5F5A537D1ADE67D500F81DF0 /* AppDelegate.swift */,
-				5F5A537B1ADE67D500F81DF0 /* Supporting Files */,
-				2CA807BB1B21702E009AD7F2 /* FPMeasurementHelper.swift */,
-				2CA807BD1B217B21009AD7F2 /* FPAppState.swift */,
-				2C595F041B34B73A00355AE7 /* FPConstants.swift */,
-			);
-			path = FriendlyPixSwift;
-			sourceTree = "<group>";
-		};
-		5F5A537B1ADE67D500F81DF0 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				5F5A539B1ADE695B00F81DF0 /* BridgingHeader.h */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
 		AD1F1C80A93A096F652504F5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -363,12 +195,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5F5A536F1ADE670C00F81DF0 /* Build configuration list for PBXNativeTarget "FriendlyPix" */;
 			buildPhases = (
-				73885C728AEAB31B78E89112 /* 📦 Check Pods Manifest.lock */,
 				5F5A53481ADE670C00F81DF0 /* Sources */,
 				5F5A53491ADE670C00F81DF0 /* Frameworks */,
 				5F5A534A1ADE670C00F81DF0 /* Resources */,
-				91D1D05A9D77932AF7D6B095 /* 📦 Copy Pods Resources */,
-				EF4D0A7028D9859DC5BDE7F6 /* 📦 Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -377,26 +206,6 @@
 			name = FriendlyPix;
 			productName = FriendlyPing;
 			productReference = 5F5A534C1ADE670C00F81DF0 /* FriendlyPix.app */;
-			productType = "com.apple.product-type.application";
-		};
-		5F5A53781ADE67D500F81DF0 /* FriendlyPixSwift */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 5F5A53991ADE67D500F81DF0 /* Build configuration list for PBXNativeTarget "FriendlyPixSwift" */;
-			buildPhases = (
-				C28B8236018FCC6F2BE257E2 /* 📦 Check Pods Manifest.lock */,
-				5F5A53751ADE67D500F81DF0 /* Sources */,
-				5F5A53761ADE67D500F81DF0 /* Frameworks */,
-				5F5A53771ADE67D500F81DF0 /* Resources */,
-				EE326273B800FA91BE4D7048 /* 📦 Copy Pods Resources */,
-				BD479261BF360C92A9D4DA22 /* 📦 Embed Pods Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = FriendlyPixSwift;
-			productName = FriendlyPingSwift;
-			productReference = 5F5A53791ADE67D500F81DF0 /* FriendlyPix.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -412,15 +221,6 @@
 					5F5A534B1ADE670C00F81DF0 = {
 						CreatedOnToolsVersion = 6.3;
 						DevelopmentTeam = EQHXZ8M8AV;
-					};
-					5F5A53781ADE67D500F81DF0 = {
-						CreatedOnToolsVersion = 6.3;
-						DevelopmentTeam = EQHXZ8M8AV;
-						SystemCapabilities = {
-							com.apple.BackgroundModes = {
-								enabled = 1;
-							};
-						};
 					};
 				};
 			};
@@ -438,7 +238,6 @@
 			projectRoot = "";
 			targets = (
 				5F5A534B1ADE670C00F81DF0 /* FriendlyPix */,
-				5F5A53781ADE67D500F81DF0 /* FriendlyPixSwift */,
 			);
 		};
 /* End PBXProject section */
@@ -455,112 +254,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		5F5A53771ADE67D500F81DF0 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				1088F85A1C20B83E00467D36 /* FPPhotoFooterView.xib in Resources */,
-				2C8562871AFAB65F00F0B24B /* LaunchScreen.xib in Resources */,
-				2C8562851AFAB65F00F0B24B /* Images.xcassets in Resources */,
-				5F5A539C1ADE69AA00F81DF0 /* Main.storyboard in Resources */,
-				2C8562831AFAB65F00F0B24B /* Icon@2x.png in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		73885C728AEAB31B78E89112 /* 📦 Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "📦 Check Pods Manifest.lock";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		91D1D05A9D77932AF7D6B095 /* 📦 Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "📦 Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-FriendlyPix/Pods-FriendlyPix-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		BD479261BF360C92A9D4DA22 /* 📦 Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "📦 Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-FriendlyPixSwift/Pods-FriendlyPixSwift-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		C28B8236018FCC6F2BE257E2 /* 📦 Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "📦 Check Pods Manifest.lock";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		EE326273B800FA91BE4D7048 /* 📦 Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "📦 Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-FriendlyPixSwift/Pods-FriendlyPixSwift-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		EF4D0A7028D9859DC5BDE7F6 /* 📦 Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "📦 Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-FriendlyPix/Pods-FriendlyPix-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		5F5A53481ADE670C00F81DF0 /* Sources */ = {
@@ -580,31 +274,8 @@
 				1061E5921C24F2E300B3BD42 /* FPComment.m in Sources */,
 				10563BFE1C29EDFB00356685 /* FPCommentViewController.m in Sources */,
 				1024C2E11C88C3FD00945A88 /* KZPropertyMapper+Date.m in Sources */,
-				2C595F051B34B73A00355AE7 /* FPConstants.swift in Sources */,
 				1061E58E1C24B4EC00B3BD42 /* FPAppState.m in Sources */,
 				1061E5981C24F68200B3BD42 /* FPPost.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		5F5A53751ADE67D500F81DF0 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				2C8E6C2B1B16875B0073CE3D /* SignInViewController.swift in Sources */,
-				102C8D961C0E26630083E4F3 /* FPTabBarController.swift in Sources */,
-				2CA807BE1B217B21009AD7F2 /* FPAppState.swift in Sources */,
-				103FCF8A1C10F6E1002F7A61 /* FPHomeViewController.swift in Sources */,
-				102C8D991C0E33480083E4F3 /* FPEditPhotoViewController.swift in Sources */,
-				101464531C06C34D000194E7 /* FPProfileImageView.swift in Sources */,
-				101464601C0CBAB9000194E7 /* FPPhotoTimelineViewController.swift in Sources */,
-				5F5A53801ADE67D500F81DF0 /* FPTryController.swift in Sources */,
-				1088F8591C20B83E00467D36 /* FPPhotoFooterView.swift in Sources */,
-				5F5A537E1ADE67D500F81DF0 /* AppDelegate.swift in Sources */,
-				1014645B1C076AF1000194E7 /* FPPhotoCell.swift in Sources */,
-				2CA807BC1B21702E009AD7F2 /* FPMeasurementHelper.swift in Sources */,
-				109F8CE71C03AD7000831B94 /* FPActivityViewController.swift in Sources */,
-				2C595F061B34B73A00355AE7 /* FPConstants.swift in Sources */,
-				101464551C06C4E6000194E7 /* FPPhotoHeaderView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -748,42 +419,6 @@
 			};
 			name = Release;
 		};
-		5F5A53951ADE67D500F81DF0 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEFINES_MODULE = NO;
-				ENABLE_BITCODE = NO;
-				INFOPLIST_FILE = "$(SRCROOT)/FriendlyPix/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.google.experimental0.dev;
-				PRODUCT_NAME = FriendlyPix;
-				PROVISIONING_PROFILE = "";
-				SWIFT_OBJC_BRIDGING_HEADER = FriendlyPixSwift/BridgingHeader.h;
-			};
-			name = Debug;
-		};
-		5F5A53961ADE67D500F81DF0 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEFINES_MODULE = NO;
-				ENABLE_BITCODE = NO;
-				INFOPLIST_FILE = "$(SRCROOT)/FriendlyPix/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.google.experimental0.dev;
-				PRODUCT_NAME = FriendlyPix;
-				PROVISIONING_PROFILE = "";
-				SWIFT_OBJC_BRIDGING_HEADER = FriendlyPixSwift/BridgingHeader.h;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -801,15 +436,6 @@
 			buildConfigurations = (
 				5F5A53701ADE670C00F81DF0 /* Debug */,
 				5F5A53711ADE670C00F81DF0 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		5F5A53991ADE67D500F81DF0 /* Build configuration list for PBXNativeTarget "FriendlyPixSwift" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				5F5A53951ADE67D500F81DF0 /* Debug */,
-				5F5A53961ADE67D500F81DF0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
