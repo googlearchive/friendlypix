@@ -28,6 +28,7 @@
     "$": true,
     "jQuery": true,
     "swal": true,
+    "latinize": true,
     "componentHandler": true,
     "friendlyPix": true,
     "page": true,

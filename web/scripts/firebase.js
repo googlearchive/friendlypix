@@ -281,23 +281,31 @@ friendlyPix.Firebase = class {
    * Returns the users which name match the given search query as a Promise.
    */
   searchUsers(searchString, maxResults) {
-    return this.database.ref('/people')
-        .orderByChild('_search_index').startAt(searchString)
-        .limitToFirst(maxResults).once('value').then(snapshot => {
-          let people = snapshot.val();
-          if (people) {
-            // Remove results that do not start with the search query.
-            let userIds = Object.keys(people);
-            userIds.forEach(userId => {
-              let searchTerms = Object.keys(people[userId]._search_index);
-              if (!searchTerms.find(term => term.startsWith(searchString))) {
-                delete people[userId];
-              }
-            });
-            return people;
-          }
-          return {};
-        });
+    searchString = latinize(searchString).toLowerCase();
+    let query = this.database.ref('/people')
+        .orderByChild('_search_index/full_name').startAt(searchString)
+        .limitToFirst(maxResults).once('value');
+    let reversedQuery = this.database.ref('/people')
+        .orderByChild('_search_index/reversed_full_name').startAt(searchString)
+        .limitToFirst(maxResults).once('value');
+    return Promise.all([query, reversedQuery]).then(results => {
+      let people = {};
+      // construct people from the two search queries results.
+      results.forEach(result => result.forEach(data => {
+        people[data.key] = data.val();
+      }));
+
+      // Remove results that do not start with the search query.
+      let userIds = Object.keys(people);
+      userIds.forEach(userId => {
+        let name = people[userId]._search_index.full_name;
+        let reversedName = people[userId]._search_index.reversed_full_name;
+        if (!name.startsWith(searchString) && !reversedName.startsWith(searchString)) {
+          delete people[userId];
+        }
+      });
+      return people;
+    });
   }
 
   /**
@@ -307,10 +315,11 @@ friendlyPix.Firebase = class {
     let updateData = {
       profile_picture: imageUrl,
       full_name: displayName,
-      _search_index: {}
+      _search_index: {
+        full_name: latinize(displayName).toLowerCase(),
+        reversed_full_name: latinize(displayName).toLowerCase().split(' ').reverse().join(' ')
+      }
     };
-    updateData._search_index[displayName.toLowerCase()] = true;
-    updateData._search_index[displayName.toLowerCase().split(' ').reverse().join(' ')] = true;
     return this.database.ref(`people/${this.auth.currentUser.uid}`).update(updateData);
   }
 
