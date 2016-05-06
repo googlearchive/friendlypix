@@ -12,7 +12,8 @@
       "node_modules/**",
       "security-rules.json",
       "bower.json",
-      "package.json"
+      "package.json",
+      "README.md"
     ]
   }
 }
