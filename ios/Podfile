@@ -1,6 +1,4 @@
-# FriendlyChat Codelab
-
-source 'https://cpdc-eap.googlesource.com/spec.git'
+# FriendlyPix
 source 'https://github.com/CocoaPods/Specs.git'
 
 pod 'Firebase/Auth'
@@ -8,10 +6,9 @@ pod 'Firebase/Database'
 pod 'Firebase/Storage'
 pod 'Firebase/RemoteConfig'
 pod 'Firebase/AdMob'
-pod 'Firebase/AppInvites'
+pod 'Firebase/Invites'
 pod 'Firebase/Messaging'
 pod 'STXDynamicTableView'
 
 platform :ios, '8.0'
 target 'FriendlyPix'
-target 'FriendlyPixSwift'
