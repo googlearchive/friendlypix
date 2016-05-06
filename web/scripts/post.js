@@ -67,7 +67,7 @@ friendlyPix.Post = class {
           timeout: 5000
         };
         this.toast[0].MaterialSnackbar.showSnackbar(data);
-        page(`/users/${this.auth.currentUser.uid}`);
+        page(`/user/${this.auth.currentUser.uid}`);
       } else {
         this.fillPostData(snapshot.key, post.url, post.text, post.author, post.timestamp,
             post.storage_uri);
@@ -135,7 +135,7 @@ friendlyPix.Post = class {
     post.addClass(`fp-post-${postId}`);
 
     // Fills element with data
-    $('.fp-usernamelink', post).attr('href', `/users/${author.uid}`);
+    $('.fp-usernamelink', post).attr('href', `/user/${author.uid}`);
     $('.fp-avatar', post).css('background-image', `url(${author.profile_picture})`);
     $('.fp-username', post).text(author.full_name);
     $('.fp-time', post).attr('href', `/post/${postId}`);
@@ -153,26 +153,37 @@ friendlyPix.Post = class {
     if (this.auth.currentUser && this.auth.currentUser.uid === author.uid && storageUri) {
       $('.fp-delete-post', post).show();
       $('.fp-delete-post', post).click(() => {
-        var confirm = window.confirm('Are you sure you want to delete this post?');
-        if (confirm === true) {
+        swal({
+          title: 'Are you sure?',
+          text: 'You will not be able to recover this post!',
+          type: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#DD6B55',
+          confirmButtonText: 'Yes, delete it!',
+          closeOnConfirm: false,
+          showLoaderOnConfirm: true,
+          allowEscapeKey: true
+        }, () => {
           $('.fp-delete-post', post).prop('disabled', true);
           friendlyPix.firebase.deletePost(postId, storageUri).then(() => {
-            let data = {
-              message: 'Your post has been deleted.',
-              timeout: 5000
-            };
-            this.toast[0].MaterialSnackbar.showSnackbar(data);
+            swal({
+              title: 'Deleted!',
+              text: 'Your post has been deleted.',
+              type: 'success',
+              timer: 2000
+            });
             $('.fp-delete-post', post).prop('disabled', false);
-            page(`/users/${this.auth.currentUser.uid}`);
+            page(`/user/${this.auth.currentUser.uid}`);
           }).catch(error => {
+            swal.close();
             $('.fp-delete-post', post).prop('disabled', false);
             let data = {
-              message: `There was an error deleting your post ${error}`,
+              message: `There was an error deleting your post: ${error}`,
               timeout: 5000
             };
             this.toast[0].MaterialSnackbar.showSnackbar(data);
           });
-        }
+        });
       });
     } else {
       $('.fp-delete-post', post).hide();
@@ -245,7 +256,7 @@ friendlyPix.Post = class {
   static createCommentHtml(author, text) {
     return `
         <div class="fp-comment">
-            <a class="fp-author" href="/users/${author.uid}">${author.full_name}</a>:
+            <a class="fp-author" href="/user/${author.uid}">${author.full_name}</a>:
             <span class="fp-text">${text}</span>
         </div>`;
   }

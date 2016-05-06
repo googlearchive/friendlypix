@@ -50,7 +50,7 @@ friendlyPix.Router = class {
             pipe(displayPage, {pageId: 'feed', onlyAuthed: true}));
         page('/feed', pipe(showGeneralFeed, null, true), pipe(displayPage, {pageId: 'feed'}));
         page('/post/:postId', pipe(showPost, null, true), pipe(displayPage, {pageId: 'post'}));
-        page('/users/:userId', pipe(loadUser, null, true), pipe(displayPage, {pageId: 'user-info'}));
+        page('/user/:userId', pipe(loadUser, null, true), pipe(displayPage, {pageId: 'user-info'}));
         page('/about', pipe(displayPage, {pageId: 'about'}));
         page('/add', pipe(displayPage, {pageId: 'add', onlyAuthed: true}));
 

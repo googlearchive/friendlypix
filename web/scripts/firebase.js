@@ -97,7 +97,7 @@ friendlyPix.Firebase = class {
    * If provided we'll only listen to posts that were posted after `latestPostId`.
    */
   subscribeToGeneralFeed(callback, latestPostId) {
-    return this._subscribeToFeed('/posts/', callback, latestPostId, false);
+    return this._subscribeToFeed('/posts/', callback, latestPostId);
   }
 
   /**
@@ -109,7 +109,7 @@ friendlyPix.Firebase = class {
    * `null` if there is no next page.
    */
   getPosts() {
-    return this._getPaginatedFeed('/posts/', friendlyPix.Firebase.POSTS_PAGE_SIZE, null, false);
+    return this._getPaginatedFeed('/posts/', friendlyPix.Firebase.POSTS_PAGE_SIZE);
   }
 
   /**
@@ -164,12 +164,13 @@ friendlyPix.Firebase = class {
    * Subscribes to receive updates to the given feed. The given `callback` function gets called
    * for each new entry on the given feed.
    *
-   * If provided we'll only listen to entries that were posted after `latestEntryId`.
+   * If provided we'll only listen to entries that were posted after `latestEntryId`. This allows to
+   * listen only for new feed entries after fetching existing entries using `_getPaginatedFeed()`.
    *
    * If needed the posts details can be fetched. This is useful for shallow post feeds.
    * @private
    */
-  _subscribeToFeed(uri, callback, latestEntryId, fetchPostDetails) {
+  _subscribeToFeed(uri, callback, latestEntryId = null, fetchPostDetails = false) {
     // Load all posts information.
     let feedRef = this.database.ref(uri);
     if (latestEntryId) {
@@ -202,7 +203,7 @@ friendlyPix.Firebase = class {
    * home feed and the user post feed.
    * @private
    */
-  _getPaginatedFeed(uri, pageSize, earliestEntryId, fetchPostDetails) {
+  _getPaginatedFeed(uri, pageSize, earliestEntryId = null, fetchPostDetails = false) {
     console.log('Fetching posts from', uri, 'starting at', earliestEntryId);
     let ref = this.database.ref(uri);
     if (earliestEntryId) {
@@ -252,7 +253,7 @@ friendlyPix.Firebase = class {
   /**
    * Keeps the home feed populated with latest followed users' posts.
    */
-  startHomeFeedUpdators() {
+  startHomeFeedUpdaters() {
     // Make sure we listen on each followed people's posts.
     let followingRef = this.database.ref(`/people/${this.auth.currentUser.uid}/following`);
     this.firebaseRefs.push(followingRef);
@@ -285,7 +286,7 @@ friendlyPix.Firebase = class {
         .limitToFirst(maxResults).once('value').then(snapshot => {
           let people = snapshot.val();
           if (people) {
-            // Remove results that do not start with the search.
+            // Remove results that do not start with the search query.
             let userIds = Object.keys(people);
             userIds.forEach(userId => {
               let searchTerms = Object.keys(people[userId]._search_index);
@@ -322,6 +323,8 @@ friendlyPix.Firebase = class {
 
   /**
    * Subscribe to receive updates on a post's likes.
+   * TODO: This won't scale if a user has a huge amount of likes. We need to keep track of a
+   *       likes count instead and subscribe the like of the user.
    */
   subscribeToLikes(postId, callback) {
     // Load and listen to new Likes.
@@ -408,10 +411,10 @@ friendlyPix.Firebase = class {
           let lastPostId = true;
 
           // Add followed user's posts to the home feed.
-          for (let postId in data.val()) {
-            updateData[`/feed/${this.auth.currentUser.uid}/${postId}`] = follow ? !!follow : null;
-            lastPostId = postId;
-          }
+          data.forEach(post => {
+            updateData[`/feed/${this.auth.currentUser.uid}/${post.key}`] = follow ? !!follow : null;
+            lastPostId = post.key;
+          });
 
           // Add followed user to the 'following' list.
           updateData[`/people/${this.auth.currentUser.uid}/following/${followedUserId}`] =
@@ -443,12 +446,12 @@ friendlyPix.Firebase = class {
 
   /**
    * Listens to updates on the likes of a post and calls the callback with likes counts.
+   * TODO: This won't scale if a user has a huge amount of likes. We need to keep track of a
+   *       likes count instead.
    */
   registerForLikesCount(postId, likesCallback) {
     let likesRef = this.database.ref(`/likes/${postId}`);
-    likesRef.on('value', data => {
-      likesCallback(postId, data.val() ? Object.keys(data.val()).length : 0);
-    });
+    likesRef.on('value', data => likesCallback(data.numChildren()));
     this.firebaseRefs.push(likesRef);
   }
 
@@ -456,23 +459,19 @@ friendlyPix.Firebase = class {
    * Listens to updates on the comments of a post and calls the callback with comments counts.
    */
   registerForCommentsCount(postId, commentsCallback) {
-    let likesRef = this.database.ref(`/comments/${postId}`);
-    likesRef.on('value', data => {
-      commentsCallback(postId, data.val() ? Object.keys(data.val()).length : 0);
-    });
-    this.firebaseRefs.push(likesRef);
+    let commentsRef = this.database.ref(`/comments/${postId}`);
+    commentsRef.on('value', data => commentsCallback(data.numChildren()));
+    this.firebaseRefs.push(commentsRef);
   }
 
   /**
    * Listens to updates on the followers of a person and calls the callback with followers counts.
    * TODO: This won't scale if a user has a huge amount of followers. We need to keep track of a
-   *       follower count.
+   *       follower count instead.
    */
   registerForFollowersCount(uid, followersCallback) {
     let followersRef = this.database.ref(`/followers/${uid}`);
-    followersRef.on('value', data => {
-      followersCallback(data.val() ? Object.keys(data.val()).length : 0);
-    });
+    followersRef.on('value', data => followersCallback(data.numChildren()));
     this.firebaseRefs.push(followersRef);
   }
 
@@ -481,9 +480,7 @@ friendlyPix.Firebase = class {
    */
   registerForFollowingCount(uid, followingCallback) {
     let followingRef = this.database.ref(`/people/${uid}/following`);
-    followingRef.on('value', data => {
-      followingCallback(data.val() ? Object.keys(data.val()).length : 0);
-    });
+    followingRef.on('value', data => followingCallback(data.numChildren()));
     this.firebaseRefs.push(followingRef);
   }
 
@@ -513,11 +510,9 @@ friendlyPix.Firebase = class {
   /**
    * Listens to updates on the user's posts and calls the callback with user posts counts.
    */
-  registerForPostsCount(uid, followersCallback) {
+  registerForPostsCount(uid, postsCallback) {
     let userPostsRef = this.database.ref(`/people/${uid}/posts`);
-    userPostsRef.on('value', data => {
-      followersCallback(data.val() ? Object.keys(data.val()).length : 0);
-    });
+    userPostsRef.on('value', data => postsCallback(data.numChildren()));
     this.firebaseRefs.push(userPostsRef);
   }
 
