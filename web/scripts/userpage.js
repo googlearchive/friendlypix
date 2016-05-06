@@ -242,9 +242,9 @@ friendlyPix.UserPage = class {
 
     // Start listening for comments and likes counts.
     friendlyPix.firebase.registerForLikesCount(postId,
-        (postId, nbLikes) => $('.likes', element).text(nbLikes));
+        (nbLikes) => $('.likes', element).text(nbLikes));
     friendlyPix.firebase.registerForCommentsCount(postId,
-        (postId, nbComments) => $('.comments', element).text(nbComments));
+        (nbComments) => $('.comments', element).text(nbComments));
 
     return element;
   }
@@ -254,7 +254,7 @@ friendlyPix.UserPage = class {
    */
   static createProfileCardHtml(uid, profilePic, fullName) {
     return `
-        <a class="fp-usernamelink mdl-button mdl-js-button" href="/users/${uid}">
+        <a class="fp-usernamelink mdl-button mdl-js-button" href="/user/${uid}">
             <div class="fp-avatar" style="background-image: url('${profilePic}')"></div>
             <div class="fp-username mdl-color-text--black">${fullName}</div>
         </a>`;

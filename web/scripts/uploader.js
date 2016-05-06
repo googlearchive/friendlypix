@@ -37,7 +37,7 @@ friendlyPix.Uploader = class {
       this.addButton = $('#add');
       this.addButtonFloating = $('#add-floating');
       this.imageInput = $('#fp-mediacapture');
-      this.overlay = $('#page-add .fp-overlay');
+      this.overlay = $('.fp-overlay', '#page-add');
       this.newPictureContainer = $('#newPictureContainer');
       this.uploadButton = $('.fp-upload');
       this.imageCaptionInput = $('#imageCaptionInput');
@@ -112,7 +112,7 @@ friendlyPix.Uploader = class {
 
     // Upload the File upload to Firebase Storage and create new post.
     friendlyPix.firebase.uploadNewPic(this.currentFile, imageCaption).then(postId => {
-      page(`/users/${this.auth.currentUser.uid}`);
+      page(`/user/${this.auth.currentUser.uid}`);
       var data = {
         message: 'New pic has been posted!',
         actionHandler: () => page(`/post/${postId}`),

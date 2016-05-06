@@ -93,7 +93,7 @@ friendlyPix.Search = class {
    */
   static createSearchResultHtml(peopleId, peopleProfile) {
     return `
-        <a class="fp-searchResultItem fp-usernamelink mdl-button mdl-js-button" href="/users/${peopleId}">
+        <a class="fp-searchResultItem fp-usernamelink mdl-button mdl-js-button" href="/user/${peopleId}">
             <div class="fp-avatar" style="background-image: url(${peopleProfile.profile_picture})"></div>
             <div class="fp-username mdl-color-text--black">${peopleProfile.full_name}</div>
         </a>`;

@@ -137,7 +137,7 @@ friendlyPix.Feed = class {
 
     if (this.auth.currentUser) {
       // Make sure the home feed is being populated with followed users's new posts.
-      friendlyPix.firebase.startHomeFeedUpdators();
+      friendlyPix.firebase.startHomeFeedUpdaters();
 
       // Load initial batch of posts.
       friendlyPix.firebase.getHomeFeedPosts().then(data => {
@@ -147,6 +147,7 @@ friendlyPix.Feed = class {
         }
         let now = Date.now();
         // Listen for new posts.
+        let latestPostId = postIds[postIds.length - 1];
         friendlyPix.firebase.subscribeToHomeFeed(
             (postId, postValue) => {
               this.addNewPost(postId, postValue);
@@ -154,7 +155,7 @@ friendlyPix.Feed = class {
               if (Date.now() < now + 3000) {
                 this.showNewPosts();
               }
-            }, postIds[postIds.length - 1]);
+            }, latestPostId);
 
         // Adds fetched posts and next page button if necessary.
         this.addPosts(data.entries);
