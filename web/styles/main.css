@@ -41,6 +41,9 @@ a {
 .fp-header .mdl-textfield__label:after {
   background-color: #FFCA28;
 }
+.mdl-snackbar__action {
+  color: #FFCA28;
+}
 .mdl-textfield__label:after {
   background-color: #0288D1;
 }
