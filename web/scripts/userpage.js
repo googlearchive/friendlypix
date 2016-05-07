@@ -55,7 +55,10 @@ friendlyPix.UserPage = class {
       this.followCheckbox.change(() => this.onFollowChange());
       this.auth.onAuthStateChanged(() => this.trackFollowStatus());
       this.nbFollowingContainer.click(() => this.displayFollowing());
-      this.closeFollowingButton.click(() => this.followingContainer.hide());
+      this.closeFollowingButton.click(() => {
+        this.followingContainer.hide();
+        this.nbFollowingContainer.removeClass('is-active');
+      });
     });
   }
 
@@ -195,12 +198,16 @@ friendlyPix.UserPage = class {
    */
   displayFollowing() {
     friendlyPix.firebase.getFollowingProfiles(this.userId).then(profiles => {
+      // Clear previous following list.
       $('.fp-usernamelink', this.followingContainer).remove();
+      // Display all following profile cards.
       Object.keys(profiles).forEach(uid => this.followingContainer.prepend(
           friendlyPix.UserPage.createProfileCardHtml(
               uid, profiles[uid].profile_picture, profiles[uid].full_name)));
       if (Object.keys(profiles).length > 0) {
         this.followingContainer.show();
+        // Mark submenu as active.
+        this.nbFollowingContainer.addClass('is-active');
       }
     });
   }
@@ -211,6 +218,9 @@ friendlyPix.UserPage = class {
   clear() {
     // Removes all pics.
     $('.fp-image', this.userInfoPageImageContainer).remove();
+
+    // Remove active states of sub menu selectors (like "Following").
+    $('.is-active', this.userInfoPageImageContainer).removeClass('is-active');
 
     // Cancel all Firebase listeners.
     friendlyPix.firebase.cancelAllSubscriptions();

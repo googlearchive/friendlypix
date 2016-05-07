@@ -47,9 +47,9 @@
   <meta name="msapplication-navbutton-color" content="#303F9F">
 
   <!-- Material Design Lite imports -->
+  <link rel="stylesheet" href="/bower_components/material-design-lite/material.min.css">
+  <script src="/bower_components/material-design-lite/material.min.js"></script>
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-  <link rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.indigo-amber.min.css">
-  <script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
 
   <!-- Styling -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
@@ -71,7 +71,7 @@
 <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
 
   <!-- Header section containing logo and menu -->
-  <header class="fp-header mdl-layout__header mdl-color-text--white mdl-color--primary mdl-layout__header--scroll">
+  <header class="fp-header mdl-layout__header mdl-color-text--white mdl-color--light-blue-700 mdl-layout__header--scroll">
     <div class="mdl-layout__header-row fp-titlebar">
 
       <!-- Logo -->
@@ -112,19 +112,19 @@
     </div>
 
     <!-- Navigation Bar -->
-    <div class="fp-tab mdl-layout__header-row mdl-cell--hide-phone mdl-color--primary-dark">
+    <div class="fp-tab mdl-layout__header-row mdl-cell--hide-phone mdl-color--light-blue-600">
       <div class="mdl-tab">
         <a href="/" id="fp-menu-home" class="mdl-layout__tab fp-signed-in-only is-active mdl-button mdl-js-button mdl-js-ripple-effect"><i class="material-icons">home</i> Home</a>
         <div class="mdl-tooltip mdl-tooltip--large" for="fp-menu-home">People you are following</div>
         <a href="/feed" id="fp-menu-feed" class="mdl-layout__tab mdl-button mdl-js-button mdl-js-ripple-effect"><i class="material-icons">trending_up</i> Feed</a>
         <div class="mdl-tooltip mdl-tooltip--large" for="fp-menu-feed">All the Pics!</div>
         <input id="fp-mediacapture" type="file" accept="image/*;capture=camera">
-        <button class="fp-signed-in-only mdl-button mdl-js-button mdl-button--fab mdl-cell--hide-tablet mdl-button--colored mdl-shadow--4dp mdl-js-ripple-effect" id="add">
+        <button class="fp-signed-in-only mdl-button mdl-js-button mdl-button--fab mdl-cell--hide-tablet mdl-color--amber-400 mdl-shadow--4dp mdl-js-ripple-effect" id="add">
           <i class="material-icons">file_upload</i>
         </button>
       </div>
     </div>
-    <button class="fp-signed-in-only mdl-cell--hide-desktop mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored mdl-shadow--4dp" id="add-floating">
+    <button class="fp-signed-in-only mdl-cell--hide-desktop mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-color--amber-400 mdl-shadow--4dp" id="add-floating">
       <i class="material-icons">photo_camera</i>
     </button>
   </header>
@@ -132,7 +132,7 @@
   <!-- Drawer menu -->
   <div class="mdl-cell--hide-desktop mdl-cell--hide-tablet mdl-layout__drawer">
     <button class="fp-sign-in-button fp-signed-out-only mdl-button mdl-js-button mdl-js-ripple-effect"><i class="material-icons">account_circle</i> Sign in</button>
-    <div class="fp-signed-in-user-container mdl-color--primary fp-signed-in-only">
+    <div class="fp-signed-in-user-container mdl-color--light-blue-700 fp-signed-in-only">
       <a class="fp-usernamelink">
         <div class="fp-avatar"></div>
         <div class="fp-username mdl-color-text--white"></div>
@@ -236,15 +236,14 @@
         <div class="mdl-card__supporting-text mdl-color-text--grey-600">
           <i class="fp-info material-icons">help</i>
           <div>
-            <p>Start following people to see their posts in your <a href="/"><i class="material-icons">home</i> home</a>!</p>
+            <p>Start following people to see their posts in your <a href="/"><i class="material-icons">home</i>home</a>!</p>
             <p>
-              Use the <strong><i class="material-icons">search</i> search bar</strong> to find people you know and have
-              a look at the <a href="/feed"><i class="material-icons">trending_up</i> feed</a> to discover interesting people.
+              Use the <strong><i class="material-icons">search</i>search bar</strong> to find people you know and have
+              a look at the <a href="/feed"><i class="material-icons">trending_up</i>feed</a> to discover interesting people.
             </p>
-            <p>Then <i class="material-icons">favorite</i> like and comment their posts!</p>
+            <p>Then <i class="material-icons">favorite</i>like and comment their posts!</p>
             <p>
-              Share your pics with your friends using the <i class="material-icons">file_upload</i>
-              or <i class="material-icons">photo_camera</i> buttons.
+              Share your pics with your friends using the <i class="material-icons">file_upload</i>or <i class="material-icons">photo_camera</i>buttons.
             </p>
           </div>
         </div>
@@ -283,7 +282,6 @@
         <button class="fp-close-following  mdl-button mdl-js-button mdl-button--raised mdl-button--fab">
           <i class="material-icons">expand_less</i>
         </button>
-        <div class="fp-following-title">Following</div>
       </div>
       <div class="fp-image-container mdl-cell mdl-cell--12-col mdl-grid">
         <div class="fp-no-posts mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-desktop mdl-grid mdl-grid--no-spacing">

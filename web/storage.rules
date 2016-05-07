@@ -1,0 +1,8 @@
+service firebase.storage {
+  // TODO: Change the <STORAGE_BUCKET> placeholder below
+  match /b/<STORAGE_BUCKET>/o {
+    match /{userId}/{timestamp}/{fileName} {
+      allow read, write: if request.auth.uid == userId;
+    }
+  }
+}

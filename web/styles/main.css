@@ -18,6 +18,10 @@ html, body {
   font-family: 'Roboto', 'Helvetica', sans-serif;
 }
 a {
+  text-decoration: underline;
+  color: #039BE5;
+}
+.mdl-menu a {
   text-decoration: none;
 }
 .fp-content {
@@ -26,10 +30,22 @@ a {
 .mdl-card {
   display: block;
 }
+/* Fixes an MDL bug where the header does not scroll on small devices */
 .mdl-layout__container.has-scrolling-header .mdl-layout--fixed-header .mdl-layout__content {
   overflow-y: visible;
   overflow-x: visible;
   overflow: visible;
+}
+/* Overrides MDL colors */
+.mdl-layout.is-upgraded .mdl-layout__tab.is-active::after,
+.fp-header .mdl-textfield__label:after {
+  background-color: #FFCA28;
+}
+.mdl-textfield__label:after {
+  background-color: #0288D1;
+}
+.mdl-textfield--floating-label.is-focused .mdl-textfield__label {
+  color: #0288D1;
 }
 
 /* Header */
@@ -264,7 +280,7 @@ a {
 }
 .fp-user-following {
   display: none;
-  padding: 50px 10px 10px 10px;
+  padding: 30px 10px 10px 10px;
   overflow: visible;
   margin-top: 35px;
   height: auto;
@@ -301,11 +317,18 @@ a {
 #page-user-info .fp-user-detail {
   margin-right: 15px;
   white-space: nowrap;
+  opacity: 0.6;
 }
 #page-user-info .fp-user-nbposts,
 #page-user-info .fp-user-nbfollowers,
 #page-user-info .fp-user-nbfollowing {
   font-weight: bold;
+}
+#page-user-info .fp-user-detail.is-active {
+  border-bottom: 2px #FFCA28 solid;
+  padding: 5px 5px 3px 5px;
+  margin: -5px 10px -5px -5px;
+  opacity: 1;
 }
 #page-user-info .fp-no-posts .mdl-card {
   display: flex;
@@ -321,6 +344,7 @@ a {
   border-radius: 5px;
   padding: 5px;
   margin: -5px 10px -5px -5px;
+  border-bottom: none;
 }
 .fp-close-following {
   top: -28px;
@@ -331,18 +355,6 @@ a {
 }
 .fp-close-following:HOVER {
   background-color: #ddd;
-}
-.fp-following-title {
-  display:block;
-  position: absolute;
-  top: 0;
-  padding: 12px 30px;
-  background: rgba(63,81,181, 0.7);
-  left: 0;
-  color: white;
-  min-width: 200px;
-  box-sizing: border-box;
-  width: 100%;
 }
 @media screen and (max-width: 479px) {
   .fp-name-follow-container {
@@ -491,6 +503,7 @@ a {
   margin-top: 8px;
   font-size: 14px;
   margin-right: 5px;
+  text-decoration: none;
 }
 .fp-post .fp-time:HOVER {
   color: black;
@@ -517,7 +530,8 @@ a {
 }
 .fp-post .fp-comments .fp-author,
 .fp-post .fp-first-comment .fp-author {
-  color: #272796;
+  text-decoration: none;
+  color: #0288D1;
   font-weight: normal;
   padding: 3px 10px 3px 6px;
   margin: 0 -10px 0 -6px;
@@ -547,14 +561,13 @@ a {
 }
 .fp-post .fp-action .fp-like .material-icons {
   font-size: 35px;
-  color: darkred;
+  color: #FF5252;
   margin-right: 10px;
   padding-top: 18px;
   cursor: pointer;
-  opacity: 0.6;
 }
 .fp-post .fp-action .fp-like .material-icons:HOVER {
-  opacity: 0.3;
+  opacity: 0.6;
 }
 .fp-post .fp-action .fp-like .fp-liked {
   display: none;
@@ -595,8 +608,8 @@ a {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: blue;
-  background: radial-gradient(circle, #53749c, rgb(48,63,159) 80%);
+  background-color: #0288D1;
+  background: radial-gradient(circle, #039BE5, #01579b);
   z-index: 10000;
   display: flex;
   justify-content: center;
@@ -642,6 +655,7 @@ a {
 .fp-help p .material-icons {
   top: 7px;
   position: relative;
+  margin-right: 3px;
 }
 .fp-no-posts {
   display: none;
@@ -695,9 +709,6 @@ a {
   white-space: nowrap;
   width: calc(100% - 50px);
   overflow: hidden;
-}
-.fp-header .mdl-textfield__label:after{
-  background-color: rgb(255,215,64);
 }
 
 /* Misc */
