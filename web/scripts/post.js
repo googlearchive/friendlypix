@@ -136,7 +136,8 @@ friendlyPix.Post = class {
 
     // Fills element with data
     $('.fp-usernamelink', post).attr('href', `/user/${author.uid}`);
-    $('.fp-avatar', post).css('background-image', `url(${author.profile_picture})`);
+    $('.fp-avatar', post).css('background-image',
+        `url(${author.profile_picture || '/images/silhouette.jpg'})`);
     $('.fp-username', post).text(author.full_name);
     $('.fp-time', post).attr('href', `/post/${postId}`);
     $('.fp-time', post).text(friendlyPix.Post.getTimeText(timestamp));

@@ -37,6 +37,7 @@ friendlyPix.UserPage = class {
       this.userAvatar = $('.fp-user-avatar');
       this.toast = $('.mdl-js-snackbar');
       this.userUsername = $('.fp-user-username');
+      this.userInfoContainer = $('.fp-user-container');
       this.followContainer = $('.fp-follow');
       this.noPosts = $('.fp-no-posts', this.userPage);
       this.followLabel = $('.mdl-switch__label', this.followContainer);
@@ -140,8 +141,10 @@ friendlyPix.UserPage = class {
     friendlyPix.firebase.loadUserProfile(userId).then(snapshot => {
       let userInfo = snapshot.val();
       if (userInfo) {
-        this.userAvatar.css('background-image', `url("${userInfo.profile_picture}")`);
+        this.userAvatar.css('background-image',
+            `url("${userInfo.profile_picture || '/images/silhouette.jpg'}")`);
         this.userUsername.text(userInfo.full_name);
+        this.userInfoContainer.show();
       } else {
         var data = {
           message: 'This user does not exists.',
@@ -215,6 +218,9 @@ friendlyPix.UserPage = class {
     // Hides the "Load Next Page" button.
     this.nextPageButton.hide();
 
+    // Hides the user info box.
+    this.userInfoContainer.hide();
+
     // Hide and empty the list of Followed people.
     this.followingContainer.hide();
     $('.fp-usernamelink', this.followingContainer).remove();
@@ -252,7 +258,7 @@ friendlyPix.UserPage = class {
   /**
    * Returns an image Card element for the image with the given URL.
    */
-  static createProfileCardHtml(uid, profilePic, fullName) {
+  static createProfileCardHtml(uid, profilePic = '/images/silhouette.jpg', fullName) {
     return `
         <a class="fp-usernamelink mdl-button mdl-js-button" href="/user/${uid}">
             <div class="fp-avatar" style="background-image: url('${profilePic}')"></div>

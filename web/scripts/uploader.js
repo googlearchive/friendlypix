@@ -49,6 +49,7 @@ friendlyPix.Uploader = class {
       this.addButtonFloating.click(() => this.initiatePictureCapture());
       this.imageInput.change(e => this.readPicture(e));
       this.uploadPicForm.submit(e => this.uploadPic(e));
+      this.imageCaptionInput.keyup(() => this.uploadButton.prop('disabled', !this.imageCaptionInput.val()));
     });
   }
 
@@ -66,6 +67,7 @@ friendlyPix.Uploader = class {
     this.newPictureContainer.attr('src', url);
     page('/add');
     this.imageCaptionInput.focus();
+    this.uploadButton.prop('disabled', true);
   }
 
   /**
