@@ -69,17 +69,21 @@ friendlyPix.Feed = class {
    * then the button is hidden.
    */
   toggleNextPageButton(nextPage) {
+    this.nextPageButton.unbind('click');
     if (nextPage) {
-      this.nextPageButton.show();
-      this.nextPageButton.unbind('click');
-      this.nextPageButton.prop('disabled', false);
-      this.nextPageButton.click(() => {
+      let loadMorePosts = () => {
         this.nextPageButton.prop('disabled', true);
+        console.log('Loading next page of posts.');
         nextPage().then(data => {
           this.addPosts(data.entries);
           this.toggleNextPageButton(data.nextPage);
         });
-      });
+      };
+      this.nextPageButton.show();
+      // Enable infinite Scroll.
+      friendlyPix.MaterialUtils.onEndScroll(100).then(loadMorePosts);
+      this.nextPageButton.prop('disabled', false);
+      this.nextPageButton.click(loadMorePosts);
     } else {
       this.nextPageButton.hide();
     }

@@ -31,7 +31,7 @@ a {
   display: block;
 }
 /* Fixes an MDL bug where the header does not scroll on small devices */
-.mdl-layout__container.has-scrolling-header .mdl-layout--fixed-header .mdl-layout__content {
+.mdl-layout__container .mdl-layout--fixed-header .mdl-layout__content {
   overflow-y: visible;
   overflow-x: visible;
   overflow: visible;
@@ -349,6 +349,12 @@ a {
   margin: -5px 10px -5px -5px;
   border-bottom: none;
 }
+#page-user-info .fp-user-nbfollowing-container.is-active:HOVER {
+  border-bottom: 2px #FFCA28 solid;
+  padding: 5px 5px 3px 5px;
+  margin: -5px 10px -5px -5px;
+  border-radius: 5px 5px 0 0;
+}
 .fp-close-following {
   top: -28px;
   background-color: #eee;
@@ -520,7 +526,7 @@ a {
   padding: 5px 0 6px 10px;
   cursor: pointer;
   font-size: 14px;
-  color: #000066;
+  color: #0288D1;
 }
 .fp-post .fp-morecomments:HOVER {
   text-decoration: underline;

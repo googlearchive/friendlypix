@@ -63,4 +63,25 @@ friendlyPix.MaterialUtils = class {
     componentHandler.upgradeElements($('.mdl-textfield', clone).get());
     return clone;
   }
+
+  /**
+   * Returns a Promise which resolves when the user has reached the bottom of the page while
+   * scrolling.
+   * If an `offset` is specified the promise will resolve before reaching the bottom of
+   * the page by the given amount offset in pixels.
+   */
+  static onEndScroll(offset = 0) {
+    let resolver = new $.Deferred();
+    let mdlLayoutElement = $('.mdl-layout');
+    mdlLayoutElement.scroll(() => {
+      if ((window.innerHeight + mdlLayoutElement.scrollTop() + offset) >=
+          mdlLayoutElement.prop('scrollHeight')) {
+        console.log('Scroll End Reached!');
+        mdlLayoutElement.unbind('scroll');
+        resolver.resolve();
+      }
+    });
+    console.log('Now watching for Scroll End.');
+    return resolver.promise();
+  }
 };

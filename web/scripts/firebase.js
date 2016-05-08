@@ -204,7 +204,7 @@ friendlyPix.Firebase = class {
    * @private
    */
   _getPaginatedFeed(uri, pageSize, earliestEntryId = null, fetchPostDetails = false) {
-    console.log('Fetching posts from', uri, 'starting at', earliestEntryId);
+    console.log('Fetching entries from', uri, 'start at', earliestEntryId, 'page size', pageSize);
     let ref = this.database.ref(uri);
     if (earliestEntryId) {
       ref = ref.orderByKey().endAt(earliestEntryId);
