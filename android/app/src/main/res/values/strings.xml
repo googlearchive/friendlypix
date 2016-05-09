@@ -52,4 +52,11 @@
     <string name="new_post_location_placeholder">Getting location...</string>
     <string name="user_info_no_name">Unknown user</string>
     <string name="error_required_field">Required</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="error_upload_task_create">Couldn\'t create upload task.</string>
+    <string name="default_progress_message">Please wait...</string>
+    <string name="profile_progress_message">Signing in...</string>
+    <string name="post_upload_progress_message">Uploading...</string>
 </resources>

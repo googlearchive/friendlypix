@@ -49,6 +49,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 
@@ -57,7 +58,7 @@ import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class ProfileActivity extends AppCompatActivity implements
+public class ProfileActivity extends BaseActivity implements
         View.OnClickListener,
         GoogleApiClient.OnConnectionFailedListener {
     private static final String TAG = "ProfileActivity";
@@ -67,7 +68,6 @@ public class ProfileActivity extends AppCompatActivity implements
     private CircleImageView mProfilePhoto;
     private TextView mProfileUsername;
     private GoogleApiClient mGoogleApiClient;
-    private ProgressDialog mProgressDialog;
 
     private static final int RC_SIGN_IN = 103;
 
@@ -151,26 +151,26 @@ public class ProfileActivity extends AppCompatActivity implements
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         Log.d(TAG, "firebaseAuthWithGooogle:" + acct.getId());
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
-        showProgressDialog();
+        showProgressDialog(getString(R.string.profile_progress_message));
         mAuth.signInWithCredential(credential)
                 .addOnSuccessListener(this, new OnSuccessListener<AuthResult>() {
                     @Override
                     public void onSuccess(AuthResult result) {
-                        dismissProgressDialog();
                         handleFirebaseAuthResult(result);
                     }
                 })
                 .addOnFailureListener(this, new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Throwable throwable) {
-                        Log.e(TAG, "auth:onFailure:" + throwable.getMessage(), throwable);
-                        dismissProgressDialog();
+                        FirebaseCrash.logcat(Log.ERROR, TAG, "auth:onFailure:" + throwable.getMessage());
                         handleFirebaseAuthResult(null);
                     }
                 });
     }
 
     private void handleFirebaseAuthResult(AuthResult result) {
+        // TODO: This auth callback isn't being called after orientation change. Investigate.
+        dismissProgressDialog();
         if (result != null) {
             Log.d(TAG, "handleFirebaseAuthResult:SUCCESS");
             showSignedInUI(result.getUser());
@@ -217,32 +217,6 @@ public class ProfileActivity extends AppCompatActivity implements
         mProfileUi.setVisibility(View.GONE);
     }
 
-    public void showProgressDialog() {
-        if (mProgressDialog == null) {
-            mProgressDialog = new ProgressDialog(this);
-            mProgressDialog.setMessage("Signing in...");
-            mProgressDialog.setIndeterminate(true);
-            mProgressDialog.setCancelable(false);
-            mProgressDialog.setCanceledOnTouchOutside(false);
-        }
-        if (!mProgressDialog.isShowing()) {
-            mProgressDialog.show();
-        }
-    }
-
-    public void dismissProgressDialog() {
-        if (mProgressDialog != null && mProgressDialog.isShowing()) {
-            Context context = ((ContextWrapper) mProgressDialog.getContext()).getBaseContext();
-
-            // Dismiss only if launching activity hasn't been finished or destroyed.
-            if(context instanceof Activity &&
-                    ((Activity)context).isFinishing() || ((Activity)context).isDestroyed()) {
-                return;
-            } else
-                mProgressDialog.dismiss();
-        }
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -270,6 +244,7 @@ public class ProfileActivity extends AppCompatActivity implements
         super.onStart();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null && !currentUser.isAnonymous()) {
+            dismissProgressDialog();
             showSignedInUI(currentUser);
         } else {
             showSignedOutUI();
