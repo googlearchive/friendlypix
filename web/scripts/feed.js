@@ -59,8 +59,15 @@ friendlyPix.Feed = class {
       let postData = posts[postIds[i]];
       let post = friendlyPix.post.clone();
       this.posts.push(post);
-      this.feedImageContainer.append(post.fillPostData(
-        postIds[i], postData.url, postData.text, postData.author, postData.timestamp));
+      let postElement = post.fillPostData(
+          postIds[i], postData.url, postData.text, postData.author, postData.timestamp);
+      // If a post with similar ID is already in the feed we replace it instead of appending.
+      let existingPostElement = $(`.fp-post-${postIds[i]}`, this.feedImageContainer);
+      if (existingPostElement.length) {
+        existingPostElement.replaceWith(postElement);
+      } else {
+        this.feedImageContainer.append(postElement);
+      }
     }
   }
 
