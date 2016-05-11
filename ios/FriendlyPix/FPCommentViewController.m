@@ -60,7 +60,7 @@ NSMutableArray *comments;
                           };
   // Push data to Firebase Database
   FIRDatabaseReference *ref;
-  ref = [FIRDatabase database].reference;
+  ref = [[FIRDatabase database] reference];
   FIRDatabaseReference *comment = [[ref child:[@"comments/" stringByAppendingString:self.post.postID]] childByAutoId];
   [comment setValue:data withCompletionBlock:^(NSError *error, FIRDatabaseReference *ref) {
     if (error==nil) {

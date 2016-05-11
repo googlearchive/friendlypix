@@ -102,19 +102,19 @@
 
   [[super.ref child:
     [NSString stringWithFormat:@"users/%@/followers/%@", _user.userID,
-     [FPAppState sharedInstance].currentUser.userID]] setValue:[NSNumber numberWithBool:YES]];
+     [FPAppState sharedInstance].currentUser.userID]] setValue:@YES];
   [[super.ref child:
     [NSString stringWithFormat:@"users/%@/following/%@",
      [FPAppState sharedInstance].currentUser.userID, _user.userID]]
-   setValue:[NSNumber numberWithBool:YES]];
+   setValue:@YES];
 
   FIRDatabaseReference *myFeed = [super.ref child:
-                      [NSString stringWithFormat:@"users/%@/feed", [FPAppState sharedInstance].currentUser.userID]];
+                      [NSString stringWithFormat:@"feed/%@", [FPAppState sharedInstance].currentUser.userID]];
   [[super.ref child:
     [NSString stringWithFormat:@"users/%@/posts", _user.userID]]
    observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot *snapshot) {
      for (NSString *postId in [snapshot.value allKeys]) {
-       [[myFeed child:postId] setValue:[NSNumber numberWithBool:YES]];
+       [[myFeed child:postId] setValue:@YES];
      }
    }];
 
