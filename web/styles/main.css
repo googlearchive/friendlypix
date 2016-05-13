@@ -30,6 +30,29 @@ a {
 .mdl-card {
   display: block;
 }
+/* Theatre mode */
+.fp-theatre {
+  display: none;
+  background: rgba(0,0,0,0.8);
+  padding: 30px;
+  text-align: center;
+  box-sizing: border-box;
+  vertical-align: middle;
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  z-index: 10000;
+  align-items: center;
+  justify-content: center;
+}
+.fp-fullpic {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  border: black 10px solid;
+  box-sizing: border-box;
+}
 /* Fixes an MDL bug where the header does not scroll on small devices */
 .mdl-layout__container .mdl-layout--fixed-header .mdl-layout__content {
   overflow-y: visible;
@@ -496,6 +519,7 @@ a {
   position: relative;
   padding-bottom: 25%;
   min-height: 250px;
+  cursor: pointer;
 }
 @media screen and (max-width: 840px) {
   .fp-post .fp-image {
