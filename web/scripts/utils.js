@@ -84,4 +84,12 @@ friendlyPix.MaterialUtils = class {
     console.log('Now watching for Scroll End.');
     return resolver.promise();
   }
+
+  /**
+   * Stops scroll listeners.
+   */
+  static stopOnEndScrolls() {
+    let mdlLayoutElement = $('.mdl-layout');
+    mdlLayoutElement.unbind('scroll');
+  }
 };

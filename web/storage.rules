@@ -1,8 +1,15 @@
 service firebase.storage {
   // TODO: Change the <STORAGE_BUCKET> placeholder below
   match /b/<STORAGE_BUCKET>/o {
-    match /{userId}/{timestamp}/{fileName} {
-      allow read, write: if request.auth.uid == userId;
+    match /{userId}/thumb/{timestamp}/{fileName} {
+      allow read, write: if request.auth.uid == userId
+                            && request.resource.size < 1024 * 1024
+                            && request.resource.metadata.contentType.matches('image/.*');
+    }
+    match /{userId}/full/{timestamp}/{fileName} {
+      allow read, write: if request.auth.uid == userId
+                            && request.resource.size < 5 * 1024 * 1024
+                            && request.resource.metadata.contentType.matches('image/.*');
     }
   }
 }

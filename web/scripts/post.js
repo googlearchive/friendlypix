@@ -69,8 +69,8 @@ friendlyPix.Post = class {
         this.toast[0].MaterialSnackbar.showSnackbar(data);
         page(`/user/${this.auth.currentUser.uid}`);
       } else {
-        this.fillPostData(snapshot.key, post.url, post.text, post.author, post.timestamp,
-            post.storage_uri);
+        this.fillPostData(snapshot.key, post.thumb_url || post.url, post.text, post.author,
+            post.timestamp, post.full_storage_uri, post.thumb_storage_uri);
       }
     });
   }
@@ -130,7 +130,7 @@ friendlyPix.Post = class {
    * Fills the post's Card with the given details.
    * Also sets all auto updates and listeners on the UI elements of the post.
    */
-  fillPostData(postId, imageUrl, imageText, author, timestamp, storageUri) {
+  fillPostData(postId, imageUrl, imageText, author, timestamp, thumbStorageUri, picStorageUri) {
     let post = this.postElement;
     post.addClass(`fp-post-${postId}`);
 
@@ -151,7 +151,7 @@ friendlyPix.Post = class {
     $('.fp-first-comment', post).append(friendlyPix.Post.createCommentHtml(author, imageText));
 
     // Handle the Delete button.
-    if (this.auth.currentUser && this.auth.currentUser.uid === author.uid && storageUri) {
+    if (this.auth.currentUser && this.auth.currentUser.uid === author.uid && picStorageUri) {
       $('.fp-delete-post', post).show();
       $('.fp-delete-post', post).click(() => {
         swal({
@@ -166,7 +166,7 @@ friendlyPix.Post = class {
           allowEscapeKey: true
         }, () => {
           $('.fp-delete-post', post).prop('disabled', true);
-          friendlyPix.firebase.deletePost(postId, storageUri).then(() => {
+          friendlyPix.firebase.deletePost(postId, picStorageUri, thumbStorageUri).then(() => {
             swal({
               title: 'Deleted!',
               text: 'Your post has been deleted.',

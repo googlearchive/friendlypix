@@ -44,6 +44,7 @@ friendlyPix.Router = class {
         let loadUser = userId => friendlyPix.userPage.loadUser(userId);
         let showHomeFeed = () => friendlyPix.feed.showHomeFeed();
         let showGeneralFeed = () => friendlyPix.feed.showGeneralFeed();
+        let clearFeed = () => friendlyPix.feed.clear();
         let showPost = postId => friendlyPix.post.loadPost(postId);
 
         page('/', pipe(showHomeFeed, null, true),
@@ -51,7 +52,7 @@ friendlyPix.Router = class {
         page('/feed', pipe(showGeneralFeed, null, true), pipe(displayPage, {pageId: 'feed'}));
         page('/post/:postId', pipe(showPost, null, true), pipe(displayPage, {pageId: 'post'}));
         page('/user/:userId', pipe(loadUser, null, true), pipe(displayPage, {pageId: 'user-info'}));
-        page('/about', pipe(displayPage, {pageId: 'about'}));
+        page('/about', pipe(clearFeed, null, true), pipe(displayPage, {pageId: 'about'}));
         page('/add', pipe(displayPage, {pageId: 'add', onlyAuthed: true}));
         page('*', () => page('/'));
 

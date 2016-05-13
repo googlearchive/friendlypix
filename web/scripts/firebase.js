@@ -251,29 +251,70 @@ friendlyPix.Firebase = class {
   }
 
   /**
-   * Keeps the home feed populated with latest followed users' posts.
+   * Keeps the home feed populated with latest followed users' posts live.
    */
-  startHomeFeedUpdaters() {
+  startHomeFeedLiveUpdaters() {
     // Make sure we listen on each followed people's posts.
     let followingRef = this.database.ref(`/people/${this.auth.currentUser.uid}/following`);
     this.firebaseRefs.push(followingRef);
     followingRef.on('child_added', followingData => {
       // Start listening the followed user's posts to populate the home feed.
-      let followedUserId = followingData.key;
-      let followedUserPostsRef = this.database.ref(`/people/${followedUserId}/posts`);
-      if (followingData.val() && followingData.val() !== true) {
+      let followedUid = followingData.key;
+      let followedUserPostsRef = this.database.ref(`/people/${followedUid}/posts`);
+      if (followingData.val() instanceof String) {
         followedUserPostsRef = followedUserPostsRef.orderByKey().startAt(followingData.val());
       }
       this.firebaseRefs.push(followedUserPostsRef);
       followedUserPostsRef.on('child_added', postData => {
         if (postData.key !== followingData.val()) {
-          let addedPost = {};
-          addedPost[postData.key] = true;
-          this.database.ref(`/feed/${this.auth.currentUser.uid}`).update(addedPost);
-          this.database.ref(`/people/${this.auth.currentUser.uid}/following/${followedUserId}`)
-              .set(postData.key);
+          let updates = {};
+          updates[`/feed/${this.auth.currentUser.uid}/${postData.key}`] = true;
+          updates[`/people/${this.auth.currentUser.uid}/following/${followedUid}`] = postData.key;
+          this.database.ref().update(updates);
         }
       });
+    });
+    // Stop listening to users we unfollow.
+    followingRef.on('child_removed', followingData => {
+      // Stop listening the followed user's posts to populate the home feed.
+      let followedUserId = followingData.key;
+      this.database.ref(`/people/${followedUserId}/posts`).off();
+    });
+  }
+
+  /**
+   * Updates the home feed with new followed users' posts and returns a promise once that's done.
+   */
+  updateHomeFeeds() {
+    // Make sure we listen on each followed people's posts.
+    let followingRef = this.database.ref(`/people/${this.auth.currentUser.uid}/following`);
+    return followingRef.once('value', followingData => {
+      // Start listening the followed user's posts to populate the home feed.
+      let following = followingData.val();
+      if (!following) {
+        return;
+      }
+      let updateOperations = Object.keys(following).map(followedUid => {
+        let followedUserPostsRef = this.database.ref(`/people/${followedUid}/posts`);
+        let lastSyncedPostId = following[followedUid];
+        if (lastSyncedPostId instanceof String) {
+          followedUserPostsRef = followedUserPostsRef.orderByKey().startAt(lastSyncedPostId);
+        }
+        return followedUserPostsRef.once('value', postData => {
+          let updates = {};
+          if (!postData.val()) {
+            return;
+          }
+          Object.keys(postData.val()).forEach(postId => {
+            if (postId !== lastSyncedPostId) {
+              updates[`/feed/${this.auth.currentUser.uid}/${postId}`] = true;
+              updates[`/people/${this.auth.currentUser.uid}/following/${followedUid}`] = postId;
+            }
+          });
+          return this.database.ref().update(updates);
+        });
+      });
+      return Promise.all(updateOperations);
     });
   }
 
@@ -370,40 +411,55 @@ friendlyPix.Firebase = class {
    * Uploads a new Picture to Firebase Storage and adds a new post referencing it.
    * This returns a Promise which completes with the new Post ID.
    */
-  uploadNewPic(file, text) {
-    // Start the File upload to Firebase Storage.
-    let fileRef = this.storage.ref(`${this.auth.currentUser.uid}/${Date.now()}/${file.name}`);
+  uploadNewPic(pic, thumb, fileName, text) {
+    // Start the pic file upload to Firebase Storage.
+    let picRef = this.storage.ref(`${this.auth.currentUser.uid}/full/${Date.now()}/${fileName}`);
     let metadata = {
-      contentType: file.type
+      contentType: pic.type
     };
-    var uploadTask = fileRef.put(file, metadata);
-    let completer = new $.Deferred();
-    uploadTask.on('state_changed', null, error => {
-      completer.reject(error);
+    var picUploadTask = picRef.put(pic, metadata);
+    let picCompleter = new $.Deferred();
+    picUploadTask.on('state_changed', null, error => {
+      picCompleter.reject(error);
       console.error('Error while uploading new pic', error);
     }, () => {
-      console.log('New image uploaded. Size:', uploadTask.snapshot.totalBytes, 'bytes.');
-      var url = uploadTask.snapshot.metadata.downloadURLs[0];
+      console.log('New pic uploaded. Size:', picUploadTask.snapshot.totalBytes, 'bytes.');
+      var url = picUploadTask.snapshot.metadata.downloadURLs[0];
       console.log('File available at', url);
+      picCompleter.resolve(url);
+    });
 
+    // Start the thumb file upload to Firebase Storage.
+    let thumbRef = this.storage.ref(`${this.auth.currentUser.uid}/thumb/${Date.now()}/${fileName}`);
+    var tumbUploadTask = thumbRef.put(thumb, metadata);
+    let thumbCompleter = new $.Deferred();
+    tumbUploadTask.on('state_changed', null, error => {
+      thumbCompleter.reject(error);
+      console.error('Error while uploading new thumb', error);
+    }, () => {
+      console.log('New thumb uploaded. Size:', tumbUploadTask.snapshot.totalBytes, 'bytes.');
+      var url = tumbUploadTask.snapshot.metadata.downloadURLs[0];
+      console.log('File available at', url);
+      thumbCompleter.resolve(url);
+    });
+
+    return Promise.all([picCompleter.promise(), thumbCompleter.promise()]).then(urls => {
       // Add a new post in the Firebase Database.
-      this.database.ref('/posts').push({
-        url: url,
+      return this.database.ref('/posts').push({
+        full_url: urls[0],
+        thumb_url: urls[1],
         text: text,
         timestamp: firebase.database.ServerValue.TIMESTAMP,
-        storage_uri: fileRef.toString(),
+        full_storage_uri: picRef.toString(),
+        thumb_storage_uri: thumbRef.toString(),
         author: {
           uid: this.auth.currentUser.uid,
           full_name: this.auth.currentUser.displayName,
           profile_picture: this.auth.currentUser.photoURL
         }
       }).then(data => this.database.ref(`/people/${this.auth.currentUser.uid}/posts/${data.key}`)
-          .set(true).then(() => completer.resolve(data.key)), error => {
-            completer.reject(error);
-            console.error('Error while creating new post', error);
-          });
+          .set(true));
     });
-    return completer.promise();
   }
 
   /**
@@ -529,7 +585,7 @@ friendlyPix.Firebase = class {
    * Deletes the given post from the global post feed and the user's post feed. Also deletes
    * comments, likes and the file on Firebase Storage.
    */
-  deletePost(postId, storageUri) {
+  deletePost(postId, picStorageUri, thumbStorageUri) {
     console.log(`Deleting ${postId}`);
     let updateObj = {};
     updateObj[`/people/${this.auth.currentUser.uid}/posts/${postId}`] = null;
@@ -537,9 +593,10 @@ friendlyPix.Firebase = class {
     updateObj[`/likes/${postId}`] = null;
     updateObj[`/posts/${postId}`] = null;
     let deleteFromDatabase = this.database.ref().update(updateObj);
-    if (storageUri) {
-      let deleteFromStorage = this.storage.refFromURL(storageUri).delete();
-      return Promise.all([deleteFromDatabase, deleteFromStorage]);
+    if (picStorageUri) {
+      let deletePicFromStorage = this.storage.refFromURL(picStorageUri).delete();
+      let deleteThumbFromStorage = this.storage.refFromURL(thumbStorageUri).delete();
+      return Promise.all([deleteFromDatabase, deletePicFromStorage, deleteThumbFromStorage]);
     }
     return deleteFromDatabase;
   }
