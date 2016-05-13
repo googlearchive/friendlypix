@@ -59,8 +59,8 @@ friendlyPix.Feed = class {
       let postData = posts[postIds[i]];
       let post = friendlyPix.post.clone();
       this.posts.push(post);
-      let postElement = post.fillPostData(
-          postIds[i], postData.url, postData.text, postData.author, postData.timestamp);
+      let postElement = post.fillPostData(postIds[i], postData.thumb_url || postData.url,
+          postData.text, postData.author, postData.timestamp);
       // If a post with similar ID is already in the feed we replace it instead of appending.
       let existingPostElement = $(`.fp-post-${postIds[i]}`, this.feedImageContainer);
       if (existingPostElement.length) {
@@ -111,8 +111,8 @@ friendlyPix.Feed = class {
       let postValue = newPosts[postKeys[i]];
       let post = friendlyPix.post.clone();
       this.posts.push(post);
-      this.feedImageContainer.prepend(post.fillPostData(
-        postKeys[i], postValue.url, postValue.text, postValue.author, postValue.timestamp));
+      this.feedImageContainer.prepend(post.fillPostData(postKeys[i], postValue.thumb_url ||
+          postValue.url, postValue.text, postValue.author, postValue.timestamp));
     }
   }
 
@@ -147,34 +147,32 @@ friendlyPix.Feed = class {
     this.clear();
 
     if (this.auth.currentUser) {
-      // Make sure the home feed is being populated with followed users's new posts.
-      friendlyPix.firebase.startHomeFeedUpdaters();
+      // Make sure the home feed is updated with followed users's new posts.
+      friendlyPix.firebase.updateHomeFeeds().then(() => {
+        // Load initial batch of posts.
+        friendlyPix.firebase.getHomeFeedPosts().then(data => {
+          let postIds = Object.keys(data.entries);
+          if (postIds.length === 0) {
+            this.noPostsMessage.fadeIn();
+          }
+          // Listen for new posts.
+          let latestPostId = postIds[postIds.length - 1];
+          friendlyPix.firebase.subscribeToHomeFeed(
+              (postId, postValue) => {
+                this.addNewPost(postId, postValue);
+              }, latestPostId);
 
-      // Load initial batch of posts.
-      friendlyPix.firebase.getHomeFeedPosts().then(data => {
-        let postIds = Object.keys(data.entries);
-        if (postIds.length === 0) {
-          this.noPostsMessage.fadeIn();
-        }
-        let now = Date.now();
-        // Listen for new posts.
-        let latestPostId = postIds[postIds.length - 1];
-        friendlyPix.firebase.subscribeToHomeFeed(
-            (postId, postValue) => {
-              this.addNewPost(postId, postValue);
-              // The first 3 seconds we display posts automatically.
-              if (Date.now() < now + 3000) {
-                this.showNewPosts();
-              }
-            }, latestPostId);
+          // Adds fetched posts and next page button if necessary.
+          this.addPosts(data.entries);
+          this.toggleNextPageButton(data.nextPage);
+        });
 
-        // Adds fetched posts and next page button if necessary.
-        this.addPosts(data.entries);
-        this.toggleNextPageButton(data.nextPage);
+        // Add new posts from followers live.
+        friendlyPix.firebase.startHomeFeedLiveUpdaters();
+
+        // Listen for posts deletions.
+        friendlyPix.firebase.registerForPostsDeletion(postId => this.onPostDeleted(postId));
       });
-
-      // Listen for posts deletions.
-      friendlyPix.firebase.registerForPostsDeletion(postId => this.onPostDeleted(postId));
     }
   }
 
@@ -215,6 +213,12 @@ friendlyPix.Feed = class {
     // Hides the "next page" and "new posts" buttons.
     this.nextPageButton.hide();
     this.newPostsButton.hide();
+
+    // Remove any click listener on the next page button.
+    this.nextPageButton.unbind('click');
+
+    // Stops then infinite scrolling listeners.
+    friendlyPix.MaterialUtils.stopOnEndScrolls();
 
     // Clears the list of upcoming posts to display.
     this.newPosts = {};

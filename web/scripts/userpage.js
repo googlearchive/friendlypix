@@ -93,8 +93,8 @@ friendlyPix.UserPage = class {
     let postIds = Object.keys(posts);
     for (let i = postIds.length - 1; i >= 0; i--) {
       this.userInfoPageImageContainer.append(
-          friendlyPix.UserPage.createImageCard(postIds[i], posts[postIds[i]].url,
-              posts[postIds[i]].text));
+          friendlyPix.UserPage.createImageCard(postIds[i],
+              posts[postIds[i]].thumb_url || posts[postIds[i]].url, posts[postIds[i]].text));
       this.noPosts.hide();
     }
   }
@@ -179,7 +179,8 @@ friendlyPix.UserPage = class {
       friendlyPix.firebase.subscribeToUserFeed(userId,
         (postId, postValue) => {
           this.userInfoPageImageContainer.prepend(
-              friendlyPix.UserPage.createImageCard(postId, postValue.url, postValue.text));
+              friendlyPix.UserPage.createImageCard(postId,
+                  postValue.thumb_url || postValue.url, postValue.text));
           this.noPosts.hide();
         }, postIds[postIds.length - 1]);
 
@@ -235,6 +236,9 @@ friendlyPix.UserPage = class {
     this.followingContainer.hide();
     $('.fp-usernamelink', this.followingContainer).remove();
 
+    // Stops then infinite scrolling listeners.
+    friendlyPix.MaterialUtils.stopOnEndScrolls();
+
     // Hide the "No posts" message.
     this.noPosts.hide();
   }
@@ -258,9 +262,9 @@ friendlyPix.UserPage = class {
 
     // Start listening for comments and likes counts.
     friendlyPix.firebase.registerForLikesCount(postId,
-        (nbLikes) => $('.likes', element).text(nbLikes));
+        nbLikes => $('.likes', element).text(nbLikes));
     friendlyPix.firebase.registerForCommentsCount(postId,
-        (nbComments) => $('.comments', element).text(nbComments));
+        nbComments => $('.comments', element).text(nbComments));
 
     return element;
   }
