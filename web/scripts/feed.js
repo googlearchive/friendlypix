@@ -66,7 +66,7 @@ friendlyPix.Feed = class {
       if (existingPostElement.length) {
         existingPostElement.replaceWith(postElement);
       } else {
-        this.feedImageContainer.append(postElement);
+        this.feedImageContainer.append(postElement.addClass(`fp-post-${postIds[i]}`);
       }
     }
   }
