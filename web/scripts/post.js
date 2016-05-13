@@ -141,7 +141,6 @@ friendlyPix.Post = class {
    */
   fillPostData(postId, thumbUrl, imageText, author, timestamp, thumbStorageUri, picStorageUri, picUrl) {
     let post = this.postElement;
-    post.addClass(`fp-post-${postId}`);
 
     // Fills element's author profile.
     $('.fp-usernamelink', post).attr('href', `/user/${author.uid}`);
