@@ -372,14 +372,12 @@ friendlyPix.Firebase = class {
   }
 
   /**
-   * Subscribe to receive updates on a post's likes.
-   * TODO: This won't scale if a user has a huge amount of likes. We need to keep track of a
-   *       likes count instead and subscribe the like of the user.
+   * Subscribe to receive updates on a user's post like status.
    */
-  subscribeToLikes(postId, callback) {
+  registerToUserLike(postId, callback) {
     // Load and listen to new Likes.
-    let likesRef = this.database.ref(`likes/${postId}`);
-    likesRef.on('value', callback);
+    let likesRef = this.database.ref(`likes/${postId}/${this.auth.currentUser.uid}`);
+    likesRef.on('value', data => callback(!!data.val()));
     this.firebaseRefs.push(likesRef);
   }
 
@@ -388,7 +386,7 @@ friendlyPix.Firebase = class {
    */
   updateLike(postId, value) {
     return this.database.ref(`likes/${postId}/${this.auth.currentUser.uid}`)
-        .set(value ? !!value : null);
+        .set(value ? firebase.database.ServerValue.TIMESTAMP : null);
   }
 
   /**
@@ -444,7 +442,7 @@ friendlyPix.Firebase = class {
     });
 
     return Promise.all([picCompleter.promise(), thumbCompleter.promise()]).then(urls => {
-      // Add a new post in the Firebase Database.
+      // Once both pics and thumbanils has been uploaded add a new post in the Firebase Database.
       return this.database.ref('/posts').push({
         full_url: urls[0],
         thumb_url: urls[1],
@@ -457,8 +455,13 @@ friendlyPix.Firebase = class {
           full_name: this.auth.currentUser.displayName,
           profile_picture: this.auth.currentUser.photoURL
         }
-      }).then(data => this.database.ref(`/people/${this.auth.currentUser.uid}/posts/${data.key}`)
-          .set(true));
+      }).then(data => {
+        // Add the post to the user's post and the user's home feed.
+        let update = {};
+        update[`/people/${this.auth.currentUser.uid}/posts/${data.key}`] = true;
+        update[`/feed/${this.auth.currentUser.uid}/${data.key}`] = true;
+        return this.database.ref().update(update);
+      });
     });
   }
 
@@ -592,6 +595,7 @@ friendlyPix.Firebase = class {
     updateObj[`/comments/${postId}`] = null;
     updateObj[`/likes/${postId}`] = null;
     updateObj[`/posts/${postId}`] = null;
+    updateObj[`/feed/${this.auth.currentUser.uid}/${postId}`] = null;
     let deleteFromDatabase = this.database.ref().update(updateObj);
     if (picStorageUri) {
       let deletePicFromStorage = this.storage.refFromURL(picStorageUri).delete();

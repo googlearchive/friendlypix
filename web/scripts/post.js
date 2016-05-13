@@ -39,6 +39,15 @@ friendlyPix.Post = class {
       this.postPage = $('#page-post');
       this.postElement = $('.fp-post', this.postPage);
       this.toast = $('.mdl-js-snackbar');
+      this.theatre = $('.fp-theatre');
+
+      this.theatre.click(() => this.theatre.hide());
+      $(document).keydown(e => {
+        if (e.which === 27) {
+          this.theatre.hide();
+        }
+        e.preventDefault();
+      });
     });
   }
 
@@ -70,7 +79,7 @@ friendlyPix.Post = class {
         page(`/user/${this.auth.currentUser.uid}`);
       } else {
         this.fillPostData(snapshot.key, post.thumb_url || post.url, post.text, post.author,
-            post.timestamp, post.full_storage_uri, post.thumb_storage_uri);
+            post.timestamp, post.thumb_storage_uri, post.full_storage_uri, post.full_url);
       }
     });
   }
@@ -130,27 +139,93 @@ friendlyPix.Post = class {
    * Fills the post's Card with the given details.
    * Also sets all auto updates and listeners on the UI elements of the post.
    */
-  fillPostData(postId, imageUrl, imageText, author, timestamp, thumbStorageUri, picStorageUri) {
+  fillPostData(postId, thumbUrl, imageText, author, timestamp, thumbStorageUri, picStorageUri, picUrl) {
     let post = this.postElement;
     post.addClass(`fp-post-${postId}`);
 
-    // Fills element with data
+    // Fills element's author profile.
     $('.fp-usernamelink', post).attr('href', `/user/${author.uid}`);
     $('.fp-avatar', post).css('background-image',
         `url(${author.profile_picture || '/images/silhouette.jpg'})`);
     $('.fp-username', post).text(author.full_name);
+
+    // Shows the pic's thumbnail.
+    $('.fp-image', post).css('background-image', `url(${thumbUrl})`);
+    $('.fp-image', post).unbind('click');
+    $('.fp-image', post).click(() => {
+      $('.fp-fullpic', '.fp-theatre').prop('src', picUrl || thumbUrl);
+      $('.fp-theatre').css('display', 'flex');
+    });
+
+    this._setupDate(postId, timestamp);
+    this._setupDeleteButton(postId, author, picStorageUri, thumbStorageUri);
+    this._setupLikeCountAndStatus(postId);
+    this._setupComments(postId, author, imageText);
+    return post;
+  }
+
+  /**
+   * Shows the publishing date of the post and updates this date live.
+   * @private
+   */
+  _setupDate(postId, timestamp) {
+    let post = this.postElement;
+
     $('.fp-time', post).attr('href', `/post/${postId}`);
     $('.fp-time', post).text(friendlyPix.Post.getTimeText(timestamp));
-    $('.fp-image', post).css('background-image', `url(${imageUrl})`);
-    let ran = Math.floor(Math.random() * 10000000);
-    $('.mdl-textfield__input', post).attr('id', `${postId}-${ran}-comment`);
-    $('.mdl-textfield__label', post).attr('for', `${postId}-${ran}-comment`);
+    // Update the time counter every minutes.
+    this.timers.push(setInterval(
+      () => $('.fp-time', post).text(friendlyPix.Post.getTimeText(timestamp)), 60000));
+  }
+
+  /**
+   * Shows comments and binds actions to the comments form.
+   * @private
+   */
+  _setupComments(postId, author, imageText) {
+    let post = this.postElement;
 
     // Creates the initial comment with the post's text.
     $('.fp-first-comment', post).empty();
     $('.fp-first-comment', post).append(friendlyPix.Post.createCommentHtml(author, imageText));
 
-    // Handle the Delete button.
+    // Load first page of comments and listen to new comments.
+    $('.fp-comments', post).empty();
+    friendlyPix.firebase.getComments(postId).then(data => {
+      this.displayComments(data.entries);
+      this.displayNextPageButton(data.nextPage);
+
+      // Display any new comments.
+      let commentIds = Object.keys(data.entries);
+      friendlyPix.firebase.subscribeToComments(postId, (commentId, commentData) => {
+        $('.fp-comments', post).append(
+          friendlyPix.Post.createCommentHtml(commentData.author, commentData.text));
+      }, commentIds ? commentIds[commentIds.length - 1] : 0);
+    });
+
+    if (this.auth.currentUser) {
+      // Bind comments form posting.
+      $('.fp-add-comment', post).submit(e => {
+        e.preventDefault();
+        let commentText = $(`.mdl-textfield__input`, post).val();
+        friendlyPix.firebase.addComment(postId, commentText);
+        $(`.mdl-textfield__input`, post).val('');
+      });
+      let ran = Math.floor(Math.random() * 10000000);
+      $('.mdl-textfield__input', post).attr('id', `${postId}-${ran}-comment`);
+      $('.mdl-textfield__label', post).attr('for', `${postId}-${ran}-comment`);
+      // Show comments form.
+      $('.fp-action', post).css('display', 'flex');
+    }
+  }
+
+  /**
+   * Shows/Hode and binds actions to the Delete button.
+   * @private
+   */
+  _setupDeleteButton(postId, author, picStorageUri, thumbStorageUri) {
+    let post = this.postElement;
+
     if (this.auth.currentUser && this.auth.currentUser.uid === author.uid && picStorageUri) {
       $('.fp-delete-post', post).show();
       $('.fp-delete-post', post).click(() => {
@@ -189,66 +264,45 @@ friendlyPix.Post = class {
     } else {
       $('.fp-delete-post', post).hide();
     }
+  }
 
-    // Update the time counter every minutes.
-    this.timers.push(setInterval(
-        () => $('.fp-time', post).text(friendlyPix.Post.getTimeText(timestamp)), 60000));
-
-    // Load first page of comments and listen to new comments.
-    $('.fp-comments', post).empty();
-    friendlyPix.firebase.getComments(postId).then(data => {
-      this.displayComments(data.entries);
-      this.displayNextPageButton(data.nextPage);
-
-      // Display any new comments.
-      let commentIds = Object.keys(data.entries);
-      friendlyPix.firebase.subscribeToComments(postId, (commentId, commentData) => {
-        $('.fp-comments', post).append(
-            friendlyPix.Post.createCommentHtml(commentData.author, commentData.text));
-      }, commentIds ? commentIds[commentIds.length - 1] : 0);
-    });
-
-    // Load and listen to new Likes.
-    friendlyPix.firebase.subscribeToLikes(postId, data => {
-      if (this.auth.currentUser) {
-        $('.fp-liked', post).hide();
-        $('.fp-not-liked', post).show();
-      }
-      if (data.val()) {
-        $('.fp-likes', post).show();
-        let nbLikes = Object.keys(data.val()).length;
-        $('.fp-likes', post).text(nbLikes + ' like' + (nbLikes === 1 ? '' : 's'));
-        if (this.auth.currentUser) {
-          for (let uid in data.val()) {
-            if (uid === this.auth.currentUser.uid) {
-              $('.fp-liked', post).show();
-              $('.fp-not-liked', post).hide();
-              break;
-            }
-          }
-        }
-      } else {
-        $('.fp-likes', post).hide();
-      }
-    });
+  /**
+   * Starts Likes count listener and on/off like status.
+   * @private
+   */
+  _setupLikeCountAndStatus(postId) {
+    let post = this.postElement;
 
     if (this.auth.currentUser) {
-      // Add event listeners.
-      $('.fp-liked', post).click(() => friendlyPix.firebase.updateLike(postId, null));
-      $('.fp-not-liked', post).click(() => friendlyPix.firebase.updateLike(postId, true));
-      $('.fp-add-comment', post).submit(e => {
-        e.preventDefault();
-        let commentText = $(`.mdl-textfield__input`, post).val();
-        friendlyPix.firebase.addComment(postId, commentText);
-        $(`.mdl-textfield__input`, post).val('');
+      // Listen to like status.
+      friendlyPix.firebase.registerToUserLike(postId, isliked => {
+        if (isliked) {
+          $('.fp-liked', post).show();
+          $('.fp-not-liked', post).hide();
+        } else {
+          $('.fp-liked', post).hide();
+          $('.fp-not-liked', post).show();
+        }
       });
-      $('.fp-action', post).css('display', 'flex');
+
+      // Add event listeners.
+      $('.fp-liked', post).click(() => friendlyPix.firebase.updateLike(postId, false));
+      $('.fp-not-liked', post).click(() => friendlyPix.firebase.updateLike(postId, true));
     } else {
       $('.fp-liked', post).hide();
       $('.fp-not-liked', post).hide();
       $('.fp-action', post).hide();
     }
-    return post;
+
+    // Listen to number of Likes.
+    friendlyPix.firebase.registerForLikesCount(postId, nbLikes => {
+      if (nbLikes > 0) {
+        $('.fp-likes', post).show();
+        $('.fp-likes', post).text(nbLikes + ' like' + (nbLikes === 1 ? '' : 's'));
+      } else {
+        $('.fp-likes', post).hide();
+      }
+    });
   }
 
   /**
