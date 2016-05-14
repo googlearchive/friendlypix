@@ -110,41 +110,15 @@
         FPComment *comment;
         for (FIRDataSnapshot *commentSnapshot in commentsSnapshot.children) {
           comment = [[FPComment alloc] initWithSnapshot:commentSnapshot];
-          NSString *fromUser = commentSnapshot.value[@"author"];
-          if (![[FPAppState sharedInstance].users objectForKey:fromUser]) {
-            [[_ref child:[@"people/" stringByAppendingString:fromUser]]
-                observeEventType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot *peopleSnapshot) {
-                  [FPAppState sharedInstance].users[fromUser] = [[FPUser alloc]
-                      initWithSnapshot:peopleSnapshot];
-                  [commentsArray addObject:comment];
-                  [self.tableView reloadData];
-                }
-            ];
-          } else {
-            [commentsArray addObject:comment];
-            [self.tableView reloadData];
-          }
+          [commentsArray addObject:comment];
         }
+        [self.tableView reloadData];
 
         FPPost *post = [[FPPost alloc] initWithSnapshot:postSnapshot andComments:commentsArray];
-        NSString *authorId = postSnapshot.value[@"author"];
-        if (![[FPAppState sharedInstance].users objectForKey:authorId]) {
-          [[_ref child:[@"people/" stringByAppendingString:authorId]]
-              observeEventType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot *peopleSnapshot) {
-                [FPAppState sharedInstance].users[authorId] = [[FPUser alloc]
-                    initWithSnapshot:peopleSnapshot];
-                [_posts addObject:post];
-                self.tableViewDataSource.posts = [_posts copy];
-                [self.tableView insertSections:[NSIndexSet
-                             indexSetWithIndex:[self.tableViewDataSource.posts count]-1]
-                              withRowAnimation:UITableViewRowAnimationNone];
-       }];
-    } else {
-      [_posts addObject:post];
-      self.tableViewDataSource.posts = [_posts copy];
-      [self.tableView insertSections:[NSIndexSet indexSetWithIndex:[self.tableViewDataSource.posts count]-1]
-                                                  withRowAnimation:UITableViewRowAnimationNone];
-    }
+        [_posts addObject:post];
+        self.tableViewDataSource.posts = [_posts copy];
+        [self.tableView insertSections:[NSIndexSet indexSetWithIndex:[self.tableViewDataSource.posts count]-1]
+                                                    withRowAnimation:UITableViewRowAnimationNone];
   }];
 }
 
@@ -173,16 +147,9 @@
 
 - (void)userDidLike:(STXUserActionCell *)userActionCell {
   FPPost *postItem = userActionCell.postItem;
-  [[_usersRef child:[NSString stringWithFormat:@"%@/likes/%@",
-      [FPAppState sharedInstance].currentUser.userID, [postItem postID]]]
-          setValue:@YES withCompletionBlock:^(NSError *error, FIRDatabaseReference *ref) {
-            if (error) {
-              NSLog(@"error in syncing like");
-              return;
-            }
-  [[_postsRef child:[NSString stringWithFormat:@"%@/likes/%@", [postItem postID],
+  [[_postsRef child:[NSString stringWithFormat:@"likes/%@/%@", [postItem postID],
                                    [FPAppState sharedInstance].currentUser.userID]]
-       setValue:@YES withCompletionBlock:^(NSError *error, FIRDatabaseReference *ref) {
+       setValue:FIRServerValue.timestamp withCompletionBlock:^(NSError *error, FIRDatabaseReference *ref) {
     if (error) {
       NSLog(@"error in syncing like");
       return;
@@ -191,31 +158,21 @@
     [self.tableView reloadRowsAtIndexPaths:@[userActionCell.indexPath]
                             withRowAnimation:UITableViewRowAnimationNone];
        }];
-  }];
 }
 
 - (void)userDidUnlike:(STXUserActionCell *)userActionCell {
   FPPost *postItem = userActionCell.postItem;
-  [[_usersRef child:[NSString stringWithFormat:@"%@/likes/%@",
-      [FPAppState sharedInstance].currentUser.userID, [postItem postID]]]
-          removeValueWithCompletionBlock:^(NSError *error, FIRDatabaseReference *ref) {
-            if (error) {
-              NSLog(@"error in syncing unlike");
-              return;
-            }
-  [[_postsRef child:[NSString stringWithFormat:@"%@/likes/%@", [postItem postID],
+  [[_postsRef child:[NSString stringWithFormat:@"likes/%@/%@", [postItem postID],
                                    [FPAppState sharedInstance].currentUser.userID]]
        removeValueWithCompletionBlock:^(NSError *error, FIRDatabaseReference *ref) {
     if (error) {
       NSLog(@"error in syncing unlike");
       return;
     }
-      postItem.liked = NO;
-      [self.tableView reloadRowsAtIndexPaths:@[userActionCell.indexPath]
-                            withRowAnimation:UITableViewRowAnimationNone];
-  }];
-          }];
-
+    postItem.liked = NO;
+    [self.tableView reloadRowsAtIndexPaths:@[userActionCell.indexPath]
+                          withRowAnimation:UITableViewRowAnimationNone];
+       }];
 }
 
 - (void)userWillComment:(STXUserActionCell *)userActionCell {

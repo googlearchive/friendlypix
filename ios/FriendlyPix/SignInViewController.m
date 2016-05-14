@@ -67,15 +67,26 @@
       [FPAppState sharedInstance].currentUser = [[FPUser alloc] initWithSnapshot:peopleSnapshot];
     } else {
       NSDictionary *person = @{
-                               @"displayName" : user.displayName ? user.displayName : @"",
-                               @"photoUrl" : user.photoURL ? [user.photoURL absoluteString] : @""
+                               @"full_name" : user.displayName ? user.displayName : @"",
+                               @"profile_picture" : user.photoURL ? [user.photoURL absoluteString] : @"",
+                               @"_search_index" : @{
+                                   @"full_name": user.displayName ? user.displayName.lowercaseString : @"",
+                                   @"reversed_full_name": [[self reverseArray:[user.displayName componentsSeparatedByString:@" "]] componentsJoinedByString:@" "]
+                                   }
                                };
-
       [peopleRef setValue:person];
     }
   }];
   [self performSegueWithIdentifier:@"SignInToFP" sender:nil];
 }
 
+- (NSArray *)reverseArray:(NSArray *)array {
+  NSMutableArray *rarray = [NSMutableArray arrayWithCapacity:[array count]];
+  NSEnumerator *enumerator = [array reverseObjectEnumerator];
+  for (id element in enumerator) {
+    [rarray addObject:element];
+  }
+  return rarray;
+}
 
 @end

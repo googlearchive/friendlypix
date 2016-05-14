@@ -28,6 +28,7 @@
 @property (weak, nonatomic) IBOutlet UITextField *commentTextField;
 @property (strong, nonatomic) FIRStorageReference *storageRef;
 @property (strong, nonatomic) NSString *fileUrl;
+@property (strong, nonatomic) NSString *storageUri;
 @end
 
 @implementation FPEditPhotoViewController
@@ -100,6 +101,7 @@
                                     return;
                                   }
                                   _fileUrl = [metadata.downloadURLs[0] absoluteString];
+                                  _storageUri = [_storageRef child:metadata.path].description;
                                 }
                                 ];
                              }];
@@ -111,8 +113,9 @@
   // Push data to Firebase Database
   NSString *trimmedComment = [self.commentTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
   NSDictionary * data = @{ @"url" : _fileUrl,
+                           @"storage_uri": _storageUri,
                            @"text" : trimmedComment,
-                           @"author" : [FPAppState sharedInstance].currentUser.userID,
+                           @"author" : [[FPAppState sharedInstance].currentUser author],
                            @"timestamp" : FIRServerValue.timestamp
                            };
 
@@ -121,17 +124,8 @@
   FIRDatabaseReference *photo = [[ref child:@"posts"] childByAutoId];
   [photo setValue:data];
   NSString *postId = photo.key;
-  [[ref child: [NSString stringWithFormat:@"users/%@/posts/%@", [FPAppState sharedInstance].currentUser.userID, postId]] setValue:@YES];
+  [[ref child: [NSString stringWithFormat:@"people/%@/posts/%@", [FPAppState sharedInstance].currentUser.userID, postId]] setValue:@YES];
   [[ref child: [NSString stringWithFormat:@"feed/%@/%@", [FPAppState sharedInstance].currentUser.userID, postId]] setValue:@YES];
-
-  [[ref child: [NSString stringWithFormat:@"users/%@/followers", [FPAppState sharedInstance].currentUser.userID]] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot *snapshot) {
-    if (snapshot.exists) {
-      NSDictionary *followers = snapshot.value;
-      for (NSString *follower in followers.allKeys) {
-        [[ref child: [NSString stringWithFormat:@"feed/%@/%@", follower, postId]] setValue:@YES];
-      }
-    }
-  }];
   [self.parentViewController dismissViewControllerAnimated:YES completion:nil];
 }
 

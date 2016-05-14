@@ -24,7 +24,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *followingCountLabel;
 @property (weak, nonatomic) IBOutlet UIImageView *profilePictureImageView;
 @property unsigned long postCount;
-@property unsigned long feedCount;
 @property NSDictionary *followers;
 @property unsigned long followingCount;
 @end
@@ -32,17 +31,14 @@
 @implementation FPAccountViewController
 
 - (void)loadFeed {
-  [[super.ref child:[@"users/" stringByAppendingString:_user.userID]]
-   observeEventType:FIRDataEventTypeValue
+  [[[super.ref child:@"people"] child:_user.userID]
+   observeSingleEventOfType:FIRDataEventTypeValue
    withBlock:^(FIRDataSnapshot *userSnapshot) {
      NSArray *posts = [userSnapshot childSnapshotForPath:@"posts"].value;
-     _postCount = posts.count;
-     _feedCount = [[userSnapshot childSnapshotForPath:@"feed"] childrenCount];
-     _followers = userSnapshot.value[@"followers"];
-     _followingCount = [[userSnapshot childSnapshotForPath:@"following"] childrenCount];
+     self.postCount = posts.count;
+     self.followingCount = [[userSnapshot childSnapshotForPath:@"following"] childrenCount];
      [self feedDidLoad];
      for (NSString *postId in posts) {
-
        [[super.ref child:[@"posts/" stringByAppendingString:postId]]
         observeEventType:FIRDataEventTypeValue
         withBlock:^(FIRDataSnapshot *postSnapshot) {
@@ -50,6 +46,11 @@
         }];
      }
    }];
+  [[[super.ref child:@"followers"] child: _user.userID]
+   observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
+     self.followers = snapshot.value;
+   }];
+
   [_profilePictureImageView setCircleImageWithURL:_user.profilePictureURL placeholderImage:[UIImage imageNamed:@"PlaceholderPhoto"]];
 }
 
@@ -62,7 +63,7 @@
   self.navigationItem.title = _user.username;
 
   [_photoCountLabel setText:[NSString
-                             stringWithFormat:@"%lu post%@", _feedCount, _feedCount==1?@"":@"s"]];
+                             stringWithFormat:@"%lu post%@", _postCount, _postCount==1?@"":@"s"]];
 
   unsigned long followersCount = [_followers count];
   [_followerCountLabel setText:[NSString
@@ -100,18 +101,17 @@
   self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]
                                             initWithCustomView:loadingActivityIndicatorView];
 
-  [[super.ref child:
-    [NSString stringWithFormat:@"users/%@/followers/%@", _user.userID,
+  [[super.ref child:[NSString stringWithFormat:@"followers/%@/%@", _user.userID,
      [FPAppState sharedInstance].currentUser.userID]] setValue:@YES];
   [[super.ref child:
-    [NSString stringWithFormat:@"users/%@/following/%@",
+    [NSString stringWithFormat:@"people/%@/following/%@",
      [FPAppState sharedInstance].currentUser.userID, _user.userID]]
    setValue:@YES];
 
   FIRDatabaseReference *myFeed = [super.ref child:
                       [NSString stringWithFormat:@"feed/%@", [FPAppState sharedInstance].currentUser.userID]];
   [[super.ref child:
-    [NSString stringWithFormat:@"users/%@/posts", _user.userID]]
+    [NSString stringWithFormat:@"people/%@/posts", _user.userID]]
    observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot *snapshot) {
      for (NSString *postId in [snapshot.value allKeys]) {
        [[myFeed child:postId] setValue:@YES];
@@ -131,11 +131,21 @@
                                             initWithCustomView:loadingActivityIndicatorView];
 
   [[super.ref child:
-    [NSString stringWithFormat:@"users/%@/followers/%@",
+    [NSString stringWithFormat:@"followers/%@/%@",
      _user.userID, [FPAppState sharedInstance].currentUser.userID]] removeValue];
   [[super.ref child:
-    [NSString stringWithFormat:@"users/%@/following/%@",
+    [NSString stringWithFormat:@"people/%@/following/%@",
      [FPAppState sharedInstance].currentUser.userID, _user.userID]] removeValue];
+
+  FIRDatabaseReference *myFeed = [super.ref child:
+                                  [NSString stringWithFormat:@"feed/%@", [FPAppState sharedInstance].currentUser.userID]];
+  [[super.ref child:
+    [NSString stringWithFormat:@"people/%@/posts", _user.userID]]
+   observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot *snapshot) {
+     for (NSString *postId in [snapshot.value allKeys]) {
+       [[myFeed child:postId] removeValue];
+     }
+   }];
 
   [self configureFollowButton];
 }

@@ -31,12 +31,4 @@
   return sharedMyInstance;
 }
 
-- (id)init {
-  if (self = [super init]) {
-    _users = [[NSMutableDictionary alloc] init];
-  }
-  return self;
-}
-
-
 @end

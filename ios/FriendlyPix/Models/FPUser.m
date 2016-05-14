@@ -20,20 +20,21 @@
 @interface FPUser ()
 
 @property (copy, nonatomic) NSString *userID;
-@property (copy, nonatomic) NSString *username;
+@property (copy, nonatomic) NSString *fullname;
 @property (copy, nonatomic) NSURL *profilePictureURL;
 
 @end
 
 @implementation FPUser
 
-- (instancetype)initWithDictionary:(NSDictionary *)dictionary
-{
+- (instancetype)initWithDictionary:(NSDictionary *)dictionary {
   self = [super init];
   if (self) {
     NSArray *errors;
-    NSDictionary *mappingDictionary = @{ @"displayName": KZProperty(username),
-                                         @"photoUrl": KZBox(URL, profilePictureURL)};
+    NSDictionary *mappingDictionary = @{
+                                        @"fullname": KZProperty(fullname),
+                                        @"profile_picture": KZBox(URL, profilePictureURL),
+                                        @"uid": KZProperty(userID)};
 
     [KZPropertyMapper mapValuesFrom:dictionary toInstance:self usingMapping:mappingDictionary errors:&errors];
   }
@@ -41,25 +42,21 @@
   return self;
 }
 
-- (instancetype)initWithSnapshot:(FIRDataSnapshot *)snapshot
-{
+- (instancetype)initWithSnapshot:(FIRDataSnapshot *)snapshot {
   FPUser *user = [self initWithDictionary:snapshot.value];
   user.userID = snapshot.key;
   return user;
 }
 
-- (NSUInteger)hash
-{
+- (NSUInteger)hash {
   return [_userID hash];
 }
 
-- (BOOL)isEqualToUser:(FPUser *)user
-{
+- (BOOL)isEqualToUser:(FPUser *)user {
   return [user.userID isEqualToString:_userID];
 }
 
-- (BOOL)isEqual:(id)object
-{
+- (BOOL)isEqual:(id)object {
   if (self == object) {
     return YES;
   }
@@ -71,17 +68,21 @@
   return [self isEqualToUser:(FPUser *)object];
 }
 
-- (NSString *)fullname {
-  return _username;
-}
-
-- (NSString *)description
-{
+- (NSString *)description {
   NSDictionary *dictionary = @{ @"userID": self.userID ? : @"",
-                                @"username": self.username ? : @"",
                                 @"fullname": self.username ? : @"",
                                 @"profilePictureURL": self.profilePictureURL ? : @"" };
   return [NSString stringWithFormat:@"<%@: %p> %@", NSStringFromClass([self class]), self, dictionary];
+}
+
+- (NSString *)username {
+  return _fullname;
+}
+
+- (NSDictionary *)author {
+  return @{ @"uid": self.userID ? : @"",
+            @"full_name": self.fullname ? : @"",
+            @"profile_picture": self.profilePictureURL ? : @"" };
 }
 
 @end

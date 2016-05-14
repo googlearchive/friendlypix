@@ -20,7 +20,6 @@
 
 @interface FPAppState : NSObject 
 
-@property (nonatomic, retain) NSMutableDictionary <NSString*, FPUser*> *users;
 @property (nonatomic, retain) FPUser *currentUser;
 
 + (FPAppState *)sharedInstance;

@@ -16,13 +16,14 @@
 
 #import "FPComment.h"
 #import "FPAppState.h"
+#import "FPUser.h"
 #import <KZPropertyMapper/KZPropertyMapper.h>
 
 @interface FPComment ()
 
 @property (copy, nonatomic) NSString *text;
 @property (copy, nonatomic) NSDate *postDate;
-@property (copy, nonatomic) NSString *fromUser;
+@property (copy, nonatomic) FPUser *from;
 
 @end
 
@@ -30,56 +31,51 @@
 
 #pragma mark - NSCoding
 
-- (void)encodeWithCoder:(NSCoder *)encoder
-{
+- (void)encodeWithCoder:(NSCoder *)encoder {
   [encoder encodeObject:_commentID forKey:@"commentID"];
   [encoder encodeObject:_text forKey:@"text"];
   [encoder encodeObject:_postDate forKey:@"postDate"];
-  [encoder encodeObject:_fromUser forKey:@"fromUser"];
+  [encoder encodeObject:_from forKey:@"from"];
 }
 
-- (instancetype)initWithCoder:(NSCoder *)decoder
-{
+- (instancetype)initWithCoder:(NSCoder *)decoder {
   self = [super init];
   if (self) {
     _commentID = [decoder decodeObjectForKey:@"commentID"];
     _text = [decoder decodeObjectForKey:@"text"];
     _postDate = [decoder decodeObjectForKey:@"postDate"];
-    _fromUser = [decoder decodeObjectForKey:@"fromUser"];
+    _from = [decoder decodeObjectForKey:@"from"];
   }
 
   return self;
 }
 
-- (instancetype)copyWithZone:(NSZone *)zone
-{
+- (instancetype)copyWithZone:(NSZone *)zone {
   FPComment *theCopy = [[[self class] allocWithZone:zone] init];
   [theCopy setCommentID:[_commentID copy]];
   [theCopy setText:[_text copy]];
   [theCopy setPostDate:[_postDate copy]];
-  [theCopy setFromUser:[_fromUser copy]];
+  [theCopy setFrom:[_from copy]];
 
   return theCopy;
 }
 
 #pragma mark - Initializers
 
-- (instancetype)initWithDictionary:(NSDictionary *)dictionary
-{
+- (instancetype)initWithDictionary:(NSDictionary *)dictionary {
   self = [super init];
   if (self) {
     NSArray *errors;
     NSDictionary *mappingDictionary = @{ @"text": KZProperty(text),
-                                         @"timestamp": KZBox(Date, postDate),
-                                         @"author": KZProperty(fromUser) };
+                                         @"timestamp": KZBox(Date, postDate)};
 
     [KZPropertyMapper mapValuesFrom:dictionary toInstance:self usingMapping:mappingDictionary errors:&errors];
+    self.from = [[FPUser alloc] initWithDictionary:dictionary[@"author"]];
   }
   return self;
 }
 
-- (instancetype)initWithSnapshot:(FIRDataSnapshot *)snapshot
-{
+- (instancetype)initWithSnapshot:(FIRDataSnapshot *)snapshot {
   FPComment *comment = [self initWithDictionary:snapshot.value];
   comment.commentID = snapshot.key;
   return comment;
@@ -90,13 +86,11 @@
   return [_commentID hash];
 }
 
-- (BOOL)isEqualToComment:(FPComment *)comment
-{
+- (BOOL)isEqualToComment:(FPComment *)comment {
   return [comment.commentID isEqualToString:_commentID];
 }
 
-- (BOOL)isEqual:(id)object
-{
+- (BOOL)isEqual:(id)object {
   if (self == object) {
     return YES;
   }
@@ -108,19 +102,11 @@
   return [self isEqualToComment:(FPComment *)object];
 }
 
-- (NSString *)description
-{
+- (NSString *)description {
   NSDictionary *dictionary = @{ @"commentID": self.commentID ? : @"",
                                 @"from": self.from ? [self.from username] : @"",
                                 @"text": self.text ? : @"" };
   return [NSString stringWithFormat:@"<%@: %p> %@", NSStringFromClass([self class]), self, dictionary];
-}
-
-#pragma mark - STXCommentItem
-
-- (id<STXUserItem>)from
-{
-  return [FPAppState sharedInstance].users[_fromUser];
 }
 
 @end

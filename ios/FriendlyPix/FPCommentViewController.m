@@ -55,7 +55,7 @@ NSMutableArray *comments;
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
   NSDictionary *data = @{ @"timestamp": FIRServerValue.timestamp,
-                          @"author": [FPAppState sharedInstance].currentUser.userID,
+                          @"author": [[FPAppState sharedInstance].currentUser author],
                           @"text": textField.text
                           };
   // Push data to Firebase Database

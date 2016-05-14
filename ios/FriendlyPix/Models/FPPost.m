@@ -31,7 +31,7 @@
 
 //@property (copy, nonatomic) NSDictionary *caption;
 
-@property (copy, nonatomic) NSString *fromUser;
+@property (copy, nonatomic) FPUser *user;
 @property (copy, nonatomic) NSString *text;
 
 //@property (nonatomic) NSInteger likeCount;
@@ -55,7 +55,7 @@
   //  [encoder encodeInteger:_commentCount forKey:@"commentCount"];
   [encoder encodeObject:_comments forKey:@"comments"];
   [encoder encodeObject:_likes forKey:@"likes"];
-  [encoder encodeObject:_fromUser forKey:@"fromUser"];
+  [encoder encodeObject:_user forKey:@"user"];
   [encoder encodeObject:_text forKey:@"text"];
   [encoder encodeBool:_liked forKey:@"liked"];
 }
@@ -72,7 +72,7 @@
     //    _commentCount = [decoder decodeIntegerForKey:@"commentCount"];
     _comments = [decoder decodeObjectForKey:@"comments"];
     _likes = [decoder decodeObjectForKey:@"likes"];
-    _fromUser = [decoder decodeObjectForKey:@"fromUser"];
+    _user = [decoder decodeObjectForKey:@"user"];
     _text = [decoder decodeObjectForKey:@"text"];
     _liked = [decoder decodeBoolForKey:@"liked"];
   }
@@ -91,7 +91,7 @@
   //  [theCopy setCommentCount:_commentCount];
   [theCopy setComments:[_comments copy]];
   [theCopy setLikes:[_likes copy]];
-  [theCopy setFromUser:_fromUser];
+  [theCopy setUser:_user];
   [theCopy setText:_text];
 
   return theCopy;
@@ -103,17 +103,18 @@
     NSArray *errors;
     NSDictionary *mappingDictionary = @{ //@"url": KZBox(URL, link),
                                         @"text": KZProperty(text),
-                                        //                                         @"caption": KZProperty(caption),
-                                        @"author": KZProperty(fromUser),
-                                        //                                         @"user_has_liked": KZProperty(liked),
+                                        //@"caption": KZProperty(caption),
+                                        //@"author": KZProperty(fromUser),
+                                        //@"user_has_liked": KZProperty(liked),
                                         @"url": KZBox(URL, imageURL),
                                         @"likes": KZProperty(likes),
-                                        //                                         @"like_count": KZProperty(likeCount),
+                                        //@"like_count": KZProperty(likeCount),
                                         @"timestamp": KZBox(Date, postDate),
-                                        //                                         @"comment_count": KZProperty(commentCount)
+                                        //@"comment_count": KZProperty(commentCount)
                                         };
 
     [KZPropertyMapper mapValuesFrom:dictionary toInstance:self usingMapping:mappingDictionary errors:&errors];
+    self.user = [[FPUser alloc] initWithDictionary:dictionary[@"author"]];
   }
 
   return self;
@@ -201,10 +202,6 @@
 
 - (NSDictionary *)caption {
   return @{@"text": self.text};
-}
-
-- (id<STXUserItem>)user {
-  return [FPAppState sharedInstance].users[_fromUser];
 }
 
 @end

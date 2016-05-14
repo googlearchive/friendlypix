@@ -27,5 +27,5 @@
  *  Initialize data model from snapshot
  */
 - (instancetype)initWithSnapshot:(FIRDataSnapshot *)snapshot;
-
+- (NSDictionary *)author;
 @end
