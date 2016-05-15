@@ -51,9 +51,9 @@ friendlyPix.Firebase = class {
    */
   constructor() {
     // Firebase SDK.
-    this.database = firebase.app().database();
-    this.storage = firebase.app().storage();
-    this.auth = firebase.app().auth();
+    this.database = firebase.database();
+    this.storage = firebase.storage();
+    this.auth = firebase.auth();
 
     // Firebase references that are listened to.
     this.firebaseRefs = [];
