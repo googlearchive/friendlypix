@@ -40,14 +40,6 @@ friendlyPix.Post = class {
       this.postElement = $('.fp-post', this.postPage);
       this.toast = $('.mdl-js-snackbar');
       this.theatre = $('.fp-theatre');
-
-      this.theatre.click(() => this.theatre.hide());
-      $(document).keydown(e => {
-        if (e.which === 27) {
-          this.theatre.hide();
-        }
-        e.preventDefault();
-      });
     });
   }
 
@@ -151,16 +143,37 @@ friendlyPix.Post = class {
     // Shows the pic's thumbnail.
     $('.fp-image', post).css('background-image', `url(${thumbUrl})`);
     $('.fp-image', post).unbind('click');
-    $('.fp-image', post).click(() => {
-      $('.fp-fullpic', '.fp-theatre').prop('src', picUrl || thumbUrl);
-      $('.fp-theatre').css('display', 'flex');
-    });
+    $('.fp-image', post).click(() => this.enterTheatreMode(picUrl, thumbUrl));
 
     this._setupDate(postId, timestamp);
     this._setupDeleteButton(postId, author, picStorageUri, thumbStorageUri);
     this._setupLikeCountAndStatus(postId);
     this._setupComments(postId, author, imageText);
     return post;
+  }
+
+  /**
+   * Leaves the theatre mode.
+   */
+  leaveTheatreMode() {
+    this.theatre.hide();
+    this.theatre.unbind('click');
+    $(document).unbind('keydown');
+  }
+
+  /**
+   * Leaves the theatre mode.
+   */
+  enterTheatreMode(picUrl, thumbUrl) {
+    $('.fp-fullpic', this.theatre).prop('src', picUrl || thumbUrl);
+    this.theatre.css('display', 'flex');
+    // Leave theatre mode if click or ESC key down.
+    this.theatre.click(() => this.leaveTheatreMode());
+    $(document).keydown(e => {
+      if (e.which === 27) {
+        this.leaveTheatreMode();
+      }
+    });
   }
 
   /**
