@@ -460,7 +460,7 @@ friendlyPix.Firebase = class {
         let update = {};
         update[`/people/${this.auth.currentUser.uid}/posts/${data.key}`] = true;
         update[`/feed/${this.auth.currentUser.uid}/${data.key}`] = true;
-        return this.database.ref().update(update);
+        return this.database.ref().update(update).then(() => data.key);
       });
     });
   }
