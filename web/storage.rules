@@ -1,15 +1,21 @@
+// Returns true if the given UID matches the signed in UID,
+// the uploaded file is an image and its size is below the given number of MB.
+// Also allow deletes.
+function isImageAndBelowMaxSize(uid, maxSizeMB) {
+  return request.auth.uid == uid
+      && (request.resource == null // Allow deletes
+          || request.resource.size < maxSizeMB * 1024 * 1024 // Max size for the uploaded file
+              && request.resource.contentType.matches('image/.*')) // The file is an image
+}
+
 service firebase.storage {
   // TODO: Change the <STORAGE_BUCKET> placeholder below
   match /b/<STORAGE_BUCKET>/o {
     match /{userId}/thumb/{timestamp}/{fileName} {
-      allow read, write: if request.auth.uid == userId
-                            && request.resource.size < 1024 * 1024
-                            && request.resource.metadata.contentType.matches('image/.*');
+      allow read, write: if isImageAndBelowMaxSize(userId, 1);
     }
     match /{userId}/full/{timestamp}/{fileName} {
-      allow read, write: if request.auth.uid == userId
-                            && request.resource.size < 5 * 1024 * 1024
-                            && request.resource.metadata.contentType.matches('image/.*');
+      allow read, write: if isImageAndBelowMaxSize(userId, 5);
     }
   }
 }
