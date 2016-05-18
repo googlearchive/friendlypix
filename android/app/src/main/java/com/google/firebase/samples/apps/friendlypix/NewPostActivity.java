@@ -18,22 +18,17 @@ package com.google.firebase.samples.apps.friendlypix;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.ComponentName;
-import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
-import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -42,10 +37,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationServices;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -58,31 +49,25 @@ import pub.devrel.easypermissions.EasyPermissions;
 
 public class NewPostActivity extends BaseActivity implements
         EasyPermissions.PermissionCallbacks,
-        GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener,
         NewPostUploadTaskFragment.TaskCallbacks {
     public static final String TAG = "NewPostActivity";
     public static final String TAG_TASK_FRAGMENT = "newPostUploadTaskFragment";
+    private static final int THUMBNAIL_MAX_DIMENSION = 640;
+    private static final int FULL_SIZE_MAX_DIMENSION = 1280;
     private Button mSubmitButton;
 
     private ImageView mImageView;
-    private TextView mLocationView;
-    private GoogleApiClient mGoogleApiClient;
-    private Location mUserLocation;
     private Uri mFileUri;
     private Bitmap mResizedBitmap;
+    private Bitmap mThumbnail;
 
     private NewPostUploadTaskFragment mTaskFragment;
 
     private static final int TC_PICK_IMAGE = 101;
     private static final int RC_CAMERA_PERMISSIONS = 102;
-    private static final int RC_LOCATION_PERMISSIONS = 103;
 
     private static final String[] cameraPerms = new String[]{
             Manifest.permission.READ_EXTERNAL_STORAGE
-    };
-    private static final String[] locationPerms = new String[]{
-            Manifest.permission.ACCESS_COARSE_LOCATION
     };
 
 
@@ -103,8 +88,6 @@ public class NewPostActivity extends BaseActivity implements
         }
 
         mImageView = (ImageView) findViewById(R.id.new_post_picture);
-        mLocationView = (TextView) findViewById(R.id.new_post_location);
-//        mLocationView.setText(R.string.new_post_location_placeholder);
 
         mImageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,19 +96,15 @@ public class NewPostActivity extends BaseActivity implements
             }
         });
         Bitmap selectedBitmap = mTaskFragment.getSelectedBitmap();
+        Bitmap thumbnail = mTaskFragment.getThumbnail();
         if (selectedBitmap != null) {
             mImageView.setImageBitmap(selectedBitmap);
             mResizedBitmap = selectedBitmap;
         }
+        if (thumbnail != null) {
+            mThumbnail = thumbnail;
+        }
         final EditText descriptionText = (EditText) findViewById(R.id.new_post_text);
-
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this, this)
-                .addApi(LocationServices.API)
-                .build();
-
-        mLocationView = (TextView) findViewById(R.id.new_post_location);
-//        mLocationView.setText(R.string.new_post_location_placeholder);
 
         mSubmitButton = (Button) findViewById(R.id.new_post_submit);
         mSubmitButton.setOnClickListener(new View.OnClickListener() {
@@ -144,25 +123,14 @@ public class NewPostActivity extends BaseActivity implements
                 showProgressDialog(getString(R.string.post_upload_progress_message));
                 mSubmitButton.setEnabled(false);
 
-                mTaskFragment.uploadPost(mResizedBitmap, mFileUri.getLastPathSegment(), postText);
+                Long timestamp = System.currentTimeMillis();
+
+                String bitmapPath = "/" + FirebaseUtil.getCurrentUserId() + "/full/" + timestamp.toString() + "/";
+                String thumbnailPath = "/" + FirebaseUtil.getCurrentUserId() + "/thumb/" + timestamp.toString() + "/";
+                mTaskFragment.uploadPost(mResizedBitmap, bitmapPath, mThumbnail, thumbnailPath, mFileUri.getLastPathSegment(),
+                        postText);
             }
         });
-    }
-
-    @AfterPermissionGranted(RC_LOCATION_PERMISSIONS)
-    private void setCurrentUserLocation() {
-        // Check for location permissions
-        if (!EasyPermissions.hasPermissions(this, locationPerms)) {
-            EasyPermissions.requestPermissions(this,
-                    "This will allow your post to be geotagged.",
-                    RC_LOCATION_PERMISSIONS, locationPerms);
-            return;
-        }
-        Log.d(TAG, "google api client is connected? " + mGoogleApiClient.isConnected());
-        mUserLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-
-        mLocationView.setText(String.format("(Lat %f) (Lon %f)",
-                mUserLocation.getLatitude(), mUserLocation.getLongitude()));
     }
 
     @Override
@@ -222,15 +190,6 @@ public class NewPostActivity extends BaseActivity implements
     }
 
     @Override
-    public void onConnected(Bundle bundle) {
-        setCurrentUserLocation();
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-    }
-
-    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
@@ -247,7 +206,8 @@ public class NewPostActivity extends BaseActivity implements
                 }
                 Log.d(TAG, "Received file uri: " + mFileUri.getPath());
 
-                mTaskFragment.resizeBitmap(mFileUri);
+                mTaskFragment.resizeBitmap(mFileUri, THUMBNAIL_MAX_DIMENSION);
+                mTaskFragment.resizeBitmap(mFileUri, FULL_SIZE_MAX_DIMENSION);
             }
         }
     }
@@ -258,24 +218,30 @@ public class NewPostActivity extends BaseActivity implements
         if (mResizedBitmap != null) {
             mTaskFragment.setSelectedBitmap(mResizedBitmap);
         }
+        if (mThumbnail != null) {
+            mTaskFragment.setThumbnail(mThumbnail);
+        }
         super.onDestroy();
     }
 
     @Override
-    public void onBitmapResized(Bitmap resizedBitmap) {
+    public void onBitmapResized(Bitmap resizedBitmap, int mMaxDimension) {
         if (resizedBitmap == null) {
             Log.e(TAG, "Couldn't resize bitmap in background task.");
             Toast.makeText(getApplicationContext(), "Couldn't resize bitmap.",
                     Toast.LENGTH_SHORT).show();
             return;
         }
-        mResizedBitmap = resizedBitmap;
+        if (mMaxDimension == THUMBNAIL_MAX_DIMENSION) {
+            mThumbnail = resizedBitmap;
+        } else if (mMaxDimension == FULL_SIZE_MAX_DIMENSION) {
+            mResizedBitmap = resizedBitmap;
+            mImageView.setImageBitmap(mResizedBitmap);
+        }
 
-        Log.d(TAG, "resized bitmap: " + mResizedBitmap.toString());
-
-        mImageView.setImageBitmap(mResizedBitmap);
-        Log.d(TAG, "Resized bitmap bytes: " + mResizedBitmap.getByteCount());
-        mSubmitButton.setEnabled(true);
+        if (mThumbnail != null && mResizedBitmap != null) {
+            mSubmitButton.setEnabled(true);
+        }
     }
 
     @Override
@@ -291,12 +257,5 @@ public class NewPostActivity extends BaseActivity implements
 
     @Override
     public void onPermissionsDenied(int requestCode, List<String> perms) {
-        mLocationView.setText("Need location permissions to tag this post.");
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.w(TAG, "onConnectionFailed:" + connectionResult);
-        mLocationView.setText("Failed to get location.");
     }
 }

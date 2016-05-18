@@ -23,6 +23,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.DatabaseError;
@@ -68,10 +70,11 @@ public class FirebasePostQueryAdapter extends RecyclerView.Adapter<PostViewHolde
     public void onBindViewHolder(final PostViewHolder holder, int position) {
         DatabaseReference ref = FirebaseUtil.getPostsRef().child(mPostPaths.get(position));
         // TODO: Fix this so async event won't bind the wrong view post recycle.
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+        ValueEventListener postListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Post post = dataSnapshot.getValue(Post.class);
+                Log.d(TAG, "post key: " + dataSnapshot.getKey());
                 mOnSetupViewListener.onSetupView(holder, post, holder.getAdapterPosition(),
                         dataSnapshot.getKey());
             }
@@ -80,7 +83,16 @@ public class FirebasePostQueryAdapter extends RecyclerView.Adapter<PostViewHolde
             public void onCancelled(DatabaseError firebaseError) {
                 Log.e(TAG, "Error occurred: " + firebaseError.getMessage());
             }
-        });
+        };
+        ref.addValueEventListener(postListener);
+        holder.mPostRef = ref;
+        holder.mPostListener = postListener;
+    }
+
+    @Override
+    public void onViewRecycled(PostViewHolder holder) {
+        super.onViewRecycled(holder);
+        holder.mPostRef.removeEventListener(holder.mPostListener);
     }
 
     @Override

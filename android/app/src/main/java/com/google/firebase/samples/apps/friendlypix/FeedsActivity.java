@@ -33,18 +33,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class FeedsActivity extends AppCompatActivity implements PostsFragment.OnPostSelectedListener {
     private static final String TAG = "FeedsActivity";
@@ -60,14 +58,10 @@ public class FeedsActivity extends AppCompatActivity implements PostsFragment.On
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.feeds_view_pager);
         FeedsPagerAdapter adapter = new FeedsPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(PostsFragment.newInstance(PostsFragment.TYPE_RECENT), "RECENT");
-        adapter.addFragment(PostsFragment.newInstance(PostsFragment.TYPE_HOT_ALL), "TOP");
-        adapter.addFragment(PostsFragment.newInstance(PostsFragment.TYPE_ALL), "ALL");
-        // TODO: Re-implement these later.
-//        adapter.addFragment(PostsFragment.newInstance(PostsFragment.TYPE_NEARBY), "NEARBY");
-//        adapter.addFragment(PostsFragment.newInstance(PostsFragment.TYPE_FOLLOWING), "FOLLOWING");
+        adapter.addFragment(PostsFragment.newInstance(PostsFragment.TYPE_HOME), "HOME");
+        adapter.addFragment(PostsFragment.newInstance(PostsFragment.TYPE_FEED), "FEED");
         viewPager.setAdapter(adapter);
-
+        viewPager.setCurrentItem(1);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.feeds_tab_layout);
         tabLayout.setupWithViewPager(viewPager);
 
@@ -95,38 +89,16 @@ public class FeedsActivity extends AppCompatActivity implements PostsFragment.On
 
     @Override
     public void onPostLike(final String postKey) {
-        final DatabaseReference ref = FirebaseUtil.getBaseRef();
         final String userKey = FirebaseUtil.getCurrentUserId();
-        final DatabaseReference postLikesRef = FirebaseUtil.getPostsRef().child(postKey).child("likes");
-        postLikesRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        final DatabaseReference postLikesRef = FirebaseUtil.getLikesRef();
+        postLikesRef.child(postKey).child(userKey).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.hasChild(userKey)) {
+                if (dataSnapshot.exists()) {
                     // User already liked this post, so we toggle like off.
-                    Map<String, Object> updatedUserData = new HashMap<>();
-                    updatedUserData.put(FirebaseUtil.getUsersPath() + userKey + "/likes/" + postKey, null);
-                    updatedUserData.put(FirebaseUtil.getPostsPath() + postKey + "/likes/" + userKey, null);
-                    ref.updateChildren(updatedUserData, new DatabaseReference.CompletionListener() {
-                        @Override
-                        public void onComplete(DatabaseError firebaseError, DatabaseReference firebase) {
-                            if (firebaseError != null) {
-                                Toast.makeText(FeedsActivity.this, "Error unliking post.", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
+                    postLikesRef.child(postKey).child(userKey).removeValue();
                 } else {
-                    Map<String, Object> updatedUserData = new HashMap<>();
-                    updatedUserData.put(FirebaseUtil.getUsersPath() + userKey + "/likes/" + postKey, true);
-                    updatedUserData.put(FirebaseUtil.getPostsPath() + postKey + "/likes/" + userKey, true);
-                    ref.updateChildren(updatedUserData, new DatabaseReference.CompletionListener() {
-                        @Override
-                        public void onComplete(DatabaseError firebaseError, DatabaseReference firebase) {
-                            if (firebaseError != null) {
-                                Toast.makeText(FeedsActivity.this, "Error liking post.", Toast.LENGTH_SHORT).show();
-
-                            }
-                        }
-                    });
+                    postLikesRef.child(postKey).child(userKey).setValue(ServerValue.TIMESTAMP);
                 }
             }
 

@@ -28,16 +28,17 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.samples.apps.friendlypix.Models.Person;
+import com.google.firebase.samples.apps.friendlypix.Models.Author;
 import com.google.firebase.samples.apps.friendlypix.Models.Post;
 
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -48,18 +49,8 @@ public class PostsFragment extends Fragment {
     public static final String TAG = "PostsFragment";
     private static final String KEY_LAYOUT_POSITION = "layoutPosition";
     private static final String KEY_TYPE = "type";
-    public static final int TYPE_NEARBY = 1000;
-    public static final int TYPE_RECOMMENDED = 1001;
-    public static final int TYPE_HOT = 1002;
-    public static final int TYPE_FOLLOWING = 1003;
-    public static final int TYPE_YOUR_POSTS = 1004;
-    public static final int TYPE_FEED = 1005;
-    public static final int TYPE_EXPLORE = 1006;
-    public static final int TYPE_RECENT = 1007;
-    public static final int TYPE_POPULAR = 1008;
-    public static final int TYPE_HOT_TODAY = 1009;
-    public static final int TYPE_HOT_ALL = 1010;
-    public static final int TYPE_ALL = 1011;
+    public static final int TYPE_HOME = 1001;
+    public static final int TYPE_FEED = 1002;
     private int mRecyclerViewPosition = 0;
     private OnPostSelectedListener mListener;
 
@@ -98,6 +89,8 @@ public class PostsFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        linearLayoutManager.setReverseLayout(true);
+        linearLayoutManager.setStackFromEnd(true);
         mRecyclerView.setLayoutManager(linearLayoutManager);
 
         if (savedInstanceState != null) {
@@ -109,80 +102,113 @@ public class PostsFragment extends Fragment {
         }
 
         switch (getArguments().getInt(KEY_TYPE)) {
-            case TYPE_RECENT:
-                Log.d(TAG, "Restoring recycler view position (recent): " + mRecyclerViewPosition);
-                Query recentPostsQuery = FirebaseUtil.getPostsRef().limitToLast(25);
-                mAdapter = getFirebaseRecyclerAdapter(recentPostsQuery);
-                break;
-            case TYPE_ALL:
+            case TYPE_FEED:
                 Log.d(TAG, "Restoring recycler view position (all): " + mRecyclerViewPosition);
                 Query allPostsQuery = FirebaseUtil.getPostsRef();
                 mAdapter = getFirebaseRecyclerAdapter(allPostsQuery);
-                break;
-            case TYPE_HOT_TODAY:
-                // TODO: Fix this and HOT_ALL to put new stuff at top (reverse list order).
-                Log.d(TAG, "Restoring recycler view position (hot today): " + mRecyclerViewPosition);
-                Calendar c = Calendar.getInstance();
-                c.add(Calendar.DATE, -1);
-                long startTimestamp = c.getTimeInMillis();
-                Log.d(TAG, "timestamp: " + startTimestamp);
-                Query hotTodayPostsQuery = FirebaseUtil.getPostsRef().orderByChild("timestamp").startAt(startTimestamp);
-                mAdapter = getFirebaseRecyclerAdapter(hotTodayPostsQuery);
-                break;
-            case TYPE_HOT_ALL:
-                Log.d(TAG, "Restoring recycler view position (hot all): " + mRecyclerViewPosition);
-                // TODO: This doesn't currently work to only show posts with >= 5 likes (shows everything >= 1 like).
-                Query hotAllPostsQuery = FirebaseUtil.getPostsRef().orderByChild("likes").startAt(5).limitToLast(50);
-                mAdapter = getFirebaseRecyclerAdapter(hotAllPostsQuery);
-                break;
-            case TYPE_NEARBY:
-                Log.d(TAG, "Restoring recycler view position (nearby): " + mRecyclerViewPosition);
-                // stuff
-                break;
-            case TYPE_FOLLOWING:
-                Log.d(TAG, "Restoring recycler view position (following): " + mRecyclerViewPosition);
-                mAdapter = new FirebasePostQueryAdapter(null, new FirebasePostQueryAdapter.OnSetupViewListener() {
+                mAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
                     @Override
-                    public void onSetupView(PostViewHolder holder, Post post, int position, String postKey) {
-                        setupPost(holder, post, position, postKey);
+                    public void onItemRangeInserted(int positionStart, int itemCount) {
+                        super.onItemRangeInserted(positionStart, itemCount);
+                        // TODO: Refresh feed view.
                     }
                 });
-                FirebaseUtil.getUsersRef().child(FirebaseUtil.getCurrentUserId()).child("following")
-                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                break;
+            case TYPE_HOME:
+                Log.d(TAG, "Restoring recycler view position (following): " + mRecyclerViewPosition);
 
+                FirebaseUtil.getCurrentUserRef().child("following").addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(final DataSnapshot followedUserSnapshot, String s) {
+                        String followedUserId = followedUserSnapshot.getKey();
+                        String lastKey = "";
+                        if (followedUserSnapshot.getValue() instanceof String) {
+                            lastKey = followedUserSnapshot.getValue().toString();
+                        }
+                        Log.d(TAG, "followed user id: " + followedUserId);
+                        Log.d(TAG, "last key: " + lastKey);
+                        FirebaseUtil.getPeopleRef().child(followedUserId).child("posts")
+                                .orderByKey().startAt(lastKey).addChildEventListener(new ChildEventListener() {
                             @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                    String userKey = snapshot.getKey();
-                                    final List<String> photoPaths = new ArrayList<>();
-                                    // TODO: Decide whether to duplicate post data for speed.
-                                    FirebaseUtil.getUsersRef().child(userKey).child("posts")
-                                            .addListenerForSingleValueEvent(new ValueEventListener() {
-                                                @Override
-                                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                                        photoPaths.add(snapshot.getKey());
-                                                        ((FirebasePostQueryAdapter) mAdapter).addItem(snapshot.getKey());
-                                                    }
-                                                }
-
-                                                @Override
-                                                public void onCancelled(DatabaseError firebaseError) {
-
-                                                }
-                                            });
-                                }
+                            public void onChildAdded(final DataSnapshot postSnapshot, String s) {
+                                HashMap<String, Object> addedPost = new HashMap<String, Object>();
+                                addedPost.put(postSnapshot.getKey(), true);
+                                FirebaseUtil.getFeedRef().child(FirebaseUtil.getCurrentUserId())
+                                        .updateChildren(addedPost).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        FirebaseUtil.getCurrentUserRef().child("following")
+                                                .child(followedUserSnapshot.getKey())
+                                                .setValue(postSnapshot.getKey());
+                                    }
+                                });
                             }
 
+                            @Override
+                            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                            }
+
+                            @Override
+                            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                            }
+
+                            @Override
+                            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+                FirebaseUtil.getFeedRef().child(FirebaseUtil.getCurrentUserId())
+                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                final List<String> postPaths = new ArrayList<>();
+                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                    Log.d(TAG, "adding post key: " + snapshot.getKey());
+                                    postPaths.add(snapshot.getKey());
+                                }
+                                mAdapter = new FirebasePostQueryAdapter(postPaths,
+                                        new FirebasePostQueryAdapter.OnSetupViewListener() {
+                                    @Override
+                                    public void onSetupView(PostViewHolder holder, Post post, int position, String postKey) {
+                                        setupPost(holder, post, position, postKey);
+                                    }
+                                });
+                            }
                             @Override
                             public void onCancelled(DatabaseError firebaseError) {
 
                             }
                         });
-                break;
-            case TYPE_EXPLORE:
-                Log.d(TAG, "Restoring recycler view position (your posts): " + mRecyclerViewPosition);
-                // stuff
                 break;
             default:
                 throw new RuntimeException("Illegal post fragment type specified.");
@@ -198,13 +224,18 @@ public class PostsFragment extends Fragment {
                                            final Post post, final int position) {
                 setupPost(postViewHolder, post, position, null);
             }
+
+            @Override
+            public void onViewRecycled(PostViewHolder holder) {
+                super.onViewRecycled(holder);
+//                FirebaseUtil.getLikesRef().child(holder.mPostKey).removeEventListener(holder.mLikeListener);
+            }
         };
     }
 
     private void setupPost(final PostViewHolder postViewHolder, final Post post, final int position, final String inPostKey) {
-        postViewHolder.setPhoto(post.getUrl());
+        postViewHolder.setPhoto(post.getThumb_url());
         postViewHolder.setText(post.getText());
-        postViewHolder.setNumLikes(post.getLikes() != null ? post.getLikes().size() : 0);
         postViewHolder.setTimestamp(DateUtils.getRelativeTimeSpanString(
                 (long) post.getTimestamp()).toString());
         final String postKey;
@@ -213,37 +244,30 @@ public class PostsFragment extends Fragment {
         } else {
             postKey = inPostKey;
         }
-        // TODO: Fix after duplicate data decision is made.
-        final DatabaseReference authorRef = FirebaseUtil.getPeopleRef().child(post.getAuthor());
-        authorRef.addListenerForSingleValueEvent(
-                new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        Person author = dataSnapshot.getValue(Person.class);
-                        postViewHolder.setAuthor(author.getDisplayName(), authorRef.getKey());
-                        postViewHolder.setIcon(author.getPhotoUrl(), authorRef.getKey());
-                    }
 
-                    @Override
-                    public void onCancelled(DatabaseError firebaseError) {
-                        new RuntimeException("Couldn't get comment username.", firebaseError.toException());
-                    }
-                }
-        );
-        FirebaseUtil.getCurrentUserRef().child("likes").child(postKey).addValueEventListener(
-                new ValueEventListener() {
+        Author author = post.getAuthor();
+        postViewHolder.setAuthor(author.getFull_name(), author.getUid());
+        postViewHolder.setIcon(author.getProfile_picture(), author.getUid());
+
+        ValueEventListener likeListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                postViewHolder.setLikeStatus(
-                        dataSnapshot.exists() ? PostViewHolder.LikeStatus.LIKED : PostViewHolder.LikeStatus.NOT_LIKED,
-                        getActivity());
+                postViewHolder.setNumLikes(dataSnapshot.getChildrenCount());
+                if (dataSnapshot.hasChild(FirebaseUtil.getCurrentUserId())) {
+                    postViewHolder.setLikeStatus(PostViewHolder.LikeStatus.LIKED, getActivity());
+                } else {
+                    postViewHolder.setLikeStatus(PostViewHolder.LikeStatus.NOT_LIKED, getActivity());
+                }
             }
 
             @Override
-            public void onCancelled(DatabaseError firebaseError) {
+            public void onCancelled(DatabaseError databaseError) {
 
             }
-        });
+        };
+        FirebaseUtil.getLikesRef().child(postKey).addValueEventListener(likeListener);
+        postViewHolder.mLikeListener = likeListener;
+
         postViewHolder.setPostClickListener(new PostViewHolder.PostClickListener() {
             @Override
             public void showComments() {

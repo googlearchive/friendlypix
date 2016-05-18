@@ -12,12 +12,12 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+*/
 
 package com.google.firebase.samples.apps.friendlypix.Models;
 
 public class Comment {
-    private String author;
+    private Author author;
     private String text;
     private Object timestamp;
 
@@ -25,13 +25,13 @@ public class Comment {
         // empty default constructor, necessary for Firebase to be able to deserialize comments
     }
 
-    public Comment(String author, String text, Object timestamp) {
+    public Comment(Author author, String text, Object timestamp) {
         this.author = author;
         this.text = text;
         this.timestamp = timestamp;
     }
 
-    public String getAuthor() {
+    public Author getAuthor() {
         return author;
     }
 

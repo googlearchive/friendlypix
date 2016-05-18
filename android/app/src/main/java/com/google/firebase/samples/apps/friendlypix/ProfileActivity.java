@@ -87,7 +87,7 @@ public class ProfileActivity extends BaseActivity implements
                 .addApi(Auth.GOOGLE_SIGN_IN_API,
                         new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                                 .requestEmail()
-                                .requestIdToken(getString(R.string.server_client_id))
+                                .requestIdToken(getString(R.string.default_web_client_id))
                                 .build())
                 .build();
 
@@ -161,8 +161,8 @@ public class ProfileActivity extends BaseActivity implements
                 })
                 .addOnFailureListener(this, new OnFailureListener() {
                     @Override
-                    public void onFailure(@NonNull Throwable throwable) {
-                        FirebaseCrash.logcat(Log.ERROR, TAG, "auth:onFailure:" + throwable.getMessage());
+                    public void onFailure(@NonNull Exception e) {
+                        FirebaseCrash.logcat(Log.ERROR, TAG, "auth:onFailure:" + e.getMessage());
                         handleFirebaseAuthResult(null);
                     }
                 });

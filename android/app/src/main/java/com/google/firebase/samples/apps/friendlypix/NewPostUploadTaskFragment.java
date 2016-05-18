@@ -33,34 +33,32 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ServerValue;
+import com.google.firebase.samples.apps.friendlypix.Models.Author;
 import com.google.firebase.samples.apps.friendlypix.Models.Post;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 public class NewPostUploadTaskFragment extends Fragment {
     private static final String TAG = "NewPostTaskFragment";
 
     public interface TaskCallbacks {
-        void onBitmapResized(Bitmap resizedBitmap);
+        void onBitmapResized(Bitmap resizedBitmap, int mMaxDimension);
         void onPostUploaded(String error);
     }
     private Context mApplicationContext;
     private TaskCallbacks mCallbacks;
     private Bitmap selectedBitmap;
+    private Bitmap thumbnail;
 
     public NewPostUploadTaskFragment() {
         // Required empty public constructor
@@ -103,25 +101,41 @@ public class NewPostUploadTaskFragment extends Fragment {
         return selectedBitmap;
     }
 
-    public void resizeBitmap(Uri uri) {
-        LoadResizedBitmapTask task = new LoadResizedBitmapTask();
+    public void setThumbnail(Bitmap thumbnail) {
+        this.thumbnail = thumbnail;
+    }
+
+    public Bitmap getThumbnail() {
+        return thumbnail;
+    }
+
+    public void resizeBitmap(Uri uri, int maxDimension) {
+        LoadResizedBitmapTask task = new LoadResizedBitmapTask(maxDimension);
         task.execute(uri);
     }
 
-    public void uploadPost(Bitmap bitmap, String fileName, String postText) {
-        UploadPostTask uploadTask = new UploadPostTask(bitmap, fileName, postText);
+    public void uploadPost(Bitmap bitmap, String inBitmapPath, Bitmap thumbnail, String inThumbnailPath,
+                           String inFileName, String inPostText) {
+        UploadPostTask uploadTask = new UploadPostTask(bitmap, inBitmapPath, thumbnail, inThumbnailPath, inFileName, inPostText);
         uploadTask.execute();
     }
 
     class UploadPostTask extends AsyncTask<Void, Void, Void> {
         private WeakReference<Bitmap> bitmapReference;
+        private WeakReference<Bitmap> thumbnailReference;
         private String postText;
         private String fileName;
+        private String bitmapPath;
+        private String thumbnailPath;
 
-        public UploadPostTask(Bitmap bitmap, String inFileName, String inPostText) {
+        public UploadPostTask(Bitmap bitmap, String inBitmapPath, Bitmap thumbnail, String inThumbnailPath,
+                              String inFileName, String inPostText) {
             bitmapReference = new WeakReference<Bitmap>(bitmap);
+            thumbnailReference = new WeakReference<Bitmap>(thumbnail);
             postText = inPostText;
             fileName = inFileName;
+            bitmapPath = inBitmapPath;
+            thumbnailPath = inThumbnailPath;
         }
 
         @Override
@@ -131,86 +145,84 @@ public class NewPostUploadTaskFragment extends Fragment {
 
         @Override
         protected Void doInBackground(Void... params) {
-            Bitmap bitmap = bitmapReference.get();
-            if (bitmap == null) {
+            Bitmap fullSize = bitmapReference.get();
+            final Bitmap thumbnail = thumbnailReference.get();
+            if (fullSize == null || thumbnail == null) {
                 return null;
             }
-            StorageReference storageRef = FirebaseStorage.getInstance()
-                    .getReference(getString(R.string.google_storage_bucket));
-            final StorageReference photoRef = storageRef.child("photos")
-                    .child(fileName + ".jpg");
-            // TODO: Temporary code to randomly select one of three SDK upload methods for
-            // testing. Choose one before release.
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 70, stream);
-            byte[] bytes = stream.toByteArray();
-            UploadTask uploadTask = null;
-            int randomChoice = new Random().nextInt(3);
-            switch(randomChoice) {
-                case 0:
-                    uploadTask = photoRef.putBytes(bytes);
-                    break;
-                case 1:
-                    uploadTask = photoRef.putStream(new ByteArrayInputStream(bytes));
-                    break;
-                case 2:
-                    File tmpImageFile = new File(mApplicationContext.getCacheDir(), "tmpimg.jpg");
-                    try {
-                        FileOutputStream fileOutputStream = new FileOutputStream(tmpImageFile);
-                        bitmap.compress(Bitmap.CompressFormat.JPEG, 70, fileOutputStream);
-                        fileOutputStream.flush();
-                        fileOutputStream.close();
-                        Uri tmpImgUri = Uri.fromFile(tmpImageFile);
-                        uploadTask = photoRef.putFile(tmpImgUri);
-                    } catch (FileNotFoundException e ) {
-                        FirebaseCrash.logcat(Log.ERROR, TAG, "Can't access temp image file");
-                        FirebaseCrash.report(e);
-                    } catch (IOException e) {
-                        FirebaseCrash.logcat(Log.ERROR, TAG, "Can't create temp image file");
-                        FirebaseCrash.report(e);
-                    }
-            }
-            if (uploadTask == null) {
-                FirebaseCrash.log(mApplicationContext.getString(R.string.error_upload_task_create));
-                mCallbacks.onPostUploaded(mApplicationContext.getString(
-                        R.string.error_upload_task_create));
-                return null;
-            }
-            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            FirebaseStorage storageRef = FirebaseStorage.getInstance();
+            StorageReference photoRef = storageRef.getReferenceFromUrl("gs://" + getString(R.string.google_storage_bucket));
+
+
+            Long timestamp = System.currentTimeMillis();
+            final StorageReference fullSizeRef = photoRef.child(FirebaseUtil.getCurrentUserId()).child("full").child(timestamp.toString()).child(fileName + ".jpg");
+            final StorageReference thumbnailRef = photoRef.child(FirebaseUtil.getCurrentUserId()).child("thumb").child(timestamp.toString()).child(fileName + ".jpg");
+            Log.d(TAG, fullSizeRef.toString());
+            Log.d(TAG, thumbnailRef.toString());
+
+            ByteArrayOutputStream fullSizeStream = new ByteArrayOutputStream();
+            fullSize.compress(Bitmap.CompressFormat.JPEG, 90, fullSizeStream);
+            byte[] bytes = fullSizeStream.toByteArray();
+            fullSizeRef.putBytes(bytes).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    Uri url = taskSnapshot.getDownloadUrl();
+                    final Uri fullSizeUrl = taskSnapshot.getDownloadUrl();
 
-                    final DatabaseReference ref = FirebaseUtil.getBaseRef();
-                    DatabaseReference postsRef = FirebaseUtil.getPostsRef();
-                    final String newPostKey = postsRef.push().getKey();
-
-                    String userId = FirebaseUtil.getCurrentUserId();
-                    Post newPost = new Post(userId, url.toString(), postText, ServerValue.TIMESTAMP);
-
-                    Map<String, Object> updatedUserData = new HashMap<>();
-                    updatedUserData.put(FirebaseUtil.getUsersPath() + userId + "/posts/" + newPostKey, true);
-                    updatedUserData.put(FirebaseUtil.getPostsPath() + newPostKey,
-                            new ObjectMapper().convertValue(newPost, Map.class));
-                    ref.updateChildren(updatedUserData, new DatabaseReference.CompletionListener() {
+                    ByteArrayOutputStream thumbnailStream = new ByteArrayOutputStream();
+                    thumbnail.compress(Bitmap.CompressFormat.JPEG, 70, thumbnailStream);
+                    thumbnailRef.putBytes(thumbnailStream.toByteArray())
+                            .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
-                        public void onComplete(DatabaseError firebaseError, DatabaseReference databaseReference) {
-                            if (firebaseError == null) {
-                                mCallbacks.onPostUploaded(null);
-                            } else {
-                                Log.e(TAG, "Unable to create new post: " + firebaseError.getMessage());
-                                FirebaseCrash.report(firebaseError.toException());
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            final DatabaseReference ref = FirebaseUtil.getBaseRef();
+                            DatabaseReference postsRef = FirebaseUtil.getPostsRef();
+                            final String newPostKey = postsRef.push().getKey();
+                            final Uri thumbnailUrl = taskSnapshot.getDownloadUrl();
+
+                            Author author = FirebaseUtil.getAuthor();
+                            if (author == null) {
+                                FirebaseCrash.logcat(Log.ERROR, TAG, "Couldn't upload post: Couldn't get signed in user.");
                                 mCallbacks.onPostUploaded(mApplicationContext.getString(
-                                        R.string.error_upload_task_create));
+                                        R.string.error_user_not_signed_in));
+                                return;
                             }
+                            Post newPost = new Post(author, fullSizeUrl.toString(), fullSizeRef.toString(),
+                                    thumbnailUrl.toString(), thumbnailRef.toString(), postText, ServerValue.TIMESTAMP);
+
+                            Map<String, Object> updatedUserData = new HashMap<>();
+                            updatedUserData.put(FirebaseUtil.getPeoplePath() + author.getUid() + "/posts/"
+                                    + newPostKey, true);
+                            updatedUserData.put(FirebaseUtil.getPostsPath() + newPostKey,
+                                    new ObjectMapper().convertValue(newPost, Map.class));
+                            ref.updateChildren(updatedUserData, new DatabaseReference.CompletionListener() {
+                                @Override
+                                public void onComplete(DatabaseError firebaseError, DatabaseReference databaseReference) {
+                                    if (firebaseError == null) {
+                                        mCallbacks.onPostUploaded(null);
+                                    } else {
+                                        Log.e(TAG, "Unable to create new post: " + firebaseError.getMessage());
+                                        FirebaseCrash.report(firebaseError.toException());
+                                        mCallbacks.onPostUploaded(mApplicationContext.getString(
+                                                R.string.error_upload_task_create));
+                                    }
+                                }
+                            });
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            FirebaseCrash.logcat(Log.ERROR, TAG, "Failed to upload post to database.");
+                            FirebaseCrash.report(e);
+                            mCallbacks.onPostUploaded(mApplicationContext.getString(
+                                    R.string.error_upload_task_create));
                         }
                     });
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
-                public void onFailure(@NonNull Throwable throwable) {
+                public void onFailure(@NonNull Exception e) {
                     FirebaseCrash.logcat(Log.ERROR, TAG, "Failed to upload post to database.");
-                    FirebaseCrash.report(throwable);
+                    FirebaseCrash.report(e);
                     mCallbacks.onPostUploaded(mApplicationContext.getString(
                             R.string.error_upload_task_create));
                 }
@@ -221,6 +233,12 @@ public class NewPostUploadTaskFragment extends Fragment {
     }
 
     class LoadResizedBitmapTask extends AsyncTask<Uri, Void, Bitmap> {
+        private int mMaxDimension;
+
+        public LoadResizedBitmapTask(int maxDimension) {
+            mMaxDimension = maxDimension;
+        }
+
         // Decode image in background.
         @Override
         protected Bitmap doInBackground(Uri... params) {
@@ -230,7 +248,7 @@ public class NewPostUploadTaskFragment extends Fragment {
                 // Implement thumbnail + fullsize later.
                 Bitmap bitmap = null;
                 try {
-                    bitmap = decodeSampledBitmapFromUri(uri, 640, 480);
+                    bitmap = decodeSampledBitmapFromUri(uri, mMaxDimension, mMaxDimension);
                 } catch (FileNotFoundException e) {
                     Log.e(TAG, "Can't find file to resize: " + e.getMessage());
                     FirebaseCrash.report(e);
@@ -245,7 +263,7 @@ public class NewPostUploadTaskFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Bitmap bitmap) {
-            mCallbacks.onBitmapResized(bitmap);
+            mCallbacks.onBitmapResized(bitmap, mMaxDimension);
         }
     }
 

@@ -61,12 +61,10 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
                     }
                 }).addOnFailureListener( new OnFailureListener() {
                     @Override
-                    public void onFailure(@NonNull Throwable throwable) {
+                    public void onFailure(@NonNull Exception e) {
                         Toast.makeText(WelcomeActivity.this, "Unable to sign in anonymously.",
                                 Toast.LENGTH_SHORT).show();
-                        if (throwable instanceof FirebaseAuthException) {
-                            Log.e(TAG, ((FirebaseAuthException) throwable).getMessage());
-                        }
+                            Log.e(TAG, e.getMessage());
                     }
                 });
                 break;

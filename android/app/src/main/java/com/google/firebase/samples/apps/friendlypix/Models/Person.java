@@ -16,24 +16,36 @@
 
 package com.google.firebase.samples.apps.friendlypix.Models;
 
+import java.util.Map;
+
 public class Person {
-    private String displayName;
-    private String photoUrl;
+    private String full_name;
+    private String profile_picture;
+    private Map<String, Boolean> posts;
+    private Map<String, Object> following;
 
     public Person() {
 
     }
 
-    public Person(String displayName, String photoUrl) {
-        this.displayName = displayName;
-        this.photoUrl = photoUrl;
+    public Person(String full_name, String profile_picture) {
+        this.full_name = full_name;
+        this.profile_picture = profile_picture;
     }
 
-    public String getDisplayName() {
-        return displayName;
+    public String getFull_name() {
+        return full_name;
     }
 
-    public String getPhotoUrl() {
-        return photoUrl;
+    public String getProfile_picture() {
+        return profile_picture;
+    }
+
+    public Map<String, Boolean> getPosts() {
+        return posts;
+    }
+
+    public Map<String, Object> getFollowing() {
+        return following;
     }
 }

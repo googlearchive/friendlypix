@@ -29,10 +29,6 @@
         android:background="@drawable/ic_camera_alt_24dp"
         android:backgroundTint="@color/blue_grey_500"
         />
-    <TextView
-        android:id="@+id/new_post_location"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
     <EditText
         android:layout_width="match_parent"
         android:layout_height="120dp"

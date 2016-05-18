@@ -87,13 +87,6 @@
                 android:textSize="30sp"
                 style="@style/TextAppearance.AppCompat.Title"/>
             <Button
-                android:id="@+id/my_posts_button"
-                android:layout_width="200dp"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:text="@string/my_posts_button_text"
-                style="@style/Widget.AppCompat.Button.Colored"/>
-            <Button
                 android:id="@+id/show_feeds_button"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"

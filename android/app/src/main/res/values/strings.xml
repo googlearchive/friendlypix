@@ -59,4 +59,6 @@
     <string name="default_progress_message">Please wait...</string>
     <string name="profile_progress_message">Signing in...</string>
     <string name="post_upload_progress_message">Uploading...</string>
+    <string name="user_logged_out_error">You must be logged in to do that.</string>
+    <string name="error_user_not_signed_in">Error user not signed in.</string>
 </resources>

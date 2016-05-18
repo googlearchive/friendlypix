@@ -24,9 +24,16 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
+
 public class PostViewHolder extends RecyclerView.ViewHolder {
     private final View mView;
     private PostClickListener mListener;
+    public DatabaseReference mPostRef;
+    public ValueEventListener mPostListener;
+
     public enum LikeStatus { LIKED, NOT_LIKED }
     private final ImageView mLikeIcon;
     private static final int POST_TEXT_MAX_LINES = 6;
@@ -36,6 +43,8 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
     private TextView mPostTextView;
     private TextView mTimestampView;
     private TextView mNumLikesView;
+    public String mPostKey;
+    public ValueEventListener mLikeListener;
 
     public PostViewHolder(View itemView) {
         super(itemView);
@@ -77,7 +86,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void setAuthor(String author, final String authorId) {
-        if (author.isEmpty()) {
+        if (author == null || author.isEmpty()) {
             author = mView.getResources().getString(R.string.user_info_no_name);
         }
         mAuthorView.setText(author);

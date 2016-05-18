@@ -17,7 +17,6 @@
 package com.google.firebase.samples.apps.friendlypix;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -36,12 +35,10 @@ import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.samples.apps.friendlypix.Models.Person;
 import com.google.firebase.samples.apps.friendlypix.Models.Post;
-import com.google.firebase.samples.apps.friendlypix.Models.User;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,9 +55,11 @@ public class UserDetailActivity extends AppCompatActivity {
     private ValueEventListener mFollowingListener;
     private ValueEventListener mPersonInfoListener;
     private String mUserId;
-    private DatabaseReference mUsersRef;
+    private DatabaseReference mPeopleRef;
     private DatabaseReference mPersonRef;
     private static final int GRID_NUM_COLUMNS = 2;
+    private DatabaseReference mFollowersRef;
+    private ValueEventListener mFollowersListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +77,7 @@ public class UserDetailActivity extends AppCompatActivity {
                 (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         // TODO: Investigate why initial toolbar title is activity name instead of blank.
 
-        mUsersRef = FirebaseUtil.getUsersRef();
+        mPeopleRef = FirebaseUtil.getPeopleRef();
         final String currentUserId = FirebaseUtil.getCurrentUserId();
 
         final FloatingActionButton followUserFab = (FloatingActionButton) findViewById(R.id
@@ -101,7 +100,7 @@ public class UserDetailActivity extends AppCompatActivity {
             }
         };
         if (currentUserId != null) {
-            mUsersRef.child(currentUserId).child("following").child(mUserId)
+            mPeopleRef.child(currentUserId).child("following").child(mUserId)
                     .addValueEventListener(mFollowingListener);
         }
         followUserFab.setOnClickListener(new View.OnClickListener() {
@@ -114,19 +113,19 @@ public class UserDetailActivity extends AppCompatActivity {
                 }
                 // TODO: Convert these to actually not be single value, for live updating when
                 // current user follows.
-                mUsersRef.child(mUserId).child("followers").addListenerForSingleValueEvent(new ValueEventListener() {
+                mPeopleRef.child(currentUserId).child("following").child(mUserId).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         Map<String, Object> updatedUserData = new HashMap<>();
-                        if (dataSnapshot.hasChild(currentUserId)) {
+                        if (dataSnapshot.exists()) {
                             // Already following, need to unfollow
-                            updatedUserData.put(mUserId + "/followers/" + currentUserId, null);
-                            updatedUserData.put(currentUserId + "/following/" + mUserId, null);
+                            updatedUserData.put("people/" + currentUserId + "/following/" + mUserId, null);
+                            updatedUserData.put("followers/" + mUserId + "/" + currentUserId, null);
                         } else {
-                            updatedUserData.put(mUserId + "/followers/" + currentUserId, true);
-                            updatedUserData.put(currentUserId + "/following/" + mUserId, true);
+                            updatedUserData.put("people/" + currentUserId + "/following/" + mUserId, true);
+                            updatedUserData.put("followers/" + mUserId + "/" + currentUserId, true);
                         }
-                        mUsersRef.updateChildren(updatedUserData, new DatabaseReference.CompletionListener() {
+                        FirebaseUtil.getBaseRef().updateChildren(updatedUserData, new DatabaseReference.CompletionListener() {
                             @Override
                             public void onComplete(DatabaseError firebaseError, DatabaseReference firebase) {
                                 if (firebaseError != null) {
@@ -152,65 +151,41 @@ public class UserDetailActivity extends AppCompatActivity {
         mRecyclerGrid.setAdapter(mGridAdapter);
         mRecyclerGrid.setLayoutManager(new GridLayoutManager(this, GRID_NUM_COLUMNS));
 
-        DatabaseReference userRef = FirebaseUtil.getUsersRef().child(mUserId);
-        userRef.addListenerForSingleValueEvent(
-                new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        final User user = dataSnapshot.getValue(User.class);
-                        if (user.getFollowers() != null) {
-                            int numFollowers = user.getFollowers().size();
-                            ((TextView) findViewById(R.id.user_num_followers))
-                                    .setText(numFollowers + " follower" + (numFollowers == 1 ? "" : "s"));
-                        }
-                        if (user.getFollowing() != null) {
-                            int numFollowing = user.getFollowing().size();
-                            ((TextView) findViewById(R.id.user_num_following))
-                                    .setText(numFollowing + " following");
-                        }
-                        if (user.getLikes() != null) {
-                            int numLikes = user.getLikes() == null ? 0 : user.getLikes().size();
-                            ((TextView) findViewById(R.id.user_num_likes))
-                                    .setText(numLikes + " like" + (numLikes == 1 ? "" : "s"));
-                        }
-
-                        List<String> paths = new ArrayList<String>(user.getPosts().keySet());
-                        mGridAdapter.addPaths(paths);
-                        String firstPostKey = paths.get(0);
-
-                        FirebaseUtil.getPostsRef().child(firstPostKey).addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                Post post = dataSnapshot.getValue(Post.class);
-
-                                ImageView imageView = (ImageView) findViewById(R.id.backdrop);
-                                GlideUtil.loadImage(post.getUrl(), imageView);
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError firebaseError) {
-
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError firebaseError) {
-                        new RuntimeException("Couldn't get user.", firebaseError.toException());
-                    }
-                });
         mPersonRef = FirebaseUtil.getPeopleRef().child(mUserId);
         mPersonInfoListener = mPersonRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Person person = dataSnapshot.getValue(Person.class);
                 CircleImageView userPhoto = (CircleImageView) findViewById(R.id.user_detail_photo);
-                GlideUtil.loadProfileIcon(person.getPhotoUrl(), userPhoto);
-                String name = person.getDisplayName();
+                GlideUtil.loadProfileIcon(person.getProfile_picture(), userPhoto);
+                String name = person.getFull_name();
                 if (name == null) {
                     name = getString(R.string.user_info_no_name);
                 }
                 collapsingToolbar.setTitle(name);
+                if (person.getFollowing() != null) {
+                    int numFollowing = person.getFollowing().size();
+                    ((TextView) findViewById(R.id.user_num_following))
+                            .setText(numFollowing + " following");
+                }
+                List<String> paths = new ArrayList<String>(person.getPosts().keySet());
+                mGridAdapter.addPaths(paths);
+                String firstPostKey = paths.get(0);
+
+                FirebaseUtil.getPostsRef().child(firstPostKey).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Post post = dataSnapshot.getValue(Post.class);
+
+                        ImageView imageView = (ImageView) findViewById(R.id.backdrop);
+                        GlideUtil.loadImage(post.getFull_url(), imageView);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError firebaseError) {
+
+                    }
+                });
             }
 
             @Override
@@ -218,17 +193,32 @@ public class UserDetailActivity extends AppCompatActivity {
 
             }
         });
+        mFollowersRef = FirebaseUtil.getFollowersRef().child(mUserId);
+        mFollowersListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                long numFollowers = dataSnapshot.getChildrenCount();
+                ((TextView) findViewById(R.id.user_num_followers))
+                        .setText(numFollowers + " follower" + (numFollowers == 1 ? "" : "s"));
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        mFollowersRef.addValueEventListener(mFollowersListener);
     }
 
     @Override
     protected void onDestroy() {
         if (FirebaseUtil.getCurrentUserId() != null) {
-            mUsersRef.child(FirebaseUtil.getCurrentUserId()).child("following").child(mUserId)
+            mPeopleRef.child(FirebaseUtil.getCurrentUserId()).child("following").child(mUserId)
                     .removeEventListener(mFollowingListener);
         }
 
         mPersonRef.child(mUserId).removeEventListener(mPersonInfoListener);
-
+        mFollowersRef.removeEventListener(mFollowersListener);
         super.onDestroy();
     }
 
@@ -257,7 +247,7 @@ public class UserDetailActivity extends AppCompatActivity {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     Post post = dataSnapshot.getValue(Post.class);
-                    GlideUtil.loadImage(post.getUrl(), holder.imageView);
+                    GlideUtil.loadImage(post.getFull_url(), holder.imageView);
                     holder.imageView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {

@@ -38,13 +38,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ServerValue;
-import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.samples.apps.friendlypix.Models.Author;
 import com.google.firebase.samples.apps.friendlypix.Models.Comment;
-import com.google.firebase.samples.apps.friendlypix.Models.Person;
 
 
 /**
@@ -107,26 +107,11 @@ public class CommentsFragment extends Fragment {
             @Override
             protected void populateViewHolder(final CommentViewHolder viewHolder,
                                               Comment comment, int position) {
-                String authorId = comment.getAuthor(); // TODO: fix this to be comment.getUserId()
-                FirebaseUtil.getPeopleRef().child(authorId)
-                        .addListenerForSingleValueEvent(
-                        new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                Person author = dataSnapshot.getValue(Person.class);
-                                viewHolder.commentAuthor.setText(author.getDisplayName());
-                                GlideUtil.loadProfileIcon(author.getPhotoUrl(), viewHolder
-                                        .commentPhoto);
-                            }
+                Author author = comment.getAuthor();
+                viewHolder.commentAuthor.setText(author.getFull_name());
+                GlideUtil.loadProfileIcon(author.getProfile_picture(), viewHolder.commentPhoto);
 
-                            @Override
-                            public void onCancelled(DatabaseError firebaseError) {
-                                new RuntimeException("Couldn't get comment username.",
-                                        firebaseError.toException());
-                            }
-                        }
-                );
-                viewHolder.authorRef = authorId;
+                viewHolder.authorRef = author.getUid();
                 viewHolder.commentTime
                         .setText(DateUtils.getRelativeTimeSpanString((long) comment.getTimestamp
                                 ()));
@@ -168,8 +153,17 @@ public class CommentsFragment extends Fragment {
                         mEditText.getWindowToken(),
                         InputMethodManager.HIDE_NOT_ALWAYS);
 
-                Comment comment = new Comment(FirebaseUtil.getCurrentUserId(),
-                        commentText.toString(), ServerValue.TIMESTAMP);
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                if (user == null) {
+                    Toast.makeText(getActivity(), R.string.user_logged_out_error,
+                            Toast.LENGTH_SHORT).show();
+                }
+
+                Author author = new Author(user.getDisplayName(),
+                        user.getPhotoUrl().toString(), user.getUid());
+
+                Comment comment = new Comment(author, commentText.toString(),
+                        ServerValue.TIMESTAMP);
                 commentsRef.push().setValue(comment, new DatabaseReference.CompletionListener() {
                     @Override
                     public void onComplete(DatabaseError error, DatabaseReference firebase) {
