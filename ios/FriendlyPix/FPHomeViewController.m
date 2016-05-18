@@ -80,7 +80,7 @@
   [followingRef observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull followingSnapshot) {
     // Start listening the followed user's posts to populate the home feed.
     NSDictionary *following = followingSnapshot.value;
-    if (!following) {
+    if (!following  || [following isEqual:[NSNull null]]) {
       return;
     }
 

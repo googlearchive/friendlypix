@@ -19,7 +19,6 @@
 
 @interface FPUser ()
 
-@property (copy, nonatomic) NSString *userID;
 @property (copy, nonatomic) NSString *fullname;
 @property (copy, nonatomic) NSURL *profilePictureURL;
 
@@ -27,12 +26,37 @@
 
 @implementation FPUser
 
+#pragma mark - NSCoding
+
+- (void)encodeWithCoder:(NSCoder *)encoder {
+  [encoder encodeObject:_fullname forKey:@"fullname"];
+  [encoder encodeObject:_profilePictureURL forKey:@"profilePictureURL"];
+}
+
+- (instancetype)initWithCoder:(NSCoder *)decoder {
+  self = [super init];
+  if (self) {
+    _fullname = [decoder decodeObjectForKey:@"fullname"];
+    _profilePictureURL = [decoder decodeObjectForKey:@"profilePictureURL"];
+  }
+
+  return self;
+}
+
+- (instancetype)copyWithZone:(NSZone *)zone {
+  FPUser *theCopy = [[[self class] allocWithZone:zone] init];
+  [theCopy setFullname:[_fullname copy]];
+  [theCopy setProfilePictureURL:[_profilePictureURL copy]];
+
+  return theCopy;
+}
+
 - (instancetype)initWithDictionary:(NSDictionary *)dictionary {
   self = [super init];
   if (self) {
     NSArray *errors;
     NSDictionary *mappingDictionary = @{
-                                        @"fullname": KZProperty(fullname),
+                                        @"full_name": KZProperty(fullname),
                                         @"profile_picture": KZBox(URL, profilePictureURL),
                                         @"uid": KZProperty(userID)};
 

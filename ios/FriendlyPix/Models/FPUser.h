@@ -20,6 +20,7 @@
 #import "STXUserItem.h"
 
 @interface FPUser : NSObject <STXUserItem>
+@property (copy, nonatomic) NSString *userID;
 
 - (instancetype)initWithDictionary:(NSDictionary *)dictionary;
 

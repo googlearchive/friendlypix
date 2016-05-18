@@ -17,16 +17,22 @@
 #import "AppDelegate.h"
 
 @import FirebaseAnalytics;
+@import GoogleSignIn;
 
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-  //  NSNotificationCenter.defaultCenter().addObserver(self, selector: "connectToFriendlyPing",
-  //                                                   name: FPConstants.NotificationKeys.SignedIn, object: nil)
   // Use Firebase library to configure APIs
   [FIRApp configure];
 
   return YES;
 }
 
+-(BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<NSString *,id> *)options {
+  return [self application:app openURL:url sourceApplication:options[UIApplicationOpenURLOptionsSourceApplicationKey] annotation:@{}];
+}
+
+-(BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
+  return [[GIDSignIn sharedInstance] handleURL:url sourceApplication:sourceApplication annotation:annotation];
+}
 @end
