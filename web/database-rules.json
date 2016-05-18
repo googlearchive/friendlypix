@@ -3,7 +3,10 @@
     "feed": {
       "$uid": {
         ".read": "auth.uid === $uid",
-        ".write": "auth.uid === $uid"
+        ".write": "auth.uid === $uid",
+        "$postId": {
+          ".validate": "newData.val() === true && newData.parent().parent().parent().child('posts').child($postId).exists()"
+        }
       }
     },
     "posts": {
@@ -47,6 +50,25 @@
       ".read": true,
       "$uid": {
         ".write": "auth.uid === $uid",
+        "full_name": {
+          ".validate": "newData.isString()"
+        },
+        "profile_picture": {
+          ".validate": "newData.isString()"
+        },
+        "posts": {
+          "$postId": {
+            ".validate": "newData.val() === true && newData.parent().parent().parent().parent().child('posts').child($postId).exists()"
+          }
+        },
+        "_search_index": {
+          "full_name": {
+            ".validate": "newData.isString()"
+          },
+          "reversed_full_name": {
+            ".validate": "newData.isString()"
+          }
+        },
         "following": {
           "$followedUid": {
             ".validate": "newData.parent().parent().parent().parent().child('followers').child($followedUid).child($uid).val() === true" // Makes sure /followers is in sync
