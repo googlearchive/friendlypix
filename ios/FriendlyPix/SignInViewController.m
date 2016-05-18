@@ -17,14 +17,8 @@
 
 #import "SignInViewController.h"
 #import "FPAppState.h"
-@import FirebaseAuth;
+@import Firebase;
 @import GoogleMobileAds;
-@import FirebaseDatabase;
-
-@interface SignInViewController ()
-@property (weak, nonatomic) IBOutlet UITextField *emailField;
-@property (weak, nonatomic) IBOutlet UITextField *passwordField;
-@end
 
 @implementation SignInViewController
 
@@ -35,8 +29,14 @@
   }
 }
 
-- (IBAction)didTapSignUp:(id)sender {
-  [[FIRAuth auth] createUserWithEmail:_emailField.text password:_passwordField.text completion:^(FIRUser * _Nullable user, NSError * _Nullable error) {
+-(void)signIn:(GIDSignIn *)signIn didSignInForUser:(GIDGoogleUser *)user withError:(NSError *)error {
+  if (error) {
+    NSLog(@"%@", error.localizedDescription);
+    return;
+  }
+  GIDAuthentication *auth = user.authentication;
+  FIRAuthCredential *credential = [FIRGoogleAuthProvider credentialWithIDToken:auth.idToken accessToken:auth.accessToken];
+  [[FIRAuth auth] signInWithCredential:credential completion:^(FIRUser * _Nullable user, NSError * _Nullable error) {
     if (error) {
       NSLog(@"%@", error.localizedDescription);
       return;
@@ -46,19 +46,14 @@
 }
 
 - (IBAction)didTapSignIn:(UIButton *)sender {
-  [[FIRAuth auth] signInWithEmail:_emailField.text
-                         password:_passwordField.text
-                         completion:^(FIRUser *user, NSError *error) {
-                           if (error) {
-                             NSLog(@"%@", error.localizedDescription);
-                             return;
-                           }
-
-                           [self signedIn:user];
-                         }];
+  [GIDSignIn sharedInstance].clientID = [FIRApp defaultApp].options.clientID;
+  [GIDSignIn sharedInstance].delegate = self;
+  [GIDSignIn sharedInstance].uiDelegate = self;
+  [[GIDSignIn sharedInstance] signIn];
 }
 
 - (void)signedIn:(FIRUser *)user {
+  NSLog(user.uid);
   FIRDatabaseReference *ref;
   ref = [FIRDatabase database].reference;
   FIRDatabaseReference *peopleRef = [ref child: [NSString stringWithFormat:@"people/%@", user.uid]];
@@ -75,9 +70,11 @@
                                    }
                                };
       [peopleRef setValue:person];
+      [FPAppState sharedInstance].currentUser = [[FPUser alloc] initWithDictionary:person];
+      [FPAppState sharedInstance].currentUser.userID = user.uid;
     }
+    [self performSegueWithIdentifier:@"SignInToFP" sender:nil];
   }];
-  [self performSegueWithIdentifier:@"SignInToFP" sender:nil];
 }
 
 - (NSArray *)reverseArray:(NSArray *)array {

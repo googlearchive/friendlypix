@@ -19,30 +19,24 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Email" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="hDe-Q1-Eb5">
-                                <rect key="frame" x="226" y="177" width="149" height="30"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Friendly Pix" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yLH-NJ-5O0">
+                                <rect key="frame" x="218" y="109" width="164" height="60"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="149" id="nhN-cj-ggN"/>
+                                    <constraint firstAttribute="height" constant="60" id="GkZ-I0-7A4"/>
+                                    <constraint firstAttribute="width" constant="164" id="RSH-io-cBM"/>
                                 </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
-                            </textField>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Password" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="e28-gY-ZeK">
-                                <rect key="frame" x="226" y="215" width="149" height="30"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="30" id="CEx-HI-CHr"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits" secureTextEntry="YES"/>
-                            </textField>
+                                <fontDescription key="fontDescription" type="system" pointSize="30"/>
+                                <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qDo-1s-Eg5">
                                 <rect key="frame" x="200" y="286" width="200" height="28"/>
-                                <color key="backgroundColor" red="0.0" green="0.0" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" red="1" green="0.79215686269999996" blue="0.15686274510000001" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="200" id="Gra-1E-HT6"/>
+                                    <constraint firstAttribute="width" constant="200" id="dAP-fk-rgy"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="13"/>
-                                <state key="normal" title="SIGN IN TO GET STARTED">
+                                <state key="normal" title="SIGN IN WITH GOOGLE">
                                     <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                     <color key="titleShadowColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 </state>
@@ -54,45 +48,17 @@
                                     <action selector="didTapSignIn:" destination="zxq-GO-nHP" eventType="touchUpInside" id="udk-NN-Kxr"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Dt7-Hs-H2k">
-                                <rect key="frame" x="247" y="346" width="107" height="30"/>
-                                <state key="normal" title="Create Account"/>
-                                <connections>
-                                    <action selector="didTapSignUp:" destination="zxq-GO-nHP" eventType="touchUpInside" id="kpO-yX-5YF"/>
-                                </connections>
-                            </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Friendly Pix" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yLH-NJ-5O0">
-                                <rect key="frame" x="218" y="109" width="164" height="60"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="60" id="GkZ-I0-7A4"/>
-                                    <constraint firstAttribute="width" constant="164" id="RSH-io-cBM"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="30"/>
-                                <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                         </subviews>
-                        <color key="backgroundColor" red="1" green="0.5" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="backgroundColor" red="0.01176470588" green="0.60784313729999995" blue="0.8980392157" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
-                            <constraint firstItem="e28-gY-ZeK" firstAttribute="trailing" secondItem="hDe-Q1-Eb5" secondAttribute="trailing" id="1cw-0G-qvC"/>
-                            <constraint firstItem="Dt7-Hs-H2k" firstAttribute="centerX" secondItem="qDo-1s-Eg5" secondAttribute="centerX" id="4zM-xe-kei"/>
-                            <constraint firstItem="e28-gY-ZeK" firstAttribute="top" secondItem="hDe-Q1-Eb5" secondAttribute="bottom" constant="8" symbolic="YES" id="6GA-yl-w6a"/>
-                            <constraint firstItem="qDo-1s-Eg5" firstAttribute="top" secondItem="e28-gY-ZeK" secondAttribute="bottom" constant="41" id="70C-ec-w3B"/>
                             <constraint firstItem="yLH-NJ-5O0" firstAttribute="top" secondItem="abG-qv-YP8" secondAttribute="bottom" constant="45" id="BmT-4b-8ao"/>
-                            <constraint firstItem="hDe-Q1-Eb5" firstAttribute="top" secondItem="yLH-NJ-5O0" secondAttribute="bottom" constant="8" symbolic="YES" id="H0X-OD-xlI"/>
-                            <constraint firstItem="e28-gY-ZeK" firstAttribute="centerX" secondItem="qDo-1s-Eg5" secondAttribute="centerX" id="PH6-AU-XhI"/>
-                            <constraint firstItem="hDe-Q1-Eb5" firstAttribute="centerX" secondItem="yLH-NJ-5O0" secondAttribute="centerX" id="STc-1E-TEF"/>
-                            <constraint firstItem="Dt7-Hs-H2k" firstAttribute="top" secondItem="qDo-1s-Eg5" secondAttribute="bottom" constant="32" id="edd-ru-lGn"/>
-                            <constraint firstItem="qDo-1s-Eg5" firstAttribute="centerY" secondItem="OTh-0Q-7iK" secondAttribute="centerY" id="jVO-mh-TKu"/>
-                            <constraint firstItem="qDo-1s-Eg5" firstAttribute="centerX" secondItem="OTh-0Q-7iK" secondAttribute="centerX" id="kPg-NP-hEa"/>
-                            <constraint firstItem="e28-gY-ZeK" firstAttribute="leading" secondItem="hDe-Q1-Eb5" secondAttribute="leading" id="o7D-j2-gyW"/>
-                            <constraint firstItem="hDe-Q1-Eb5" firstAttribute="top" secondItem="OTh-0Q-7iK" secondAttribute="top" constant="177" id="rzF-5E-IlP"/>
+                            <constraint firstItem="qDo-1s-Eg5" firstAttribute="centerX" secondItem="OTh-0Q-7iK" secondAttribute="centerX" id="DhI-AG-NiR"/>
+                            <constraint firstItem="qDo-1s-Eg5" firstAttribute="centerY" secondItem="OTh-0Q-7iK" secondAttribute="centerY" id="lQW-Vm-Qce"/>
+                            <constraint firstItem="qDo-1s-Eg5" firstAttribute="centerX" secondItem="yLH-NJ-5O0" secondAttribute="centerX" id="tJZ-J1-hbu"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="pev-jk-sN3"/>
                     <connections>
-                        <outlet property="emailField" destination="hDe-Q1-Eb5" id="eQW-9P-HV3"/>
-                        <outlet property="passwordField" destination="e28-gY-ZeK" id="Dg6-eo-bge"/>
                         <segue destination="EZH-O8-5Xn" kind="show" identifier="SignInToFP" id="qAY-Jh-0p5"/>
                     </connections>
                 </viewController>
@@ -121,8 +87,11 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="FriendlyPix" id="S4u-aP-nZh">
                         <barButtonItem key="backBarButtonItem" title="dfgs" id="JcQ-Tw-eBS"/>
-                        <barButtonItem key="leftBarButtonItem" title="Invite" id="OlG-7o-nVg"/>
+                        <barButtonItem key="leftBarButtonItem" title="Invite" id="OlG-7o-nVg">
+                            <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" title="Sign Out" id="LgN-dK-3Lr">
+                            <color key="tintColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                             <connections>
                                 <action selector="didTapSignOut:" destination="gHT-gQ-3v1" id="vYm-oM-YZO"/>
                             </connections>
@@ -315,7 +284,7 @@
                                 <searchBar contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="mDa-sm-Q0C">
                                     <rect key="frame" x="0.0" y="-5" width="560" height="44"/>
                                     <color key="backgroundColor" red="1" green="0.5" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                    <color key="barTintColor" red="1" green="0.5" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="barTintColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                     <textInputTraits key="textInputTraits"/>
                                 </searchBar>
                             </subviews>
@@ -367,7 +336,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="49"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                        <color key="barTintColor" red="1" green="0.5" blue="0.0" alpha="0.5" colorSpace="calibratedRGB"/>
                     </tabBar>
                     <connections>
                         <segue destination="XkN-Nq-fu5" kind="relationship" relationship="viewControllers" id="gRo-na-6Y8"/>
@@ -389,9 +357,9 @@
                     <navigationBar key="navigationBar" contentMode="scaleToFill" translucent="NO" id="CUq-ke-N7j">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <color key="barTintColor" red="1" green="0.5" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="barTintColor" red="0.01176470588" green="0.60784313729999995" blue="0.8980392157" alpha="1" colorSpace="calibratedRGB"/>
                         <textAttributes key="titleTextAttributes">
-                            <color key="textColor" red="0.0" green="0.0" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                            <color key="textColor" red="1" green="0.79215686269999996" blue="0.15686274510000001" alpha="1" colorSpace="calibratedRGB"/>
                         </textAttributes>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -412,9 +380,9 @@
                     <navigationBar key="navigationBar" contentMode="scaleToFill" translucent="NO" id="Lww-yb-zsH">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <color key="barTintColor" red="1" green="0.5" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="barTintColor" red="0.01176470588" green="0.60784313729999995" blue="0.8980392157" alpha="1" colorSpace="calibratedRGB"/>
                         <textAttributes key="titleTextAttributes">
-                            <color key="textColor" red="0.0" green="0.0" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                            <color key="textColor" red="1" green="0.79215686269999996" blue="0.15686274510000001" alpha="1" colorSpace="calibratedRGB"/>
                         </textAttributes>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -462,11 +430,13 @@
                     </view>
                     <navigationItem key="navigationItem" id="ytd-Zi-8LO">
                         <barButtonItem key="leftBarButtonItem" title="Cancel" id="ZzX-Cg-y5D">
+                            <color key="tintColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                             <connections>
                                 <action selector="cancelButtonAction:" destination="AMH-FM-gpf" id="z5i-jt-Num"/>
                             </connections>
                         </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" title="Share" id="zhW-wH-bma">
+                            <color key="tintColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                             <connections>
                                 <action selector="doneButtonAction:" destination="AMH-FM-gpf" id="nM7-cy-Yqx"/>
                             </connections>
@@ -490,7 +460,7 @@
                     <navigationBar key="navigationBar" contentMode="scaleToFill" translucent="NO" id="Ph8-MB-YtP">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <color key="barTintColor" red="1" green="0.5" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="barTintColor" red="0.01176470588" green="0.60784313729999995" blue="0.8980392157" alpha="1" colorSpace="calibratedRGB"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
@@ -509,7 +479,7 @@
         <image name="PlaceholderPhoto" width="280" height="280"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="k5X-IS-On4"/>
-        <segue reference="vUU-zr-9zj"/>
+        <segue reference="dJf-JC-1dn"/>
+        <segue reference="c3H-ql-4Us"/>
     </inferredMetricsTieBreakers>
 </document>
