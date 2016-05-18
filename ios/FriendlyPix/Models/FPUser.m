@@ -29,6 +29,7 @@
 #pragma mark - NSCoding
 
 - (void)encodeWithCoder:(NSCoder *)encoder {
+  [encoder encodeObject:_userID forKey:@"userID"];
   [encoder encodeObject:_fullname forKey:@"fullname"];
   [encoder encodeObject:_profilePictureURL forKey:@"profilePictureURL"];
 }
@@ -36,6 +37,7 @@
 - (instancetype)initWithCoder:(NSCoder *)decoder {
   self = [super init];
   if (self) {
+    _userID = [decoder decodeObjectForKey:@"userID"];
     _fullname = [decoder decodeObjectForKey:@"fullname"];
     _profilePictureURL = [decoder decodeObjectForKey:@"profilePictureURL"];
   }
@@ -45,6 +47,7 @@
 
 - (instancetype)copyWithZone:(NSZone *)zone {
   FPUser *theCopy = [[[self class] allocWithZone:zone] init];
+  [theCopy setUserID:[_userID copy]];
   [theCopy setFullname:[_fullname copy]];
   [theCopy setProfilePictureURL:[_profilePictureURL copy]];
 
@@ -106,7 +109,7 @@
 - (NSDictionary *)author {
   return @{ @"uid": self.userID ? : @"",
             @"full_name": self.fullname ? : @"",
-            @"profile_picture": self.profilePictureURL ? : @"" };
+            @"profile_picture": self.profilePictureURL.absoluteString ? : @"" };
 }
 
 @end

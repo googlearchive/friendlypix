@@ -124,8 +124,10 @@
   FIRDatabaseReference *photo = [[ref child:@"posts"] childByAutoId];
   [photo setValue:data];
   NSString *postId = photo.key;
-  [[ref child: [NSString stringWithFormat:@"people/%@/posts/%@", [FPAppState sharedInstance].currentUser.userID, postId]] setValue:@YES];
-  [[ref child: [NSString stringWithFormat:@"feed/%@/%@", [FPAppState sharedInstance].currentUser.userID, postId]] setValue:@YES];
+  [ref updateChildValues:@{
+                           [NSString stringWithFormat:@"people/%@/posts/%@", [FPAppState sharedInstance].currentUser.userID, postId]: @YES,
+                           [NSString stringWithFormat:@"feed/%@/%@", [FPAppState sharedInstance].currentUser.userID, postId]: @YES
+                           }];
   [self.parentViewController dismissViewControllerAnimated:YES completion:nil];
 }
 

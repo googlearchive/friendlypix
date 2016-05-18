@@ -22,6 +22,6 @@
 @property FIRDatabaseReference *ref;
 @property FIRDatabaseReference *postsRef;
 @property FIRDatabaseReference *commentsRef;
-@property FIRDatabaseReference *usersRef;
+@property FIRDatabaseReference *likesRef;
 - (void)loadPost:(FIRDataSnapshot *)postSnapshot;
 @end

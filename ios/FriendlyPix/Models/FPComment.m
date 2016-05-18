@@ -70,7 +70,9 @@
                                          @"timestamp": KZBox(Date, postDate)};
 
     [KZPropertyMapper mapValuesFrom:dictionary toInstance:self usingMapping:mappingDictionary errors:&errors];
-    self.from = [[FPUser alloc] initWithDictionary:dictionary[@"author"]];
+    if(dictionary[@"author"]) {
+      self.from = [[FPUser alloc] initWithDictionary:dictionary[@"author"]];
+    }
   }
   return self;
 }
