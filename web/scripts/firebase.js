@@ -442,8 +442,11 @@ friendlyPix.Firebase = class {
     });
 
     return Promise.all([picCompleter.promise(), thumbCompleter.promise()]).then(urls => {
-      // Once both pics and thumbanils has been uploaded add a new post in the Firebase Database.
-      return this.database.ref('/posts').push({
+      // Once both pics and thumbanils has been uploaded add a new post in the Firebase Database and
+      // to its fanned out posts lists (user's posts and home post).
+      let newPostKey = this.database.ref('/posts').push().key;
+      let update = {};
+      update[`/posts/${newPostKey}`] = {
         full_url: urls[0],
         thumb_url: urls[1],
         text: text,
@@ -455,13 +458,10 @@ friendlyPix.Firebase = class {
           full_name: this.auth.currentUser.displayName,
           profile_picture: this.auth.currentUser.photoURL
         }
-      }).then(data => {
-        // Add the post to the user's post and the user's home feed.
-        let update = {};
-        update[`/people/${this.auth.currentUser.uid}/posts/${data.key}`] = true;
-        update[`/feed/${this.auth.currentUser.uid}/${data.key}`] = true;
-        return this.database.ref().update(update).then(() => data.key);
-      });
+      };
+      update[`/people/${this.auth.currentUser.uid}/posts/${newPostKey}`] = true;
+      update[`/feed/${this.auth.currentUser.uid}/${newPostKey}`] = true;
+      this.database.ref().update(update).then(() => newPostKey);
     });
   }
 
