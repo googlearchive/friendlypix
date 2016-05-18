@@ -49,6 +49,11 @@
   [[[super.ref child:@"followers"] child: _user.userID]
    observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
      self.followers = snapshot.value;
+     unsigned long followersCount = [_followers count];
+     [_followerCountLabel setText:[NSString
+                                   stringWithFormat:@"%lu follower%@",
+                                   followersCount, followersCount==1?@"":@"s"]];
+
    }];
 
   [_profilePictureImageView setCircleImageWithURL:_user.profilePictureURL placeholderImage:[UIImage imageNamed:@"PlaceholderPhoto"]];
@@ -64,11 +69,6 @@
 
   [_photoCountLabel setText:[NSString
                              stringWithFormat:@"%lu post%@", _postCount, _postCount==1?@"":@"s"]];
-
-  unsigned long followersCount = [_followers count];
-  [_followerCountLabel setText:[NSString
-                                stringWithFormat:@"%lu follower%@",
-                                followersCount, followersCount==1?@"":@"s"]];
 
   [_followingCountLabel setText:[NSString
                                  stringWithFormat:@"%lu following",
@@ -101,25 +101,25 @@
   self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]
                                             initWithCustomView:loadingActivityIndicatorView];
 
-  [[super.ref child:[NSString stringWithFormat:@"followers/%@/%@", _user.userID,
-     [FPAppState sharedInstance].currentUser.userID]] setValue:@YES];
-  [[super.ref child:
-    [NSString stringWithFormat:@"people/%@/following/%@",
-     [FPAppState sharedInstance].currentUser.userID, _user.userID]]
-   setValue:@YES];
-
   FIRDatabaseReference *myFeed = [super.ref child:
-                      [NSString stringWithFormat:@"feed/%@", [FPAppState sharedInstance].currentUser.userID]];
+                                  [NSString stringWithFormat:@"feed/%@", [FPAppState sharedInstance].currentUser.userID]];
   [[super.ref child:
     [NSString stringWithFormat:@"people/%@/posts", _user.userID]]
    observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot *snapshot) {
+     NSString *lastPostID = @YES;
      for (NSString *postId in [snapshot.value allKeys]) {
        [[myFeed child:postId] setValue:@YES];
+       lastPostID = postId;
      }
+     [super.ref updateChildValues:@{
+                           [NSString stringWithFormat:@"followers/%@/%@", _user.userID,
+                            [FPAppState sharedInstance].currentUser.userID]: lastPostID,
+                           [NSString stringWithFormat:@"people/%@/following/%@",
+                            [FPAppState sharedInstance].currentUser.userID, _user.userID]: @YES
+                           }];
+
    }];
-
   [self configureUnfollowButton];
-
 }
 
 - (void)unfollowButtonAction:(id)sender {
@@ -130,13 +130,6 @@
   self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]
                                             initWithCustomView:loadingActivityIndicatorView];
 
-  [[super.ref child:
-    [NSString stringWithFormat:@"followers/%@/%@",
-     _user.userID, [FPAppState sharedInstance].currentUser.userID]] removeValue];
-  [[super.ref child:
-    [NSString stringWithFormat:@"people/%@/following/%@",
-     [FPAppState sharedInstance].currentUser.userID, _user.userID]] removeValue];
-
   FIRDatabaseReference *myFeed = [super.ref child:
                                   [NSString stringWithFormat:@"feed/%@", [FPAppState sharedInstance].currentUser.userID]];
   [[super.ref child:
@@ -145,8 +138,13 @@
      for (NSString *postId in [snapshot.value allKeys]) {
        [[myFeed child:postId] removeValue];
      }
+     [super.ref updateChildValues:@{
+                           [NSString stringWithFormat:@"followers/%@/%@", _user.userID,
+                            [FPAppState sharedInstance].currentUser.userID]: [NSNull null],
+                           [NSString stringWithFormat:@"people/%@/following/%@",
+                            [FPAppState sharedInstance].currentUser.userID, _user.userID]: [NSNull null]
+                           }];
    }];
-
   [self configureFollowButton];
 }
 

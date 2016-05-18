@@ -30,5 +30,6 @@
 - (instancetype)initWithSnapshot:(FIRDataSnapshot *)snapshot andComments:(NSArray<FPComment *> *)comments;
 
 @property (nonatomic) BOOL liked;
+@property (copy, nonatomic) NSDictionary *likes;
 
 @end

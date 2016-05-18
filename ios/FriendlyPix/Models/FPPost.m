@@ -37,7 +37,6 @@
 //@property (nonatomic) NSInteger likeCount;
 //@property (nonatomic) NSInteger commentCount;
 @property (copy, nonatomic) NSMutableArray *comments;
-@property (copy, nonatomic) NSDictionary *likes;
 
 @end
 
@@ -86,13 +85,11 @@
   [theCopy setPostDate:[_postDate copy]];
   [theCopy setImageURL:[_imageURL copy]];
   [theCopy setLink:[_link copy]];
-  //  [theCopy setCaption:[_caption copy]];
-  //  [theCopy setLikeCount:_likeCount];
-  //  [theCopy setCommentCount:_commentCount];
   [theCopy setComments:[_comments copy]];
   [theCopy setLikes:[_likes copy]];
   [theCopy setUser:_user];
   [theCopy setText:_text];
+  [theCopy setLiked:_liked];
 
   return theCopy;
 }
@@ -101,20 +98,16 @@
   self = [super init];
   if (self) {
     NSArray *errors;
-    NSDictionary *mappingDictionary = @{ //@"url": KZBox(URL, link),
+    NSDictionary *mappingDictionary = @{
                                         @"text": KZProperty(text),
-                                        //@"caption": KZProperty(caption),
-                                        //@"author": KZProperty(fromUser),
-                                        //@"user_has_liked": KZProperty(liked),
                                         @"url": KZBox(URL, imageURL),
-                                        @"likes": KZProperty(likes),
-                                        //@"like_count": KZProperty(likeCount),
-                                        @"timestamp": KZBox(Date, postDate),
-                                        //@"comment_count": KZProperty(commentCount)
+                                        @"timestamp": KZBox(Date, postDate)
                                         };
 
     [KZPropertyMapper mapValuesFrom:dictionary toInstance:self usingMapping:mappingDictionary errors:&errors];
-    self.user = [[FPUser alloc] initWithDictionary:dictionary[@"author"]];
+    if(dictionary[@"author"]) {
+      self.user = [[FPUser alloc] initWithDictionary:dictionary[@"author"]];
+    }
   }
 
   return self;

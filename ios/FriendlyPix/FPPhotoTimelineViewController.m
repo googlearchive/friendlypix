@@ -46,7 +46,7 @@
   _ref = [[FIRDatabase database] reference];
   _postsRef = [_ref child:@"posts"];
   _commentsRef = [_ref child:@"comments"];
-  _usersRef = [_ref child:@"users"];
+  _likesRef = [_ref child:@"likes"];
   _posts = [[NSMutableArray alloc] init];
 
   self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
@@ -112,13 +112,19 @@
           comment = [[FPComment alloc] initWithSnapshot:commentSnapshot];
           [commentsArray addObject:comment];
         }
-        [self.tableView reloadData];
-
-        FPPost *post = [[FPPost alloc] initWithSnapshot:postSnapshot andComments:commentsArray];
-        [_posts addObject:post];
-        self.tableViewDataSource.posts = [_posts copy];
-        [self.tableView insertSections:[NSIndexSet indexSetWithIndex:[self.tableViewDataSource.posts count]-1]
-                                                    withRowAnimation:UITableViewRowAnimationNone];
+        [[_likesRef child:postSnapshot.key] observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
+          FPPost *post = [[FPPost alloc] initWithSnapshot:postSnapshot andComments:commentsArray];
+          NSDictionary *likes = snapshot.value;
+          if (likes && ![likes isEqual:[NSNull null]]) {
+            post.likes = likes;
+          } else {
+            post.likes = [[NSDictionary alloc] init];
+          }
+          [_posts addObject:post];
+          self.tableViewDataSource.posts = [_posts copy];
+          [self.tableView insertSections:[NSIndexSet indexSetWithIndex:[self.tableViewDataSource.posts count]-1]
+                        withRowAnimation:UITableViewRowAnimationNone];
+        }];
   }];
 }
 
@@ -147,7 +153,7 @@
 
 - (void)userDidLike:(STXUserActionCell *)userActionCell {
   FPPost *postItem = userActionCell.postItem;
-  [[_postsRef child:[NSString stringWithFormat:@"likes/%@/%@", [postItem postID],
+  [[_ref child:[NSString stringWithFormat:@"likes/%@/%@", [postItem postID],
                                    [FPAppState sharedInstance].currentUser.userID]]
        setValue:FIRServerValue.timestamp withCompletionBlock:^(NSError *error, FIRDatabaseReference *ref) {
     if (error) {
@@ -162,7 +168,7 @@
 
 - (void)userDidUnlike:(STXUserActionCell *)userActionCell {
   FPPost *postItem = userActionCell.postItem;
-  [[_postsRef child:[NSString stringWithFormat:@"likes/%@/%@", [postItem postID],
+  [[_ref child:[NSString stringWithFormat:@"likes/%@/%@", [postItem postID],
                                    [FPAppState sharedInstance].currentUser.userID]]
        removeValueWithCompletionBlock:^(NSError *error, FIRDatabaseReference *ref) {
     if (error) {
