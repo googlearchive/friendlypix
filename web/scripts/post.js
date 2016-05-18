@@ -68,7 +68,11 @@ friendlyPix.Post = class {
           timeout: 5000
         };
         this.toast[0].MaterialSnackbar.showSnackbar(data);
-        page(`/user/${this.auth.currentUser.uid}`);
+        if (this.auth.currentUser) {
+          page(`/user/${this.auth.currentUser.uid}`);
+        } else {
+          page(`/feed`);
+        }
       } else {
         this.fillPostData(snapshot.key, post.thumb_url || post.url, post.text, post.author,
             post.timestamp, post.thumb_storage_uri, post.full_storage_uri, post.full_url);
