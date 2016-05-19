@@ -15,7 +15,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="description" content="Share your pics.">
+  <meta name="description" content="Share your pics. Powered by Firebase.">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Friendly Pix</title>
   <link rel="shortcut icon" href="/images/favicon.png">
@@ -78,7 +78,7 @@
     <div class="mdl-layout__header-row fp-titlebar">
 
       <!-- Logo -->
-      <h3 class="fp-logo"><i class="material-icons">photo</i> Friendly Pix</h3>
+      <h3 class="fp-logo"><a href="/feed"><i class="material-icons">photo</i> Friendly Pix</a></h3>
       <div class="mdl-layout-spacer"></div>
 
       <!-- Search bar -->
@@ -118,9 +118,7 @@
     <div class="fp-tab mdl-layout__header-row mdl-cell--hide-phone mdl-color--light-blue-600">
       <div class="mdl-tab">
         <a href="/" id="fp-menu-home" class="mdl-layout__tab fp-signed-in-only is-active mdl-button mdl-js-button mdl-js-ripple-effect"><i class="material-icons">home</i> Home</a>
-        <div class="mdl-tooltip mdl-tooltip--large" for="fp-menu-home">People you are following</div>
         <a href="/feed" id="fp-menu-feed" class="mdl-layout__tab mdl-button mdl-js-button mdl-js-ripple-effect"><i class="material-icons">trending_up</i> Feed</a>
-        <div class="mdl-tooltip mdl-tooltip--large" for="fp-menu-feed">All the Pics!</div>
         <input id="fp-mediacapture" type="file" accept="image/*;capture=camera">
         <button class="fp-signed-in-only mdl-button mdl-js-button mdl-button--fab mdl-cell--hide-tablet mdl-color--amber-400 mdl-shadow--4dp mdl-js-ripple-effect" id="add">
           <i class="material-icons">file_upload</i>

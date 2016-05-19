@@ -79,6 +79,10 @@ a {
 .fp-logo {
   font-family: 'Amaranth', sans-serif;
 }
+.fp-logo a {
+  color: white;
+  text-decoration: none;
+}
 .fp-logo .material-icons {
   top: 4px;
   font-size: 32px;
