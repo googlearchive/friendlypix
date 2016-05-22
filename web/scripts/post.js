@@ -142,7 +142,7 @@ friendlyPix.Post = class {
     $('.fp-usernamelink', post).attr('href', `/user/${author.uid}`);
     $('.fp-avatar', post).css('background-image',
         `url(${author.profile_picture || '/images/silhouette.jpg'})`);
-    $('.fp-username', post).text(author.full_name);
+    $('.fp-username', post).text(author.full_name || 'Anonymous');
 
     // Shows the pic's thumbnail.
     $('.fp-image', post).css('background-image', `url(${thumbUrl})`);
@@ -327,7 +327,7 @@ friendlyPix.Post = class {
   static createCommentHtml(author, text) {
     return `
         <div class="fp-comment">
-            <a class="fp-author" href="/user/${author.uid}">${author.full_name}</a>:
+            <a class="fp-author" href="/user/${author.uid}">${author.full_name || 'Anonymous'}</a>:
             <span class="fp-text">${text}</span>
         </div>`;
   }
