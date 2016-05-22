@@ -353,12 +353,21 @@ friendlyPix.Firebase = class {
    * Saves or updates public user data in Firebase (such as image URL, display name...).
    */
   saveUserData(imageUrl, displayName) {
+    let searchFullName = displayName.toLowerCase();
+    let searchReversedFullName = searchFullName.split(' ').reverse().join(' ');
+    try {
+      searchFullName = latinize(searchFullName);
+      searchReversedFullName = latinize(searchReversedFullName);
+    } catch (e) {
+      console.error(e);
+    }
+
     let updateData = {
       profile_picture: imageUrl,
       full_name: displayName,
       _search_index: {
-        full_name: latinize(displayName).toLowerCase(),
-        reversed_full_name: latinize(displayName).toLowerCase().split(' ').reverse().join(' ')
+        full_name: searchFullName,
+        reversed_full_name: searchReversedFullName
       }
     };
     return this.database.ref(`people/${this.auth.currentUser.uid}`).update(updateData);
