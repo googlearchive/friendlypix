@@ -196,18 +196,26 @@ public class NewPostActivity extends BaseActivity implements
         if (requestCode == TC_PICK_IMAGE) {
             if (resultCode == Activity.RESULT_OK) {
                 final boolean isCamera;
-                if (data.getData() == null) {
-                    isCamera = true;
-                } else {
-                    isCamera = MediaStore.ACTION_IMAGE_CAPTURE.equals(data.getAction());
-                }
-                if (!isCamera) {
-                    mFileUri = data.getData();
-                }
-                Log.d(TAG, "Received file uri: " + mFileUri.getPath());
+                if(data!=null) {
+                    if (data.getData() == null) {
+                        isCamera = true;
+                    } else {
+                        isCamera = MediaStore.ACTION_IMAGE_CAPTURE.equals(data.getAction());
+                    }
+                    if (!isCamera) {
+                        mFileUri = data.getData();
+                    }
 
-                mTaskFragment.resizeBitmap(mFileUri, THUMBNAIL_MAX_DIMENSION);
-                mTaskFragment.resizeBitmap(mFileUri, FULL_SIZE_MAX_DIMENSION);
+                }else{
+                    Log.d(TAG, "No Received file uri!, uses the file location");
+//                    Toast.makeText(this,"No data on result",Toast.LENGTH_SHORT).show();
+                }
+                if(mFileUri!=null) {
+                    Log.d(TAG, "Received file uri: " + mFileUri.getPath());
+
+                    mTaskFragment.resizeBitmap(mFileUri, THUMBNAIL_MAX_DIMENSION);
+                    mTaskFragment.resizeBitmap(mFileUri, FULL_SIZE_MAX_DIMENSION);
+                }
             }
         }
     }
