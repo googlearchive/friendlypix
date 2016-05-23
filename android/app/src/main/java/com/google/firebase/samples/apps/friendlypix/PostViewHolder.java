@@ -34,8 +34,9 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
     public DatabaseReference mPostRef;
     public ValueEventListener mPostListener;
 
-    public enum LikeStatus { LIKED, NOT_LIKED }
-    private final ImageView mLikeIcon;
+    public enum LikeStatus {LIKED, NOT_LIKED}
+
+    private ImageView mLikeIcon;
     private static final int POST_TEXT_MAX_LINES = 6;
     private ImageView mPhotoView;
     private ImageView mIconView;
@@ -141,13 +142,18 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void setLikeStatus(LikeStatus status, Context context) {
-        mLikeIcon.setImageDrawable(ContextCompat.getDrawable(context,
-                status == LikeStatus.LIKED ? R.drawable.heart_full : R.drawable.heart_empty));
+//        Check if we still have a reference to the ImageView
+        if (mLikeIcon == null && mView != null)
+            mLikeIcon = (ImageView) mView.findViewById(R.id.post_like_icon);
+        if (mLikeIcon != null)
+            mLikeIcon.setImageDrawable(ContextCompat.getDrawable(context,
+                    status == LikeStatus.LIKED ? R.drawable.heart_full : R.drawable.heart_empty));
     }
 
 
     public interface PostClickListener {
         void showComments();
+
         void toggleLike();
     }
 }
