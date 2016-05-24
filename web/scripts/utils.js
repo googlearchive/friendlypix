@@ -39,7 +39,7 @@ friendlyPix.MaterialUtils = class {
    * Closes the drawer if it is open.
    */
   static closeDrawer() {
-    let drawerObfuscator = $('.mdl-layout__obfuscator');
+    const drawerObfuscator = $('.mdl-layout__obfuscator');
     if (drawerObfuscator.hasClass('is-visible')) {
       drawerObfuscator.click();
     }
@@ -58,7 +58,7 @@ friendlyPix.MaterialUtils = class {
    */
   static cloneElementWithTextField(element) {
     componentHandler.downgradeElements($('.mdl-textfield', element).get());
-    let clone = element.clone();
+    const clone = element.clone();
     componentHandler.upgradeElements($('.mdl-textfield', element).get());
     componentHandler.upgradeElements($('.mdl-textfield', clone).get());
     return clone;
@@ -71,8 +71,8 @@ friendlyPix.MaterialUtils = class {
    * the page by the given amount offset in pixels.
    */
   static onEndScroll(offset = 0) {
-    let resolver = new $.Deferred();
-    let mdlLayoutElement = $('.mdl-layout');
+    const resolver = new $.Deferred();
+    const mdlLayoutElement = $('.mdl-layout');
     mdlLayoutElement.scroll(() => {
       if ((window.innerHeight + mdlLayoutElement.scrollTop() + offset) >=
           mdlLayoutElement.prop('scrollHeight')) {
@@ -89,7 +89,7 @@ friendlyPix.MaterialUtils = class {
    * Stops scroll listeners.
    */
   static stopOnEndScrolls() {
-    let mdlLayoutElement = $('.mdl-layout');
+    const mdlLayoutElement = $('.mdl-layout');
     mdlLayoutElement.unbind('scroll');
   }
 };
