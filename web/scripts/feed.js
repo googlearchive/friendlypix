@@ -60,7 +60,7 @@ friendlyPix.Feed = class {
       let post = friendlyPix.post.clone();
       this.posts.push(post);
       let postElement = post.fillPostData(postIds[i], postData.thumb_url || postData.url,
-          postData.text, postData.author, postData.timestamp, post.full_url);
+          postData.text, postData.author, postData.timestamp, null, null, postData.full_url);
       // If a post with similar ID is already in the feed we replace it instead of appending.
       let existingPostElement = $(`.fp-post-${postIds[i]}`, this.feedImageContainer);
       if (existingPostElement.length) {
@@ -112,7 +112,7 @@ friendlyPix.Feed = class {
       let postElement = friendlyPix.post.clone();
       this.posts.push(postElement);
       this.feedImageContainer.prepend(postElement.fillPostData(postKeys[i], post.thumb_url ||
-          post.url, post.text, post.author, post.timestamp, post.full_url));
+          post.url, post.text, post.author, post.timestamp, null, null, post.full_url));
     }
   }
 

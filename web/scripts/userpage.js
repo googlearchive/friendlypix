@@ -146,7 +146,7 @@ friendlyPix.UserPage = class {
       if (userInfo) {
         this.userAvatar.css('background-image',
             `url("${userInfo.profile_picture || '/images/silhouette.jpg'}")`);
-        this.userUsername.text(userInfo.full_name);
+        this.userUsername.text(userInfo.full_name || 'Anonymous');
         this.userInfoContainer.show();
       } else {
         var data = {
@@ -272,7 +272,7 @@ friendlyPix.UserPage = class {
   /**
    * Returns an image Card element for the image with the given URL.
    */
-  static createProfileCardHtml(uid, profilePic = '/images/silhouette.jpg', fullName) {
+  static createProfileCardHtml(uid, profilePic = '/images/silhouette.jpg', fullName = 'Anonymous') {
     return `
         <a class="fp-usernamelink mdl-button mdl-js-button" href="/user/${uid}">
             <div class="fp-avatar" style="background-image: url('${profilePic}')"></div>
