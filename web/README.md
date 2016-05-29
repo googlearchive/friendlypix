@@ -16,12 +16,35 @@ Install all Build/Deploy tools dependencies by running:
 $> npm install
 ```
 
-Now you need to create a Firebase/Google Project. Do this on the [Firebase Console](https://firebase.google.com/console)
 
-Once you project is created copy the initialization snippet from: **Overview > Add Firebase to your web app** into the bottom of the `index.html` file where the `TODO` placeholder is.
+## Create Firebase Project
+1. Create a Firebase/Google Project. Do this on the [Firebase Console](https://firebase.google.com/console)
+2. Add Google as a Sign in provide via the Auth section [Firebase Console Auth Section](https://firebase.google.com/docs/auth/server#use_the_firebase_server_sdk)
+3. Now click WEB SETUP button in the top right corner to copy the initialization snippet it will look like this 
+```
+<script src="https://www.gstatic.com/firebasejs/live/3.0/firebase.js"></script>
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "<YOUR API KEY>",
+    authDomain: "<YOUR PROJECT>.firebaseapp.com",
+    databaseURL: "https://<YOUR PROJECT>.firebaseapp.com",
+    storageBucket: "<YOUR PROJECT>.firebaseapp.com",
+  };
+  firebase.initializeApp(config);
+</script>
+```
+## Update the project with your firebase project
+1. In the root of the site locate the __index.html__ in the root of the folder and replace the text below with the snippet you coppied above
+```
+   <!-- TODO(DEVELOPER): Paste the initialization snippet from: Firebase Console > Add Firebase to your web app. -->
+```
+2.  In the root of the site locate the file __storage.rules__ and replace the storage bucket location with the one from firebase project
 
-Also copy the value of the `storageBucket` attribute that's in the initialization snippet (e.g. `my-project-12345.appspot.com`) into the `storage.rules` file where the `<STORAGE_BUCKET>` placeholder is, below the `TODO`.
-
+```
+  // TODO: Change the <STORAGE_BUCKET> placeholder below
+  match /b/<STORAGE_BUCKET>/o {
+```
 
 ## Start a local development server
 
