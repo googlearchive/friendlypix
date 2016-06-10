@@ -39,15 +39,18 @@ $> npm install
 
 
 ## Update the project with your firebase project
-1. In the root of the site locate the **index.html** in the root of the folder and replace the text below with the snippet you coppied above:```html
-   <!-- TODO(DEVELOPER): Paste the initialization snippet from: Firebase Console > Add Firebase to your web app. -->
-```
-2.  In the root of the site locate the file __storage.rules__ and replace the storage bucket location with the one from firebase project
+1. In the root of the site locate the **index.html** in the root of the folder and replace the text below with the snippet you coppied above:
 
-```
+  ```html
+  <!-- TODO(DEVELOPER): Paste the initialization snippet from: Firebase Console > Add Firebase to your web app. -->
+  ```
+
+2. In the root of the site locate the file __storage.rules__ and replace the storage bucket location with the one from firebase project
+
+  ```
   // TODO: Change the <STORAGE_BUCKET> placeholder below
   match /b/<STORAGE_BUCKET>/o {
-```
+  ```
 
 ## Start a local development server
 
