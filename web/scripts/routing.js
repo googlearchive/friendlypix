@@ -39,13 +39,13 @@ friendlyPix.Router = class {
         }
 
         // Configuring routes.
-        let pipe = friendlyPix.Router.pipe;
-        let displayPage = this.displayPage.bind(this);
-        let loadUser = userId => friendlyPix.userPage.loadUser(userId);
-        let showHomeFeed = () => friendlyPix.feed.showHomeFeed();
-        let showGeneralFeed = () => friendlyPix.feed.showGeneralFeed();
-        let clearFeed = () => friendlyPix.feed.clear();
-        let showPost = postId => friendlyPix.post.loadPost(postId);
+        const pipe = friendlyPix.Router.pipe;
+        const displayPage = this.displayPage.bind(this);
+        const loadUser = userId => friendlyPix.userPage.loadUser(userId);
+        const showHomeFeed = () => friendlyPix.feed.showHomeFeed();
+        const showGeneralFeed = () => friendlyPix.feed.showGeneralFeed();
+        const clearFeed = () => friendlyPix.feed.clear();
+        const showPost = postId => friendlyPix.post.loadPost(postId);
 
         page('/', pipe(showHomeFeed, null, true),
             pipe(displayPage, {pageId: 'feed', onlyAuthed: true}));
@@ -68,7 +68,7 @@ friendlyPix.Router = class {
    * the user is not signed-in.
    */
   displayPage(attributes, context) {
-    let onlyAuthed = attributes.onlyAuthed;
+    const onlyAuthed = attributes.onlyAuthed;
     let pageId = attributes.pageId;
 
     if (onlyAuthed && !firebase.app().auth().currentUser) {
@@ -114,7 +114,7 @@ friendlyPix.Router = class {
   static pipe(funct, attribute, optContinue) {
     return (context, next) => {
       if (funct) {
-        let params = Object.keys(context.params);
+        const params = Object.keys(context.params);
         if (!attribute && params.length > 0) {
           funct(context.params[params[0]], context);
         } else {

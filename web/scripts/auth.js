@@ -44,7 +44,7 @@ friendlyPix.Auth = class {
     $(document).ready(() => {
       // Pointers to DOM Elements
       this.signInButton = $('.fp-sign-in-button');
-      let signedInUserContainer = $('.fp-signed-in-user-container');
+      const signedInUserContainer = $('.fp-signed-in-user-container');
       this.signedInUserAvatar = $('.fp-avatar', signedInUserContainer);
       this.signedInUsername = $('.fp-username', signedInUserContainer);
       this.signOutButton = $('.fp-sign-out');

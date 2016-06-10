@@ -53,16 +53,16 @@ friendlyPix.Feed = class {
    */
   addPosts(posts) {
     // Displays the list of posts
-    let postIds = Object.keys(posts);
+    const postIds = Object.keys(posts);
     for (let i = postIds.length - 1; i >= 0; i--) {
       this.noPostsMessage.hide();
-      let postData = posts[postIds[i]];
-      let post = friendlyPix.post.clone();
+      const postData = posts[postIds[i]];
+      const post = friendlyPix.post.clone();
       this.posts.push(post);
-      let postElement = post.fillPostData(postIds[i], postData.thumb_url || postData.url,
+      const postElement = post.fillPostData(postIds[i], postData.thumb_url || postData.url,
           postData.text, postData.author, postData.timestamp, null, null, postData.full_url);
       // If a post with similar ID is already in the feed we replace it instead of appending.
-      let existingPostElement = $(`.fp-post-${postIds[i]}`, this.feedImageContainer);
+      const existingPostElement = $(`.fp-post-${postIds[i]}`, this.feedImageContainer);
       if (existingPostElement.length) {
         existingPostElement.replaceWith(postElement);
       } else {
@@ -78,7 +78,7 @@ friendlyPix.Feed = class {
   toggleNextPageButton(nextPage) {
     this.nextPageButton.unbind('click');
     if (nextPage) {
-      let loadMorePosts = () => {
+      const loadMorePosts = () => {
         this.nextPageButton.prop('disabled', true);
         console.log('Loading next page of posts.');
         nextPage().then(data => {
@@ -101,15 +101,15 @@ friendlyPix.Feed = class {
    * the "Show new posts" button.
    */
   showNewPosts() {
-    let newPosts = this.newPosts;
+    const newPosts = this.newPosts;
     this.newPosts = {};
     this.newPostsButton.hide();
-    let postKeys = Object.keys(newPosts);
+    const postKeys = Object.keys(newPosts);
 
     for (let i = 0; i < postKeys.length; i++) {
       this.noPostsMessage.hide();
-      let post = newPosts[postKeys[i]];
-      let postElement = friendlyPix.post.clone();
+      const post = newPosts[postKeys[i]];
+      const postElement = friendlyPix.post.clone();
       this.posts.push(postElement);
       this.feedImageContainer.prepend(postElement.fillPostData(postKeys[i], post.thumb_url ||
           post.url, post.text, post.author, post.timestamp, null, null, post.full_url));
@@ -126,7 +126,7 @@ friendlyPix.Feed = class {
     // Load initial batch of posts.
     friendlyPix.firebase.getPosts().then(data => {
       // Listen for new posts.
-      let latestPostId = Object.keys(data.entries)[Object.keys(data.entries).length - 1];
+      const latestPostId = Object.keys(data.entries)[Object.keys(data.entries).length - 1];
       friendlyPix.firebase.subscribeToGeneralFeed(
           (postId, postValue) => this.addNewPost(postId, postValue), latestPostId);
 
@@ -151,12 +151,12 @@ friendlyPix.Feed = class {
       friendlyPix.firebase.updateHomeFeeds().then(() => {
         // Load initial batch of posts.
         friendlyPix.firebase.getHomeFeedPosts().then(data => {
-          let postIds = Object.keys(data.entries);
+          const postIds = Object.keys(data.entries);
           if (postIds.length === 0) {
             this.noPostsMessage.fadeIn();
           }
           // Listen for new posts.
-          let latestPostId = postIds[postIds.length - 1];
+          const latestPostId = postIds[postIds.length - 1];
           friendlyPix.firebase.subscribeToHomeFeed(
               (postId, postValue) => {
                 this.addNewPost(postId, postValue);
@@ -183,7 +183,7 @@ friendlyPix.Feed = class {
     // Potentially remove post from in-memory new post list.
     if (this.newPosts[postId]) {
       delete this.newPosts[postId];
-      let nbNewPosts = Object.keys(this.newPosts).length;
+      const nbNewPosts = Object.keys(this.newPosts).length;
       this.newPostsButton.text(`Display ${nbNewPosts} new posts`);
       if (nbNewPosts === 0) {
         this.newPostsButton.hide();

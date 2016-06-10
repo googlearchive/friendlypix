@@ -9,19 +9,48 @@ Friendly Pix is a place where you can share photos, follow friends, comment on p
 
 Friendly Pix is built using Javascript and Firebase. Javascript dependencies are managed using [bower](http://bower.io/) and Build/Deploy tools dependencies are managed using [npm](https://www.npmjs.com/). Also Friendly Pix is written in ES2015 so for wide browser support we'll transpile the code to ES5 using [BabelJs](http://babeljs.io).
 
-
 Install all Build/Deploy tools dependencies by running:
 
 ```bash
 $> npm install
 ```
 
-Now you need to create a Firebase/Google Project. Do this on the [Firebase Console](https://firebase.google.com/console)
 
-Once you project is created copy the initialization snippet from: **Overview > Add Firebase to your web app** into the bottom of the `index.html` file where the `TODO` placeholder is.
+## Create Firebase Project
+1. Create a Firebase/Google project using the [Firebase Console](https://firebase.google.com/console).
+2. Enable **Google** as a Sign in provider in **Firebase Console > Auth > Sign in Method** tab.
+3. Now click the **WEB SETUP** button in the top right corner to copy the initialization snippet it will look like this:
 
-Also copy the value of the `storageBucket` attribute that's in the initialization snippet (e.g. `my-project-12345.appspot.com`) into the `storage.rules` file where the `<STORAGE_BUCKET>` placeholder is, below the `TODO`.
+  ```html
+  <script src="https://www.gstatic.com/firebasejs/live/<VERSION>/firebase.js"></script>
+  <script>
+    // Initialize Firebase
+    var config = {
+      apiKey: "<YOUR_API_KEY>",
+      authDomain: "<YOUR_PROJECT_ID>.firebaseapp.com",
+      databaseURL: "https://<YOUR_PROJECT_ID>.firebaseapp.com",
+      storageBucket: "<YOUR_PROJECT_ID>.firebaseapp.com",
+    };
+    firebase.initializeApp(config);
+  </script>
+  ```
 
+> If the `storageBucket` value is empty you've hit a bug. Just close the window and click the  **WEB SETUP** button again and you should get it.
+
+
+## Update the project with your firebase project
+1. In the root of the site locate the **index.html** in the root of the folder and replace the text below with the snippet you coppied above:
+
+  ```html
+  <!-- TODO(DEVELOPER): Paste the initialization snippet from: Firebase Console > Add Firebase to your web app. -->
+  ```
+
+2. In the root of the site locate the file __storage.rules__ and replace the storage bucket location with the one from firebase project:
+
+  ```javascript
+  // TODO: Change the <STORAGE_BUCKET> placeholder below
+  match /b/<STORAGE_BUCKET>/o {
+  ```
 
 ## Start a local development server
 

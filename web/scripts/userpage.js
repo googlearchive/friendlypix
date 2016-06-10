@@ -66,7 +66,7 @@ friendlyPix.UserPage = class {
    * Triggered when the user changes the "Follow" checkbox.
    */
   onFollowChange() {
-    let checked = this.followCheckbox.prop('checked');
+    const checked = this.followCheckbox.prop('checked');
     this.followCheckbox.prop('disabled', true);
 
     return friendlyPix.firebase.toggleFollowUser(this.userId, checked);
@@ -90,7 +90,7 @@ friendlyPix.UserPage = class {
    * Adds the list of posts to the UI.
    */
   addPosts(posts) {
-    let postIds = Object.keys(posts);
+    const postIds = Object.keys(posts);
     for (let i = postIds.length - 1; i >= 0; i--) {
       this.userInfoPageImageContainer.append(
           friendlyPix.UserPage.createImageCard(postIds[i],
@@ -142,7 +142,7 @@ friendlyPix.UserPage = class {
 
     // Load user's profile.
     friendlyPix.firebase.loadUserProfile(userId).then(snapshot => {
-      let userInfo = snapshot.val();
+      const userInfo = snapshot.val();
       if (userInfo) {
         this.userAvatar.css('background-image',
             `url("${userInfo.profile_picture || '/images/silhouette.jpg'}")`);
@@ -172,7 +172,7 @@ friendlyPix.UserPage = class {
 
     // Display user's posts.
     friendlyPix.firebase.getUserFeedPosts(userId).then(data => {
-      let postIds = Object.keys(data.entries);
+      const postIds = Object.keys(data.entries);
       if (postIds.length === 0) {
         this.noPosts.show();
       }
@@ -247,7 +247,7 @@ friendlyPix.UserPage = class {
    * Returns an image Card element for the image with the given URL.
    */
   static createImageCard(postId, imageUrl, text) {
-    let element = $(`
+    const element = $(`
           <a href="/post/${postId}" class="fp-post-${postId} fp-image mdl-cell mdl-cell--12-col mdl-cell--4-col-tablet
                                             mdl-cell--4-col-desktop mdl-grid mdl-grid--no-spacing">
               <div class="fp-overlay">
