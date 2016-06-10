@@ -21,19 +21,19 @@ $> npm install
 2. Enable **Google** as a Sign in provider in **Firebase Console > Auth > Sign in Method** tab.
 3. Now click the **WEB SETUP** button in the top right corner to copy the initialization snippet it will look like this:
 
-```html
-<script src="https://www.gstatic.com/firebasejs/live/<VERSION>/firebase.js"></script>
-<script>
-  // Initialize Firebase
-  var config = {
-    apiKey: "<YOUR_API_KEY>",
-    authDomain: "<YOUR_PROJECT_ID>.firebaseapp.com",
-    databaseURL: "https://<YOUR_PROJECT_ID>.firebaseapp.com",
-    storageBucket: "<YOUR_PROJECT_ID>.firebaseapp.com",
-  };
-  firebase.initializeApp(config);
-</script>
-```
+  ```html
+  <script src="https://www.gstatic.com/firebasejs/live/<VERSION>/firebase.js"></script>
+  <script>
+    // Initialize Firebase
+    var config = {
+      apiKey: "<YOUR_API_KEY>",
+      authDomain: "<YOUR_PROJECT_ID>.firebaseapp.com",
+      databaseURL: "https://<YOUR_PROJECT_ID>.firebaseapp.com",
+      storageBucket: "<YOUR_PROJECT_ID>.firebaseapp.com",
+    };
+    firebase.initializeApp(config);
+  </script>
+  ```
 
 > If the `storageBucket` value is empty you've hit a bug. Just close the window and click the  **WEB SETUP** button again and you should get it.
 
@@ -47,7 +47,7 @@ $> npm install
 
 2. In the root of the site locate the file __storage.rules__ and replace the storage bucket location with the one from firebase project
 
-  ```
+  ```javascript
   // TODO: Change the <STORAGE_BUCKET> placeholder below
   match /b/<STORAGE_BUCKET>/o {
   ```
