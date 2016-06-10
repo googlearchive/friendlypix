@@ -17,8 +17,8 @@ $> npm install
 
 
 ## Create Firebase Project
-1. Create a Firebase/Google Project. Do this on the [Firebase Console](https://firebase.google.com/console)
-2. Add Google as a Sign in provide via the Auth section [Firebase Console Auth Section](https://firebase.google.com/docs/auth/server#use_the_firebase_server_sdk)
+1. Create a Firebase/Google project using the [Firebase Console](https://firebase.google.com/console).
+2. Enable **Google** as a Sign in provider in **Firebase Console > Auth > Sign in Method** tab.
 3. Now click the **WEB SETUP** button in the top right corner to copy the initialization snippet it will look like this:
 
 ```html
