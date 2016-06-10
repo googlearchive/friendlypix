@@ -256,7 +256,7 @@ friendlyPix.UserPage = class {
                   <div class="fp-pic-text">${text}</div>
               </div>
               <div class="mdl-card mdl-shadow--2dp mdl-cell
-                          mdl-cell--12-col mdl-cell--12-col-tabconst mdl-cell--12-col-desktop"
+                          mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-desktop"
                    style="background-image: url(${imageUrl})"></div>
           </a>`);
 
