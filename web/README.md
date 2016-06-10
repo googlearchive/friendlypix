@@ -45,7 +45,7 @@ $> npm install
   <!-- TODO(DEVELOPER): Paste the initialization snippet from: Firebase Console > Add Firebase to your web app. -->
   ```
 
-2. In the root of the site locate the file __storage.rules__ and replace the storage bucket location with the one from firebase project
+2. In the root of the site locate the file __storage.rules__ and replace the storage bucket location with the one from firebase project:
 
   ```javascript
   // TODO: Change the <STORAGE_BUCKET> placeholder below
