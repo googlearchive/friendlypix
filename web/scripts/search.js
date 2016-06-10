@@ -61,12 +61,12 @@ friendlyPix.Search = class {
    * Display search results.
    */
   displaySearchResults() {
-    let searchString = this.searchField.val().toLowerCase().trim();
+    const searchString = this.searchField.val().toLowerCase().trim();
     if (searchString.length >= friendlyPix.Search.MIN_CHARACTERS) {
       friendlyPix.firebase.searchUsers(searchString, friendlyPix.Search.NB_RESULTS_LIMIT).then(
           results => {
             this.searchResults.empty();
-            let peopleIds = Object.keys(results);
+            const peopleIds = Object.keys(results);
             if (peopleIds.length > 0) {
               this.searchResults.fadeIn();
               $('html').click(() => {
@@ -74,7 +74,7 @@ friendlyPix.Search = class {
                 this.searchResults.fadeOut();
               });
               peopleIds.forEach(peopleId => {
-                let profile = results[peopleId];
+                const profile = results[peopleId];
                 this.searchResults.append(
                     friendlyPix.Search.createSearchResultHtml(peopleId, profile));
               });

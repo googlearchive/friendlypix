@@ -48,7 +48,7 @@ friendlyPix.Post = class {
    * @return friendlyPix.Post
    */
   clone() {
-    let clone = new friendlyPix.Post();
+    const clone = new friendlyPix.Post();
     clone.postElement = friendlyPix.MaterialUtils.cloneElementWithTextField(clone.postElement);
     return clone;
   }
@@ -59,7 +59,7 @@ friendlyPix.Post = class {
   loadPost(postId) {
     // Load the posts information.
     friendlyPix.firebase.getPostData(postId).then(snapshot => {
-      let post = snapshot.val();
+      const post = snapshot.val();
       // Clear listeners and previous post data.
       this.clear();
       if (!post) {
@@ -88,7 +88,7 @@ friendlyPix.Post = class {
     this.timers.forEach(timer => clearInterval(timer));
     this.timers = [];
 
-    let newElement = friendlyPix.MaterialUtils.cloneElementWithTextField(this.postElement);
+    const newElement = friendlyPix.MaterialUtils.cloneElementWithTextField(this.postElement);
     if (this.postElement.parent()) {
       this.postElement.parent().append(newElement);
       this.postElement.detach();
@@ -103,7 +103,7 @@ friendlyPix.Post = class {
    * Displays the given list of `comments` in the post.
    */
   displayComments(comments) {
-    let commentsIds = Object.keys(comments);
+    const commentsIds = Object.keys(comments);
     for (let i = commentsIds.length - 1; i >= 0; i--) {
       $('.fp-comments', this.postElement).prepend(
           friendlyPix.Post.createCommentHtml(comments[commentsIds[i]].author,
@@ -116,7 +116,7 @@ friendlyPix.Post = class {
    * `null` then the button is hidden.
    */
   displayNextPageButton(nextPage) {
-    let nextPageButton = $('.fp-morecomments', this.postElement);
+    const nextPageButton = $('.fp-morecomments', this.postElement);
     if (nextPage) {
       nextPageButton.show();
       nextPageButton.unbind('click');
@@ -136,7 +136,7 @@ friendlyPix.Post = class {
    * Also sets all auto updates and listeners on the UI elements of the post.
    */
   fillPostData(postId, thumbUrl, imageText, author, timestamp, thumbStorageUri, picStorageUri, picUrl) {
-    let post = this.postElement;
+    const post = this.postElement;
 
     // Fills element's author profile.
     $('.fp-usernamelink', post).attr('href', `/user/${author.uid}`);
@@ -185,7 +185,7 @@ friendlyPix.Post = class {
    * @private
    */
   _setupDate(postId, timestamp) {
-    let post = this.postElement;
+    const post = this.postElement;
 
     $('.fp-time', post).attr('href', `/post/${postId}`);
     $('.fp-time', post).text(friendlyPix.Post.getTimeText(timestamp));
@@ -199,7 +199,7 @@ friendlyPix.Post = class {
    * @private
    */
   _setupComments(postId, author, imageText) {
-    let post = this.postElement;
+    const post = this.postElement;
 
     // Creates the initial comment with the post's text.
     $('.fp-first-comment', post).empty();
@@ -212,7 +212,7 @@ friendlyPix.Post = class {
       this.displayNextPageButton(data.nextPage);
 
       // Display any new comments.
-      let commentIds = Object.keys(data.entries);
+      const commentIds = Object.keys(data.entries);
       friendlyPix.firebase.subscribeToComments(postId, (commentId, commentData) => {
         $('.fp-comments', post).append(
           friendlyPix.Post.createCommentHtml(commentData.author, commentData.text));
@@ -223,11 +223,11 @@ friendlyPix.Post = class {
       // Bind comments form posting.
       $('.fp-add-comment', post).submit(e => {
         e.preventDefault();
-        let commentText = $(`.mdl-textfield__input`, post).val();
+        const commentText = $(`.mdl-textfield__input`, post).val();
         friendlyPix.firebase.addComment(postId, commentText);
         $(`.mdl-textfield__input`, post).val('');
       });
-      let ran = Math.floor(Math.random() * 10000000);
+      const ran = Math.floor(Math.random() * 10000000);
       $('.mdl-textfield__input', post).attr('id', `${postId}-${ran}-comment`);
       $('.mdl-textfield__label', post).attr('for', `${postId}-${ran}-comment`);
       // Show comments form.
@@ -240,7 +240,7 @@ friendlyPix.Post = class {
    * @private
    */
   _setupDeleteButton(postId, author, picStorageUri, thumbStorageUri) {
-    let post = this.postElement;
+    const post = this.postElement;
 
     if (this.auth.currentUser && this.auth.currentUser.uid === author.uid && picStorageUri) {
       $('.fp-delete-post', post).show();
@@ -269,7 +269,7 @@ friendlyPix.Post = class {
           }).catch(error => {
             swal.close();
             $('.fp-delete-post', post).prop('disabled', false);
-            let data = {
+            const data = {
               message: `There was an error deleting your post: ${error}`,
               timeout: 5000
             };
@@ -287,7 +287,7 @@ friendlyPix.Post = class {
    * @private
    */
   _setupLikeCountAndStatus(postId) {
-    let post = this.postElement;
+    const post = this.postElement;
 
     if (this.auth.currentUser) {
       // Listen to like status.
@@ -338,14 +338,14 @@ friendlyPix.Post = class {
    */
   static getTimeText(postCreationTimestamp) {
     let millis = Date.now() - postCreationTimestamp;
-    let ms = millis % 1000;
+    const ms = millis % 1000;
     millis = (millis - ms) / 1000;
-    let secs = millis % 60;
+    const secs = millis % 60;
     millis = (millis - secs) / 60;
-    let mins = millis % 60;
+    const mins = millis % 60;
     millis = (millis - mins) / 60;
-    let hrs = millis % 24;
-    let days = (millis - hrs) / 24;
+    const hrs = millis % 24;
+    const days = (millis - hrs) / 24;
     var timeSinceCreation = [days, hrs, mins, secs, ms];
 
     let timeText = 'Now';

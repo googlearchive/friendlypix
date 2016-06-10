@@ -152,7 +152,7 @@ friendlyPix.Uploader = class {
    * @static
    */
   static _getScaledCanvas(image, maxDimension) {
-    let thumbCanvas = document.createElement('canvas');
+    const thumbCanvas = document.createElement('canvas');
     if (image.width > maxDimension ||
       image.height > maxDimension) {
       if (image.width > image.height) {
@@ -175,28 +175,28 @@ friendlyPix.Uploader = class {
    * Generates the full size image and image thumb using canvas and returns them in a promise.
    */
   generateImages() {
-    let fullDeferred = new $.Deferred();
-    let thumbDeferred = new $.Deferred();
+    const fullDeferred = new $.Deferred();
+    const thumbDeferred = new $.Deferred();
 
-    let resolveFullBlob = blob => fullDeferred.resolve(blob);
-    let resolveThumbBlob = blob => thumbDeferred.resolve(blob);
+    const resolveFullBlob = blob => fullDeferred.resolve(blob);
+    const resolveThumbBlob = blob => thumbDeferred.resolve(blob);
 
-    let displayPicture = url => {
-      let image = new Image();
+    const displayPicture = url => {
+      const image = new Image();
       image.src = url;
 
       // Generate thumb.
-      let maxThumbDimension = friendlyPix.Uploader.THUMB_IMAGE_SPECS.maxDimension;
-      let thumbCanvas = friendlyPix.Uploader._getScaledCanvas(image, maxThumbDimension);
+      const maxThumbDimension = friendlyPix.Uploader.THUMB_IMAGE_SPECS.maxDimension;
+      const thumbCanvas = friendlyPix.Uploader._getScaledCanvas(image, maxThumbDimension);
       thumbCanvas.toBlob(resolveThumbBlob, 'image/jpeg', friendlyPix.Uploader.THUMB_IMAGE_SPECS.quality);
 
       // Generate full sized image.
-      let maxFullDimension = friendlyPix.Uploader.FULL_IMAGE_SPECS.maxDimension;
-      let fullCanvas = friendlyPix.Uploader._getScaledCanvas(image, maxFullDimension);
+      const maxFullDimension = friendlyPix.Uploader.FULL_IMAGE_SPECS.maxDimension;
+      const fullCanvas = friendlyPix.Uploader._getScaledCanvas(image, maxFullDimension);
       fullCanvas.toBlob(resolveFullBlob, 'image/jpeg', friendlyPix.Uploader.FULL_IMAGE_SPECS.quality);
     };
 
-    let reader = new FileReader();
+    const reader = new FileReader();
     reader.onload = e => displayPicture(e.target.result);
     reader.readAsDataURL(this.currentFile);
 
