@@ -353,6 +353,9 @@ friendlyPix.Firebase = class {
    * Saves or updates public user data in Firebase (such as image URL, display name...).
    */
   saveUserData(imageUrl, displayName) {
+    if (!displayName) {
+      displayName = 'Anonymous';
+    }
     let searchFullName = displayName.toLowerCase();
     let searchReversedFullName = searchFullName.split(' ').reverse().join(' ');
     try {

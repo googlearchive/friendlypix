@@ -83,7 +83,7 @@ friendlyPix.Auth = class {
         this.userId = user.uid;
         this.signedInUserAvatar.css('background-image',
             `url("${user.photoURL || '/images/silhouette.jpg'}")`);
-        this.signedInUsername.text(user.displayName);
+        this.signedInUsername.text(user.displayName || 'Anonymous');
         this.usernameLink.attr('href', `/user/${user.uid}`);
         friendlyPix.firebase.saveUserData(user.photoURL, user.displayName);
       }

@@ -7,7 +7,7 @@ Friendly Pix is a place where you can share photos, follow friends, comment on p
 
 ## Initial setup, build tools and dependencies
 
-Friendly Pix is built using Javascript and Firebase. Javascript dependencies are managed using [bower](http://bower.io/) and Build/Deploy tools dependencies are managed using [npm](https://www.npmjs.com/). Also Friendly Pix is written in ES2015 so for wide browser support we'll transpile the code to ES5 using [BabelJs](http://babeljs.io).
+Friendly Pix is built using Javascript, Firebase and jQuery. Javascript dependencies are managed using [bower](http://bower.io/) and Build/Deploy tools dependencies are managed using [npm](https://www.npmjs.com/). Also Friendly Pix is written in ES2015 so for wide browser support we'll transpile the code to ES5 using [BabelJs](http://babeljs.io).
 
 Install all Build/Deploy tools dependencies by running:
 
