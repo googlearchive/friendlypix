@@ -49,7 +49,9 @@ friendlyPix.Post = class {
    */
   clone() {
     const clone = new friendlyPix.Post();
-    clone.postElement = friendlyPix.MaterialUtils.cloneElementWithTextField(clone.postElement);
+    $(document).ready(() => {
+      clone.postElement = friendlyPix.MaterialUtils.cloneElementWithTextField(clone.postElement);
+    });
     return clone;
   }
 
