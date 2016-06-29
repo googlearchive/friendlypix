@@ -147,9 +147,9 @@ friendlyPix.Post = class {
     $('.fp-username', post).text(author.full_name || 'Anonymous');
 
     // Shows the pic's thumbnail.
-    $('.fp-image', post).css('background-image', `url(${thumbUrl})`);
+    $('.fp-image', post).css('background-image', `url("${thumbUrl.replace(/"/g, '\\"')}")`);
     $('.fp-image', post).unbind('click');
-    $('.fp-image', post).click(() => this.enterTheatreMode(picUrl, thumbUrl));
+    $('.fp-image', post).click(() => this.enterTheatreMode(picUrl || thumbUrl));
 
     this._setupDate(postId, timestamp);
     this._setupDeleteButton(postId, author, picStorageUri, thumbStorageUri);
@@ -170,8 +170,8 @@ friendlyPix.Post = class {
   /**
    * Leaves the theatre mode.
    */
-  enterTheatreMode(picUrl, thumbUrl) {
-    $('.fp-fullpic', this.theatre).prop('src', picUrl || thumbUrl);
+  enterTheatreMode(picUrl) {
+    $('.fp-fullpic', this.theatre).prop('src', picUrl);
     this.theatre.css('display', 'flex');
     // Leave theatre mode if click or ESC key down.
     this.theatre.click(() => this.leaveTheatreMode());

@@ -246,7 +246,7 @@ friendlyPix.UserPage = class {
   /**
    * Returns an image Card element for the image with the given URL.
    */
-  static createImageCard(postId, imageUrl, text) {
+  static createImageCard(postId, thumbUrl, text) {
     const element = $(`
           <a href="/post/${postId}" class="fp-post-${postId} fp-image mdl-cell mdl-cell--12-col mdl-cell--4-col-tablet
                                             mdl-cell--4-col-desktop mdl-grid mdl-grid--no-spacing">
@@ -256,10 +256,10 @@ friendlyPix.UserPage = class {
                   <div class="fp-pic-text">${text}</div>
               </div>
               <div class="mdl-card mdl-shadow--2dp mdl-cell
-                          mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-desktop"
-                   style="background-image: url(${imageUrl})"></div>
+                          mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-desktop"></div>
           </a>`);
-
+    // Display the thumbnail.
+    $('.mdl-card', element).css('background-image', `url("${thumbUrl.replace(/"/g, '\\"')}")`);
     // Start listening for comments and likes counts.
     friendlyPix.firebase.registerForLikesCount(postId,
         nbLikes => $('.likes', element).text(nbLikes));
