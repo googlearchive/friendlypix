@@ -53,8 +53,10 @@ friendlyPix.Auth = class {
       this.usernameLink = $('.fp-usernamelink');
 
       // Event bindings
+      var provider = new firebase.auth.GoogleAuthProvider();
+      provider.addScope('profile');
       this.signInButton.click(
-          () => this.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()));
+          () => this.auth.signInWithPopup(provider));
       this.signOutButton.click(() => this.auth.signOut());
       this.signedInOnlyElements.hide();
     });
