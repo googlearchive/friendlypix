@@ -467,7 +467,7 @@ friendlyPix.Firebase = class {
       };
       update[`/people/${this.auth.currentUser.uid}/posts/${newPostKey}`] = true;
       update[`/feed/${this.auth.currentUser.uid}/${newPostKey}`] = true;
-      this.database.ref().update(update).then(() => newPostKey);
+      return this.database.ref().update(update).then(() => newPostKey);
     });
   }
 

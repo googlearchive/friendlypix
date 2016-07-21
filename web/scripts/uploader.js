@@ -229,7 +229,8 @@ friendlyPix.Uploader = class {
             };
             this.toast[0].MaterialSnackbar.showSnackbar(data);
             this.disableUploadUi(false);
-          }, () => {
+          }, error => {
+            console.error(error);
             var data = {
               message: `There was an error while posting your pic. Sorry!`,
               timeout: 5000
