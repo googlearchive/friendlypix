@@ -54,9 +54,7 @@ friendlyPix.Auth = class {
 
       // Event bindings
       var provider = new firebase.auth.GoogleAuthProvider();
-      provider.addScope('profile');
-      this.signInButton.click(
-          () => this.auth.signInWithPopup(provider));
+      this.signInButton.click(() => this.auth.signInWithPopup(provider));
       this.signOutButton.click(() => this.auth.signOut());
       this.signedInOnlyElements.hide();
     });
