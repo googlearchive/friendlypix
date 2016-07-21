@@ -427,33 +427,27 @@ friendlyPix.Firebase = class {
     const metadata = {
       contentType: pic.type
     };
-    var picUploadTask = picRef.put(pic, metadata);
-    const picCompleter = new $.Deferred();
-    picUploadTask.on('state_changed', null, error => {
-      picCompleter.reject(error);
-      console.error('Error while uploading new pic', error);
-    }, () => {
-      console.log('New pic uploaded. Size:', picUploadTask.snapshot.totalBytes, 'bytes.');
-      var url = picUploadTask.snapshot.metadata.downloadURLs[0];
+    var picUploadTask = picRef.put(pic, metadata).then(snapshot => {
+      console.log('New pic uploaded. Size:', snapshot.totalBytes, 'bytes.');
+      var url = snapshot.metadata.downloadURLs[0];
       console.log('File available at', url);
-      picCompleter.resolve(url);
+      return url;
+    }).catch(error => {
+      console.error('Error while uploading new pic', error);
     });
 
     // Start the thumb file upload to Firebase Storage.
     const thumbRef = this.storage.ref(`${this.auth.currentUser.uid}/thumb/${Date.now()}/${fileName}`);
-    var tumbUploadTask = thumbRef.put(thumb, metadata);
-    const thumbCompleter = new $.Deferred();
-    tumbUploadTask.on('state_changed', null, error => {
-      thumbCompleter.reject(error);
-      console.error('Error while uploading new thumb', error);
-    }, () => {
-      console.log('New thumb uploaded. Size:', tumbUploadTask.snapshot.totalBytes, 'bytes.');
-      var url = tumbUploadTask.snapshot.metadata.downloadURLs[0];
+    var tumbUploadTask = thumbRef.put(thumb, metadata).then(snapshot => {
+      console.log('New thumb uploaded. Size:', snapshot.totalBytes, 'bytes.');
+      var url = snapshot.metadata.downloadURLs[0];
       console.log('File available at', url);
-      thumbCompleter.resolve(url);
+      return url;
+    }).catch(error => {
+      console.error('Error while uploading new thumb', error);
     });
 
-    return Promise.all([picCompleter.promise(), thumbCompleter.promise()]).then(urls => {
+    return Promise.all([picUploadTask, tumbUploadTask]).then(urls => {
       // Once both pics and thumbanils has been uploaded add a new post in the Firebase Database and
       // to its fanned out posts lists (user's posts and home post).
       const newPostKey = this.database.ref('/posts').push().key;
