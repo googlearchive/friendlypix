@@ -7,7 +7,7 @@ Friendly Pix is a place where you can share photos, follow friends, comment on p
 
 ## Initial setup, build tools and dependencies
 
-Friendly Pix is built using Javascript, Firebase and jQuery. Javascript dependencies are managed using [bower](http://bower.io/) and Build/Deploy tools dependencies are managed using [npm](https://www.npmjs.com/). Also Friendly Pix is written in ES2015 so for wide browser support we'll transpile the code to ES5 using [BabelJs](http://babeljs.io).
+Friendly Pix is built using Javascript, [Firebase](https://firebase.google.com/docs/web/setup) and jQuery. The Auth flow is build using [Firebase-UI](https://github.com/firebase/firebaseui-web). Javascript dependencies are managed using [bower](http://bower.io/) and Build/Deploy tools dependencies are managed using [npm](https://www.npmjs.com/). Also Friendly Pix is written in ES2015 so for wide browser support we'll transpile the code to ES5 using [BabelJs](http://babeljs.io).
 
 Install all Build/Deploy tools dependencies by running:
 
@@ -38,7 +38,7 @@ $> npm install
 > If the `storageBucket` value is empty you've hit a bug. Just close the window and click the  **WEB SETUP** button again and you should get it.
 
 
-## Update the project with your firebase project
+## Update the app with your firebase project
 1. In the root of the site locate the **index.html** in the root of the folder and replace the text below with the snippet you coppied above:
 
   ```html
