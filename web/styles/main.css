@@ -176,7 +176,10 @@ a {
 }
 .fp-sign-in-button {
   margin-left: 10px;
-  color: inherit;
+  color: white;
+}
+.mdl-layout__drawer .fp-sign-in-button {
+  color: black;
 }
 .mdl-button .material-icons {
   margin-top: -2px;
@@ -307,6 +310,9 @@ a {
   text-align: right;
   margin: 23px 25px 0 24px;
   display: flex;
+  background: #FFF;
+  font-size: 16px;
+  font-weight: 400;
 }
 .fp-user-following {
   display: none;
@@ -316,6 +322,7 @@ a {
   height: auto;
   min-height: 50px;
   text-align: left;
+  width: 100%;
 }
 .fp-user-following .fp-usernamelink {
   margin: 10px;
@@ -655,16 +662,20 @@ a {
   flex-direction: column;
 }
 #page-splash .fp-caption {
-  margin: 20px 0 50px 0;
+  margin: 20px 0 40px 0;
   font-family: 'Amaranth', sans-serif;
   font-size: 18px;
   opacity: 0.8;
 }
 #page-splash .fp-skip {
   font-weight:lighter;
-  margin-left:20px;
   color:white;
   opacity: 0.7;
+  width: 100%;
+  display: block;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
 }
 #page-splash .fp-skip:HOVER {
   text-decoration: underline;
@@ -755,4 +766,51 @@ a {
 }
 .mdl-snackbar {
   z-index: 101;
+}
+
+/* Firebase UI overrides */
+
+#firebaseui-auth-container {
+  min-width: 251px;
+}
+.firebaseui-id-page-callback {
+  background: transparent;
+  box-shadow: none;
+  margin-top: 40px;
+  height: 84px;
+  min-height: 0;
+}
+.mdl-layout__tab {
+  height: 48px;
+  line-height: 48px;
+  padding: 0 24px;
+  color: rgba(255,255,255,.6);
+}
+.firebaseui-id-page-federated-linking {
+  background: rgba(0,0,0,0.05);
+  margin-bottom: 15px;
+  min-height: 150px;
+  padding-top: 10px;
+  border-radius: 20px;
+  box-shadow: none;
+}
+.firebaseui-card-header {
+  display: none;
+}
+.firebaseui-subtitle, .firebaseui-text {
+  color: rgba(255,255,255,0.87);
+}
+.firebaseui-form-actions .mdl-button--raised.mdl-button--colored.firebaseui-button {
+  background: rgba(0,0,0,0.1);
+}
+.firebaseui-id-dismiss-info-bar {
+  display: block;
+}
+.firebaseui-info-bar {
+  border: 0;
+  border-radius: 10px;
+  left: 5%;
+  right: 5%;
+  top: 10%;
+  bottom: 10%;
 }

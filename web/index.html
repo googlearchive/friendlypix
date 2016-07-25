@@ -26,14 +26,14 @@
   <!-- Web Application Manifest -->
   <link rel="manifest" href="/manifest.json">
 
-  <!-- Add to homescreen for Chrome on Android -->
+  <!-- Add to home screen for Chrome on Android -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="application-name" content="Friendly Pix">
   <meta name="theme-color" content="#303F9F">
   <link rel="icon" sizes="192x192" href="/images/touch/touch-icon-192x192.png">
   <link rel="icon" sizes="128x128" href="/images/touch/touch-icon-128x128.png">
 
-  <!-- Add to homescreen for Safari on iOS -->
+  <!-- Add to home screen for Safari on iOS -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Web Starter Kit">
@@ -46,10 +46,13 @@
   <meta name="msapplication-TileColor" content="#3372DF">
   <meta name="msapplication-navbutton-color" content="#303F9F">
 
-  <!-- Material Design Lite imports -->
+  <!-- Material Design Lite  -->
   <link rel="stylesheet" href="/bower_components/material-design-lite/material.min.css">
   <script defer src="/bower_components/material-design-lite/material.min.js"></script>
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+  <!-- Firebase UI Auth -->
+  <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/live/0.4/firebase-ui-auth.css" />
 
   <!-- Styling -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,500,300">
@@ -66,8 +69,8 @@
   <h3 class="fp-logo"><i class="material-icons">photo</i> Friendly Pix</h3>
   <div class="fp-caption">The friendliest way to share your pics</div>
   <div class="fp-signed-out-only fp-initially-hidden">
-    <button class="fp-sign-in-button mdl-button--raised mdl-button mdl-js-button mdl-js-ripple-effect"><i class="material-icons">account_circle</i> Sign in with Google</button>
-    <a class="fp-skip" href="/feed">skip</a>
+    <div id="firebaseui-auth-container" class="fp-signed-out-only fp-initially-hidden"></div>
+    <a class="fp-skip" href="/feed">skip sign in</a>
   </div>
 </section>
 
@@ -94,7 +97,7 @@
       </div>
 
       <!-- Singed-in User Info -->
-      <button class="fp-sign-in-button fp-signed-out-only mdl-button mdl-js-button mdl-js-ripple-effect"><i class="material-icons">account_circle</i> Sign in with Google</button>
+      <a href="/"><button class="fp-sign-in-button fp-signed-out-only mdl-button mdl-js-button mdl-js-ripple-effect"><i class="material-icons">account_circle</i> Sign in</button></a>
       <div class="fp-signed-in-user-container mdl-cell--hide-phone fp-signed-in-only">
         <a class="fp-usernamelink mdl-button mdl-js-button">
           <div class="fp-avatar"></div>
@@ -262,7 +265,7 @@
 
     <!-- User Profile page -->
     <section id="page-user-info" class="mdl-grid fp-content" style="display: none;">
-      <div class="fp-user-container mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col">
+      <div class="fp-user-container mdl-shadow--2dp mdl-cell mdl-cell--12-col">
         <div class="fp-user-avatar"></div>
         <div class="fp-name-follow-container mdl-cell mdl-cell--5-col">
           <div class="fp-user-username"></div>
@@ -346,6 +349,21 @@
 
 <!-- Firebase -->
 <!-- TODO(DEVELOPER): Paste the initialization snippet from: Firebase Console > Add Firebase to your web app. -->
+
+<!-- Firebase UI for Auth -->
+<script src="https://www.gstatic.com/firebasejs/ui/live/0.4/firebase-ui-auth.js"></script>
+<script type="text/javascript">
+  // FirebaseUI config.
+  var uiConfig = {
+    'signInSuccessUrl': '/',
+    'signInOptions': [
+      firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+      firebase.auth.FacebookAuthProvider.PROVIDER_ID
+    ]
+  };
+  var ui = new firebaseui.auth.AuthUI(firebase.auth());
+  ui.start('#firebaseui-auth-container', uiConfig);
+</script>
 
 <!-- Friendly Pix ES5 scripts -->
 <script src="/lib/utils.js"></script>
