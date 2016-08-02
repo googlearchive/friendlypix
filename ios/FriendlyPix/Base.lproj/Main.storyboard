@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="15E65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="zxq-GO-nHP">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="15G31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="zxq-GO-nHP">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
@@ -30,13 +30,13 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qDo-1s-Eg5">
-                                <rect key="frame" x="200" y="286" width="200" height="28"/>
+                                <rect key="frame" x="250" y="286" width="100" height="28"/>
                                 <color key="backgroundColor" red="1" green="0.79215686269999996" blue="0.15686274510000001" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="200" id="dAP-fk-rgy"/>
+                                    <constraint firstAttribute="width" constant="100" id="dAP-fk-rgy"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="13"/>
-                                <state key="normal" title="SIGN IN WITH GOOGLE">
+                                <state key="normal" title="SIGN IN">
                                     <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                     <color key="titleShadowColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 </state>
@@ -48,11 +48,19 @@
                                     <action selector="didTapSignIn:" destination="zxq-GO-nHP" eventType="touchUpInside" id="udk-NN-Kxr"/>
                                 </connections>
                             </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="The friendliest way to share your pics" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4Yi-Hy-Cw2">
+                                <rect key="frame" x="158" y="177" width="285" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" red="0.01176470588" green="0.60784313729999995" blue="0.8980392157" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
+                            <constraint firstItem="4Yi-Hy-Cw2" firstAttribute="centerX" secondItem="yLH-NJ-5O0" secondAttribute="centerX" id="2D9-yY-UH8"/>
                             <constraint firstItem="yLH-NJ-5O0" firstAttribute="top" secondItem="abG-qv-YP8" secondAttribute="bottom" constant="45" id="BmT-4b-8ao"/>
                             <constraint firstItem="qDo-1s-Eg5" firstAttribute="centerX" secondItem="OTh-0Q-7iK" secondAttribute="centerX" id="DhI-AG-NiR"/>
+                            <constraint firstItem="4Yi-Hy-Cw2" firstAttribute="top" secondItem="yLH-NJ-5O0" secondAttribute="bottom" constant="8" symbolic="YES" id="YVa-zN-1JM"/>
                             <constraint firstItem="qDo-1s-Eg5" firstAttribute="centerY" secondItem="OTh-0Q-7iK" secondAttribute="centerY" id="lQW-Vm-Qce"/>
                             <constraint firstItem="qDo-1s-Eg5" firstAttribute="centerX" secondItem="yLH-NJ-5O0" secondAttribute="centerX" id="tJZ-J1-hbu"/>
                         </constraints>
@@ -301,7 +309,7 @@
                     <navigationItem key="navigationItem" id="pjC-VY-fME">
                         <nil key="title"/>
                         <view key="titleView" contentMode="scaleToFill" id="dVm-Zf-cED">
-                            <rect key="frame" x="20" y="5.5" width="560" height="33"/>
+                            <rect key="frame" x="20" y="6" width="560" height="33"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
                                 <searchBar contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="mDa-sm-Q0C">

@@ -6,6 +6,7 @@ pod 'Firebase/RemoteConfig'
 pod 'Firebase/AdMob'
 pod 'Firebase/Invites'
 pod 'Firebase/Messaging'
+pod 'FirebaseUI'
 pod 'STXDynamicTableView'
 
 platform :ios, '8.0'
