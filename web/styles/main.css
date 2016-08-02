@@ -768,7 +768,7 @@ a {
   z-index: 101;
 }
 
-/* Firebase UI overrides */
+/* Firebase UI styling */
 
 #firebaseui-auth-container {
   min-width: 251px;
@@ -779,12 +779,6 @@ a {
   margin-top: 40px;
   height: 84px;
   min-height: 0;
-}
-.mdl-layout__tab {
-  height: 48px;
-  line-height: 48px;
-  padding: 0 24px;
-  color: rgba(255,255,255,.6);
 }
 .firebaseui-id-page-federated-linking {
   background: rgba(0,0,0,0.05);
@@ -799,8 +793,7 @@ a {
 }
 .firebaseui-subtitle, .firebaseui-text {
   color: rgba(255,255,255,0.87);
-}
-.firebaseui-form-actions .mdl-button--raised.mdl-button--colored.firebaseui-button {
+}.firebaseui-form-actions .mdl-button--raised.mdl-button--colored.firebaseui-button {
   background: rgba(0,0,0,0.1);
 }
 .firebaseui-id-dismiss-info-bar {
@@ -813,4 +806,13 @@ a {
   right: 5%;
   top: 10%;
   bottom: 10%;
+}
+
+/* Firebase UI MDL fixes */
+
+.mdl-layout__tab {
+  height: 48px;
+  line-height: 48px;
+  padding: 0 24px;
+  color: rgba(255,255,255,.6);
 }
