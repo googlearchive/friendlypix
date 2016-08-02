@@ -18,15 +18,33 @@
 #import "SignInViewController.h"
 #import "FPAppState.h"
 @import Firebase;
-@import GoogleMobileAds;
+@import FirebaseAuthUI;
+@import FirebaseGoogleAuthUI;
+@import FirebaseFacebookAuthUI;
+
+// Your Facebook App ID, which can be found on developers.facebook.com.
+static NSString *const kFacebookAppID = @"FACEBOOK_APP_ID";
+
+@interface SignInViewController()
+@property(strong, nonatomic) FIRAuthStateDidChangeListenerHandle authStateDidChangeHandle;
+@end
 
 @implementation SignInViewController
 
-- (void)viewDidAppear:(BOOL)animated {
-  FIRUser *user = [FIRAuth auth].currentUser;
-  if (user) {
-    [self signedIn:user];
-  }
+- (void)viewWillAppear:(BOOL)animated {
+  [super viewWillAppear:animated];
+  [FIRAuthUI authUI].signInProviders = @[[[FIRGoogleAuthUI alloc] initWithClientID:[FIRApp defaultApp].options.clientID],
+                                         [[FIRFacebookAuthUI alloc] initWithAppID:kFacebookAppID]];
+  [FIRAuthUI authUI].termsOfServiceURL = [[NSURL alloc] initWithString:@"https://firebase.google.com/terms/"];
+  self.authStateDidChangeHandle = [[FIRAuth auth]
+                                   addAuthStateDidChangeListener:^(FIRAuth *_Nonnull auth, FIRUser *_Nullable user) {
+                                     [self signedIn:user];
+                                   }];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+  [super viewWillDisappear:animated];
+  [[FIRAuth auth] removeAuthStateDidChangeListener:_authStateDidChangeHandle];
 }
 
 -(void)signIn:(GIDSignIn *)signIn didSignInForUser:(GIDGoogleUser *)user withError:(NSError *)error {
@@ -46,14 +64,11 @@
 }
 
 - (IBAction)didTapSignIn:(UIButton *)sender {
-  [GIDSignIn sharedInstance].clientID = [FIRApp defaultApp].options.clientID;
-  [GIDSignIn sharedInstance].delegate = self;
-  [GIDSignIn sharedInstance].uiDelegate = self;
-  [[GIDSignIn sharedInstance] signIn];
+  UIViewController *authViewController = [[FIRAuthUI authUI] authViewController];
+  [self presentViewController:authViewController animated:YES completion:nil];
 }
 
 - (void)signedIn:(FIRUser *)user {
-  NSLog(user.uid);
   FIRDatabaseReference *ref;
   ref = [FIRDatabase database].reference;
   FIRDatabaseReference *peopleRef = [ref child: [NSString stringWithFormat:@"people/%@", user.uid]];
