@@ -38,7 +38,9 @@ static NSString *const kFacebookAppID = @"FACEBOOK_APP_ID";
   [FIRAuthUI authUI].termsOfServiceURL = [[NSURL alloc] initWithString:@"https://firebase.google.com/terms/"];
   self.authStateDidChangeHandle = [[FIRAuth auth]
                                    addAuthStateDidChangeListener:^(FIRAuth *_Nonnull auth, FIRUser *_Nullable user) {
-                                     [self signedIn:user];
+                                     if (user) {
+                                       [self signedIn:user];
+                                     }
                                    }];
 }
 
