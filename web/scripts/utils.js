@@ -54,14 +54,10 @@ friendlyPix.MaterialUtils = class {
   }
 
   /**
-   * Clears the given Material Text Field.
+   * Upgrades the text fields in the element.
    */
-  static cloneElementWithTextField(element) {
-    componentHandler.downgradeElements($('.mdl-textfield', element).get());
-    const clone = element.clone();
+  static upgradeTextFields(element) {
     componentHandler.upgradeElements($('.mdl-textfield', element).get());
-    componentHandler.upgradeElements($('.mdl-textfield', clone).get());
-    return clone;
   }
 
   /**

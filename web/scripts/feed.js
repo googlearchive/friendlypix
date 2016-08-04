@@ -57,7 +57,7 @@ friendlyPix.Feed = class {
     for (let i = postIds.length - 1; i >= 0; i--) {
       this.noPostsMessage.hide();
       const postData = posts[postIds[i]];
-      const post = friendlyPix.post.clone();
+      const post = new friendlyPix.Post();
       this.posts.push(post);
       const postElement = post.fillPostData(postIds[i], postData.thumb_url || postData.url,
           postData.text, postData.author, postData.timestamp, null, null, postData.full_url);

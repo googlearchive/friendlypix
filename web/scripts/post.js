@@ -35,24 +35,13 @@ friendlyPix.Post = class {
     this.auth = firebase.app().auth();
 
     $(document).ready(() => {
-      // Pointers to DOM elements.
       this.postPage = $('#page-post');
-      this.postElement = $('.fp-post', this.postPage);
+      // Pointers to DOM elements.
+      this.postElement = $(friendlyPix.Post.createPostHtml());
+      friendlyPix.MaterialUtils.upgradeTextFields(this.postElement);
       this.toast = $('.mdl-js-snackbar');
       this.theatre = $('.fp-theatre');
     });
-  }
-
-  /**
-   * Creates an unattached clone of the single post element.
-   * @return friendlyPix.Post
-   */
-  clone() {
-    const clone = new friendlyPix.Post();
-    $(document).ready(() => {
-      clone.postElement = friendlyPix.MaterialUtils.cloneElementWithTextField(clone.postElement);
-    });
-    return clone;
   }
 
   /**
@@ -83,19 +72,12 @@ friendlyPix.Post = class {
   }
 
   /**
-   * Clears all listeners and times in the given element.
+   * Clears all listeners and timers in the given element.
    */
   clear() {
     // Stops all timers if any.
     this.timers.forEach(timer => clearInterval(timer));
     this.timers = [];
-
-    const newElement = friendlyPix.MaterialUtils.cloneElementWithTextField(this.postElement);
-    if (this.postElement.parent()) {
-      this.postElement.parent().append(newElement);
-      this.postElement.detach();
-    }
-    this.postElement = newElement;
 
     // Remove Firebase listeners.
     friendlyPix.firebase.cancelAllSubscriptions();
@@ -326,6 +308,47 @@ friendlyPix.Post = class {
   /**
    * Returns the HTML for a post's comment.
    */
+  static createPostHtml() {
+    return `
+        <div class="fp-post mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet
+                    mdl-cell--8-col-desktop mdl-grid mdl-grid--no-spacing">
+          <div class="mdl-card mdl-shadow--2dp mdl-cell
+                        mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-desktop">
+            <div class="fp-header">
+              <a class="fp-usernamelink mdl-button mdl-js-button" href="/user/">
+                <div class="fp-avatar"></div>
+                <div class="fp-username mdl-color-text--black"></div>
+              </a>
+              <!-- Delete button -->
+              <button class="fp-delete-post mdl-button mdl-js-button">
+                Delete
+              </button>
+              <a href="/post/" class="fp-time">now</a>
+            </div>
+            <div class="fp-image"></div>
+            <div class="fp-likes">0 likes</div>
+            <div class="fp-first-comment"></div>
+            <div class="fp-morecomments">View more comments...</div>
+            <div class="fp-comments"></div>
+            <div class="fp-action">
+              <span class="fp-like">
+                <div class="fp-not-liked material-icons">favorite_border</div>
+                <div class="fp-liked material-icons">favorite</div>
+              </span>
+              <form class="fp-add-comment" action="#">
+                <div class="mdl-textfield mdl-js-textfield">
+                  <input class="mdl-textfield__input" type="text">
+                  <label class="mdl-textfield__label">Comment...</label>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>`;
+  }
+
+  /**
+   * Returns the HTML for a post's comment.
+   */
   static createCommentHtml(author, text) {
     return `
         <div class="fp-comment">
@@ -363,3 +386,8 @@ friendlyPix.Post = class {
 };
 
 friendlyPix.post = new friendlyPix.Post();
+
+$(document).ready(() => {
+  // We add the Post element to the single post page.
+  $('.fp-image-container', friendlyPix.post.postPage).append(friendlyPix.post.postElement);
+});

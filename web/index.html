@@ -46,13 +46,13 @@
   <meta name="msapplication-TileColor" content="#3372DF">
   <meta name="msapplication-navbutton-color" content="#303F9F">
 
+  <!-- Firebase UI Auth -->
+  <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/live/0.4/firebase-ui-auth.css" />
+
   <!-- Material Design Lite  -->
   <link rel="stylesheet" href="/bower_components/material-design-lite/material.min.css">
   <script defer src="/bower_components/material-design-lite/material.min.js"></script>
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-
-  <!-- Firebase UI Auth -->
-  <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/live/0.4/firebase-ui-auth.css" />
 
   <!-- Styling -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,500,300">
@@ -186,42 +186,7 @@
 
     <!-- Show a single post with comments -->
     <section id="page-post" class="mdl-grid fp-content" style="display: none;">
-      <div class="fp-image-container mdl-cell mdl-cell--12-col mdl-grid">
-        <div class="fp-post mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet
-                    mdl-cell--8-col-desktop mdl-grid mdl-grid--no-spacing">
-          <div class="mdl-card mdl-shadow--2dp mdl-cell
-                        mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-desktop">
-            <div class="fp-header">
-              <a class="fp-usernamelink mdl-button mdl-js-button" href="/user/">
-                <div class="fp-avatar"></div>
-                <div class="fp-username mdl-color-text--black"></div>
-              </a>
-              <!-- Delete button -->
-              <button class="fp-delete-post mdl-button mdl-js-button">
-                Delete
-              </button>
-              <a href="/post/" class="fp-time">now</a>
-            </div>
-            <div class="fp-image"></div>
-            <div class="fp-likes">0 likes</div>
-            <div class="fp-first-comment"></div>
-            <div class="fp-morecomments">View more comments...</div>
-            <div class="fp-comments"></div>
-            <div class="fp-action">
-                     <span class="fp-like">
-                         <div class="fp-not-liked material-icons">favorite_border</div>
-                         <div class="fp-liked material-icons">favorite</div>
-                     </span>
-              <form class="fp-add-comment" action="#">
-                <div class="mdl-textfield mdl-js-textfield">
-                  <input class="mdl-textfield__input" type="text">
-                  <label class="mdl-textfield__label">Comment...</label>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
+      <div class="fp-image-container mdl-cell mdl-cell--12-col mdl-grid"></div>
     </section>
 
     <!-- About & Contact page -->
