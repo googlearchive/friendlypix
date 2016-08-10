@@ -43,7 +43,6 @@ friendlyPix.Auth = class {
 
     $(document).ready(() => {
       // Pointers to DOM Elements
-      this.signInButton = $('.fp-sign-in-button');
       const signedInUserContainer = $('.fp-signed-in-user-container');
       this.signedInUserAvatar = $('.fp-avatar', signedInUserContainer);
       this.signedInUsername = $('.fp-username', signedInUserContainer);
@@ -65,6 +64,11 @@ friendlyPix.Auth = class {
    * "Sign-In" button if the user isn't signed-in.
    */
   onAuthStateChanged(user) {
+    // We ignore token refresh events.
+    if (user && this.userId === user.uid || !user && this.userId === null) {
+      return;
+    }
+
     if (window.friendlyPix.router) {
       window.friendlyPix.router.reloadPage();
     }
@@ -73,7 +77,7 @@ friendlyPix.Auth = class {
       if (!user) {
         this.signedOutOnlyElements.show();
         this.signedInOnlyElements.hide();
-        this.userId = undefined;
+        this.userId = null;
         this.signedInUserAvatar.css('background-image', '');
       } else {
         this.signedOutOnlyElements.hide();
