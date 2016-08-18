@@ -52,7 +52,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 
   <!-- Firebase UI Auth -->
-  <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/live/0.4/firebase-ui-auth.css" />
+  <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/live/0.5/firebase-ui-auth.css" />
 
   <!-- Styling -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,500,300">
@@ -316,18 +316,17 @@
 <!-- TODO(DEVELOPER): Paste the initialization snippet from: Firebase Console > Add Firebase to your web app. -->
 
 <!-- Firebase UI for Auth -->
-<script src="https://www.gstatic.com/firebasejs/ui/live/0.4/firebase-ui-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/ui/live/0.5/firebase-ui-auth.js"></script>
 <script type="text/javascript">
   // FirebaseUI config.
   var uiConfig = {
-    'signInSuccessUrl': '/',
+    'signInFlow': 'popup',
     'signInOptions': [
       firebase.auth.GoogleAuthProvider.PROVIDER_ID,
       firebase.auth.FacebookAuthProvider.PROVIDER_ID
     ]
   };
-  var ui = new firebaseui.auth.AuthUI(firebase.auth());
-  ui.start('#firebaseui-auth-container', uiConfig);
+  var firebaseUi = new firebaseui.auth.AuthUI(firebase.auth());
 </script>
 
 <!-- Friendly Pix ES5 scripts -->

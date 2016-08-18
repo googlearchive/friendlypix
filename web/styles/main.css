@@ -773,20 +773,29 @@ a {
 #firebaseui-auth-container {
   min-width: 251px;
 }
-.firebaseui-id-page-callback {
-  background: transparent;
-  box-shadow: none;
-  margin-top: 40px;
-  height: 84px;
-  min-height: 0;
-}
-.firebaseui-id-page-federated-linking {
+.firebaseui-container {
   background: rgba(0,0,0,0.05);
   margin-bottom: 15px;
   min-height: 150px;
   padding-top: 10px;
   border-radius: 20px;
   box-shadow: none;
+}
+.firebaseui-container.firebaseui-page-provider-sign-in {
+  background: transparent;
+  box-shadow: none;
+  min-height: 0;
+  margin-bottom: 0;
+  padding-top: 0;
+}
+.firebaseui-container.firebaseui-id-page-callback {
+  background: transparent;
+  box-shadow: none;
+  margin-top: 40px;
+  height: 84px;
+  min-height: 0;
+  margin-bottom: 0;
+  padding-top: 0;
 }
 .firebaseui-card-header {
   display: none;

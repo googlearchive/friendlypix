@@ -33,7 +33,7 @@ friendlyPix.Feed = class {
     this.newPosts = {};
 
     // Firebase SDK.
-    this.auth = firebase.app().auth();
+    this.auth = firebase.auth();
 
     $(document).ready(() => {
       // Pointers to DOM elements.
@@ -109,7 +109,7 @@ friendlyPix.Feed = class {
     for (let i = 0; i < postKeys.length; i++) {
       this.noPostsMessage.hide();
       const post = newPosts[postKeys[i]];
-      const postElement = friendlyPix.post.clone();
+      const postElement = new friendlyPix.Post();
       this.posts.push(postElement);
       this.feedImageContainer.prepend(postElement.fillPostData(postKeys[i], post.thumb_url ||
           post.url, post.text, post.author, post.timestamp, null, null, post.full_url));

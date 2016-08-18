@@ -48,9 +48,9 @@ friendlyPix.Uploader = class {
    */
   constructor() {
     // Firebase SDK
-    this.database = firebase.app().database();
-    this.auth = firebase.app().auth();
-    this.storage = firebase.app().storage();
+    this.database = firebase.database();
+    this.auth = firebase.auth();
+    this.storage = firebase.storage();
 
     this.addPolyfills();
 

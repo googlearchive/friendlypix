@@ -71,7 +71,7 @@ friendlyPix.Router = class {
     const onlyAuthed = attributes.onlyAuthed;
     let pageId = attributes.pageId;
 
-    if (onlyAuthed && !firebase.app().auth().currentUser) {
+    if (onlyAuthed && !firebase.auth().currentUser) {
       pageId = 'splash';
       this.splashLogin.show();
     }
