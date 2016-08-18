@@ -17,12 +17,13 @@ $> npm install
 
 
 ## Create Firebase Project
-1. Create a Firebase/Google project using the [Firebase Console](https://firebase.google.com/console).
+1. Create a Firebase project using the [Firebase Console](https://firebase.google.com/console).
 2. Enable **Google** as a Sign in provider in **Firebase Console > Auth > Sign in Method** tab.
-3. Now click the **WEB SETUP** button in the top right corner to copy the initialization snippet it will look like this:
+3. Enable **Facebook** as a Sign in provider in **Firebase Console > Auth > Sign in Method** tab. You'll need to provide your Facebook app's credentials. If you haven't yet you'll need to have created a Facebook app on [Facebook for Developers](https://developers.facebook.com)
+4. Now click the **WEB SETUP** button in the top right corner to copy the initialization snippet it will look like this:
 
   ```html
-  <script src="https://www.gstatic.com/firebasejs/live/<VERSION>/firebase.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/<VERSION>/firebase.js"></script>
   <script>
     // Initialize Firebase
     var config = {
