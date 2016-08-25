@@ -17,6 +17,7 @@ $> npm install
 
 
 ## Create Firebase Project
+
 1. Create a Firebase project using the [Firebase Console](https://firebase.google.com/console).
 2. Enable **Google** as a Sign in provider in **Firebase Console > Auth > Sign in Method** tab.
 3. Enable **Facebook** as a Sign in provider in **Firebase Console > Auth > Sign in Method** tab. You'll need to provide your Facebook app's credentials. If you haven't yet you'll need to have created a Facebook app on [Facebook for Developers](https://developers.facebook.com)
@@ -40,6 +41,7 @@ $> npm install
 
 
 ## Update the app with your firebase project
+
 1. In the root of the site locate the **index.html** in the root of the folder and replace the text below with the snippet you coppied above:
 
   ```html
@@ -64,6 +66,8 @@ $> npm run serve
 ```
 
 This will start `firebase serve` and make sure your Javascript files are transpiled automatically to ES5.
+
+> This is cufrrently broken on Windows. On windows please run the following commands separately instead: `bower install`, `babel -w scripts -s --retain-lines -d lib` and `firebase serve`.
 
 Then open [http://localhost:5000](http://localhost:5000)
 
