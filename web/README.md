@@ -67,7 +67,7 @@ $> npm run serve
 
 This will start `firebase serve` and make sure your Javascript files are transpiled automatically to ES5.
 
-> This is cufrrently broken on Windows. On windows please run the following commands separately instead: `bower install`, `babel -w scripts -s --retain-lines -d lib` and `firebase serve`.
+> This is currently broken on Windows. On Windows please run the following commands separately instead: `bower install`, `babel -w scripts -s --retain-lines -d lib` and `firebase serve`.
 
 Then open [http://localhost:5000](http://localhost:5000)
 
