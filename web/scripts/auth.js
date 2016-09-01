@@ -37,8 +37,8 @@ friendlyPix.Auth = class {
    */
   constructor() {
     // Firebase SDK
-    this.database = firebase.app().database();
-    this.auth = firebase.app().auth();
+    this.database = firebase.database();
+    this.auth = firebase.auth();
     this._waitForAuthPromiseResolver = new $.Deferred();
 
     $(document).ready(() => {
@@ -65,7 +65,7 @@ friendlyPix.Auth = class {
    */
   onAuthStateChanged(user) {
     // We ignore token refresh events.
-    if (user && this.userId === user.uid || !user && this.userId === null) {
+    if (user && this.userId === user.uid) {
       return;
     }
 
@@ -79,6 +79,7 @@ friendlyPix.Auth = class {
         this.signedInOnlyElements.hide();
         this.userId = null;
         this.signedInUserAvatar.css('background-image', '');
+        firebaseUi.start('#firebaseui-auth-container', uiConfig);
       } else {
         this.signedOutOnlyElements.hide();
         this.signedInOnlyElements.show();

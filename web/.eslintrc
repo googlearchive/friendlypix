@@ -26,6 +26,8 @@
   },
   "globals": {
     "$": true,
+    "firebaseUi": true,
+    "uiConfig": true,
     "jQuery": true,
     "swal": true,
     "latinize": true,

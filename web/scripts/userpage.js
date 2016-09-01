@@ -28,8 +28,8 @@ friendlyPix.UserPage = class {
    */
   constructor() {
     // Firebase SDK.
-    this.database = firebase.app().database();
-    this.auth = firebase.app().auth();
+    this.database = firebase.database();
+    this.auth = firebase.auth();
 
     $(document).ready(() => {
       // DOM Elements.

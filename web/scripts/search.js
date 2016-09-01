@@ -43,7 +43,7 @@ friendlyPix.Search = class {
    */
   constructor() {
     // Firebase SDK.
-    this.database = firebase.app().database();
+    this.database = firebase.database();
 
     $(document).ready(() => {
       // DOM Elements pointers.

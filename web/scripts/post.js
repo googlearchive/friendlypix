@@ -30,9 +30,9 @@ friendlyPix.Post = class {
     this.timers = [];
 
     // Firebase SDK.
-    this.database = firebase.app().database();
-    this.storage = firebase.app().storage();
-    this.auth = firebase.app().auth();
+    this.database = firebase.database();
+    this.storage = firebase.storage();
+    this.auth = firebase.auth();
 
     $(document).ready(() => {
       this.postPage = $('#page-post');
