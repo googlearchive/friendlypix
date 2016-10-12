@@ -97,12 +97,14 @@
       </div>
 
       <!-- Singed-in User Info -->
-      <a href="/"><button class="fp-sign-in-button fp-signed-out-only mdl-button mdl-js-button mdl-js-ripple-effect"><i class="material-icons">account_circle</i> Sign in</button></a>
-      <div class="fp-signed-in-user-container mdl-cell--hide-phone fp-signed-in-only">
-        <a class="fp-usernamelink mdl-button mdl-js-button">
-          <div class="fp-avatar"></div>
-          <div class="fp-username mdl-color-text--white"></div>
-        </a>
+      <div class="mdl-cell--hide-phone">
+        <a href="/"><button class="fp-sign-in-button fp-signed-out-only mdl-button mdl-js-button mdl-js-ripple-effect"><i class="material-icons">account_circle</i> Sign in</button></a>
+        <div class="fp-signed-in-user-container mdl-cell--hide-phone fp-signed-in-only">
+          <a class="fp-usernamelink mdl-button mdl-js-button">
+            <div class="fp-avatar"></div>
+            <div class="fp-username mdl-color-text--white"></div>
+          </a>
+        </div>
       </div>
 
       <!-- Drop Down Menu -->
@@ -135,7 +137,7 @@
 
   <!-- Drawer menu -->
   <div class="mdl-cell--hide-desktop mdl-cell--hide-tablet mdl-layout__drawer">
-    <button class="fp-sign-in-button fp-signed-out-only mdl-button mdl-js-button mdl-js-ripple-effect"><i class="material-icons">account_circle</i> Sign in</button>
+    <a href="/" class="fp-signed-out-only"><button class="fp-sign-in-button mdl-button mdl-js-button mdl-js-ripple-effect"><i class="material-icons">account_circle</i> Sign in</button></a>
     <div class="fp-signed-in-user-container mdl-color--light-blue-700 fp-signed-in-only">
       <a class="fp-usernamelink">
         <div class="fp-avatar"></div>
@@ -313,7 +315,17 @@
 <link rel="stylesheet" type="text/css" href="/bower_components/sweetalert/dist/sweetalert.css">
 
 <!-- Firebase -->
-<!-- TODO(DEVELOPER): Paste the initialization snippet from: Firebase Console > Add Firebase to your web app. -->
+<script src="https://www.gstatic.com/firebasejs/3.3.0/firebase.js"></script>
+<script>
+  // Initialize Firebase SDK
+  var config = {
+    apiKey: "AIzaSyBdjTzzr-Ou7Xi_VduywqTecrnZ9OsNdNA",
+    authDomain: "test-77c48.firebaseapp.com",
+    databaseURL: "https://test-77c48.firebaseio.com",
+    storageBucket: "test-77c48.appspot.com"
+  };
+  firebase.initializeApp(config);
+</script>
 
 <!-- Firebase UI for Auth -->
 <script src="https://www.gstatic.com/firebasejs/ui/live/0.5/firebase-ui-auth.js"></script>

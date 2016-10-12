@@ -75,7 +75,7 @@ friendlyPix.Uploader = class {
     });
   }
 
-  // Adds polyfills requireed for the Uploader.
+  // Adds polyfills required for the Uploader.
   addPolyfills() {
     // Polyfill for canvas.toBlob().
     if (!HTMLCanvasElement.prototype.toBlob) {
