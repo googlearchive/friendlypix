@@ -55,6 +55,9 @@ $> npm install
   match /b/<STORAGE_BUCKET>/o {
   ```
 
+3. Generate a service accounts file using the **Firebase Console > Project Settings > Service Accounts > Generate New Private Key** and save it as `functions/service-account-credentials.json`
+
+
 ## Start a local development server
 
 You need to have installed the Firebase CLI by running `npm install`.
