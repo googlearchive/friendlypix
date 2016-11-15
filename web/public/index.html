@@ -47,8 +47,8 @@
   <meta name="msapplication-navbutton-color" content="#303F9F">
 
   <!-- Material Design Lite  -->
-  <link rel="stylesheet" href="/bower_components/material-design-lite/material.min.css">
-  <script defer src="/bower_components/material-design-lite/material.min.js"></script>
+  <link rel="stylesheet" href="/libs/material-design-lite/material.min.css">
+  <script defer src="/libs/material-design-lite/material.min.js"></script>
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 
   <!-- Firebase UI Auth -->
@@ -241,6 +241,10 @@
               <input type="checkbox" id="follow" class="mdl-switch__input" value="true">
               <span class="mdl-switch__label">Follow</span>
             </label>
+            <label class="fp-notifications mdl-switch mdl-js-switch mdl-js-ripple-effect" for="notifications">
+              <input type="checkbox" id="notifications" class="mdl-switch__input" value="true">
+              <span class="mdl-switch__label">Enable Notifications</span>
+            </label>
           </div>
           <div class="fp-user-detail-container">
             <div class="fp-user-detail"><span class="fp-user-nbposts">0</span> posts</div>
@@ -302,23 +306,23 @@
 </div>
 
 <!-- Page.js -->
-<script src="/bower_components/page/page.js"></script>
+<script src="/libs/page/page.js"></script>
 
 <!-- jQuery -->
-<script src="/bower_components/jquery/dist/jquery.min.js"></script>
+<script src="/libs/jquery/dist/jquery.min.js"></script>
 
 <!-- Latinize -->
-<script src="/bower_components/latinize/latinize.js"></script>
+<script src="/libs/latinize/latinize.js"></script>
 
 <!-- SweetAlert -->
-<script src="/bower_components/sweetalert/dist/sweetalert.min.js"></script>
-<link rel="stylesheet" type="text/css" href="/bower_components/sweetalert/dist/sweetalert.css">
+<script src="/libs/sweetalert/dist/sweetalert.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/libs/sweetalert/dist/sweetalert.css">
 
 <!-- Firebase -->
 <!-- TODO(DEVELOPER): Paste the initialization snippet from: Firebase Console > Add Firebase to your web app. -->
 
 <!-- Firebase UI for Auth -->
-<script src="https://www.gstatic.com/firebasejs/ui/live/0.5/firebase-ui-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/ui/live/1.0/firebase-ui-auth.js"></script>
 <script type="text/javascript">
   // FirebaseUI config.
   var uiConfig = {
@@ -332,15 +336,16 @@
 </script>
 
 <!-- Friendly Pix ES5 scripts -->
-<script src="/lib/utils.js"></script>
-<script src="/lib/firebase.js"></script>
-<script src="/lib/auth.js"></script>
-<script src="/lib/search.js"></script>
-<script src="/lib/uploader.js"></script>
-<script src="/lib/userpage.js"></script>
-<script src="/lib/post.js"></script>
-<script src="/lib/feed.js"></script>
-<script src="/lib/routing.js"></script>
+<script src="/scripts-es5/utils.js"></script>
+<script src="/scripts-es5/firebase.js"></script>
+<script src="/scripts-es5/auth.js"></script>
+<script src="/scripts-es5/search.js"></script>
+<script src="/scripts-es5/uploader.js"></script>
+<script src="/scripts-es5/messaging.js"></script>
+<script src="/scripts-es5/userpage.js"></script>
+<script src="/scripts-es5/post.js"></script>
+<script src="/scripts-es5/feed.js"></script>
+<script src="/scripts-es5/routing.js"></script>
 
 <!-- Friendly Pix ES2015 scripts -->
 <!-- Uncomment and replace scripts above to serve ES2015 scripts directly -->
@@ -349,6 +354,7 @@
 <script src="/scripts/auth.js"></script>
 <script src="/scripts/search.js"></script>
 <script src="/scripts/uploader.js"></script>
+<script src="/scripts/messaging.js"></script>
 <script src="/scripts/userpage.js"></script>
 <script src="/scripts/post.js"></script>
 <script src="/scripts/feed.js"></script>

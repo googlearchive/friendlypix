@@ -6,19 +6,10 @@
     "rules": "storage.rules"
   },
   "hosting": {
-    "public": "./",
+    "public": "public",
     "rewrites": [{
       "source": "**",
       "destination": "/index.html"
-    }],
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "node_modules/**",
-      "security-rules.json",
-      "bower.json",
-      "package.json",
-      "README.md"
-    ]
+    }]
   }
 }

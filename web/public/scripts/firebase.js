@@ -514,6 +514,32 @@ friendlyPix.Firebase = class {
   }
 
   /**
+   * Enables or disables the notifications for that user.
+   */
+  toggleNotificationEnabled(checked) {
+    return this.database.ref(`/people/${this.auth.currentUser.uid}/notificationEnabled`)
+        .set(checked ? checked : null);
+  }
+
+  /**
+   * Saves the given notification token.
+   */
+  saveNotificationToken(token) {
+    return this.database.ref(`/people/${this.auth.currentUser.uid}/notificationTokens/${token}`)
+        .set(true);
+  }
+
+  /**
+   * Listens to updates on the Enable notifications status of the current user.
+   */
+  registerToNotificationEnabledStatusUpdate(callback) {
+    const followStatusRef =
+        this.database.ref(`/people/${this.auth.currentUser.uid}/notificationEnabled`);
+    followStatusRef.on('value', callback);
+    this.firebaseRefs.push(followStatusRef);
+  }
+
+  /**
    * Load a single user profile information
    */
   loadUserProfile(uid) {
@@ -558,6 +584,15 @@ friendlyPix.Firebase = class {
     const followingRef = this.database.ref(`/people/${uid}/following`);
     followingRef.on('value', data => followingCallback(data.numChildren()));
     this.firebaseRefs.push(followingRef);
+  }
+
+  /**
+   * Listens for changes of the thumbnail URL of a given post.
+   */
+  registerForThumbChanges(postId, callback) {
+    const thumbRef = this.database.ref(`/posts/${postId}/thumb_url`);
+    thumbRef.on('value', data => callback(data.val()));
+    this.firebaseRefs.push(thumbRef);
   }
 
   /**

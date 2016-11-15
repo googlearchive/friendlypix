@@ -129,9 +129,12 @@ friendlyPix.Post = class {
     $('.fp-username', post).text(author.full_name || 'Anonymous');
 
     // Shows the pic's thumbnail.
-    $('.fp-image', post).css('background-image', `url("${thumbUrl.replace(/"/g, '\\"')}")`);
-    $('.fp-image', post).unbind('click');
-    $('.fp-image', post).click(() => this.enterTheatreMode(picUrl || thumbUrl));
+    this._setupThumb(thumbUrl, picUrl);
+
+    // Make sure we update if the thumb or pic URL changes.
+    friendlyPix.firebase.registerForThumbChanges(postId, thumbUrl => {
+      this._setupThumb(thumbUrl, picUrl);
+    });
 
     this._setupDate(postId, timestamp);
     this._setupDeleteButton(postId, author, picStorageUri, thumbStorageUri);
@@ -162,6 +165,18 @@ friendlyPix.Post = class {
         this.leaveTheatreMode();
       }
     });
+  }
+
+  /**
+   * Shows the thumbnail and sets up the click to see the full size image.
+   * @private
+   */
+  _setupThumb(thumbUrl, picUrl) {
+    const post = this.postElement;
+
+    $('.fp-image', post).css('background-image', `url("${thumbUrl ? thumbUrl.replace(/"/g, '\\"') : ''}")`);
+    $('.fp-image', post).unbind('click');
+    $('.fp-image', post).click(() => this.enterTheatreMode(picUrl || thumbUrl));
   }
 
   /**

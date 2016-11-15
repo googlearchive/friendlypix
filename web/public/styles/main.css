@@ -329,8 +329,8 @@ a {
   width: 215px;
   box-sizing: border-box;
 }
-.fp-follow {
-  width: 120px;
+.fp-follow, .fp-notifications {
+  width: 220px;
   text-align: left;
   margin-top: 20px;
 }
@@ -421,7 +421,7 @@ a {
   .fp-user-following {
     margin: 35px 16px 0 16px;
   }
-  .fp-follow {
+  .fp-follow, .fp-notifications {
     margin-top: 10px;
   }
   #page-user-info .fp-user-detail-container {

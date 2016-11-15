@@ -69,7 +69,7 @@ friendlyPix.UserPage = class {
     const checked = this.followCheckbox.prop('checked');
     this.followCheckbox.prop('disabled', true);
 
-    return friendlyPix.firebase.toggleFollowUser(this.userId, checked);
+    friendlyPix.firebase.toggleFollowUser(this.userId, checked);
   }
 
   /**
@@ -129,10 +129,16 @@ friendlyPix.UserPage = class {
     // Reset the UI.
     this.clear();
 
-    // If users is the currently signed-in user we hide the "Follow" Checkbox.
+    // If users is the currently signed-in user we hide the "Follow" checkbox and the opposite for
+    // the "Notifications" checkbox.
     if (this.auth.currentUser && userId === this.auth.currentUser.uid) {
       this.followContainer.hide();
+      friendlyPix.messaging.enableNotificationsContainer.show();
+      friendlyPix.messaging.enableNotificationsCheckbox.prop('disabled', true);
+      friendlyPix.MaterialUtils.refreshSwitchState(friendlyPix.messaging.enableNotificationsContainer);
+      friendlyPix.messaging.trackNotificationsEnabledStatus();
     } else {
+      friendlyPix.messaging.enableNotificationsContainer.hide();
       this.followContainer.show();
       this.followCheckbox.prop('disabled', true);
       friendlyPix.MaterialUtils.refreshSwitchState(this.followContainer);
