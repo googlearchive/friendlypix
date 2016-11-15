@@ -422,8 +422,11 @@ friendlyPix.Firebase = class {
    * This returns a Promise which completes with the new Post ID.
    */
   uploadNewPic(pic, thumb, fileName, text) {
+    // Get a reference to where the post will be created.
+    const newPostKey = this.database.ref('/posts').push().key;
+
     // Start the pic file upload to Firebase Storage.
-    const picRef = this.storage.ref(`${this.auth.currentUser.uid}/full/${Date.now()}/${fileName}`);
+    const picRef = this.storage.ref(`${this.auth.currentUser.uid}/full/${newPostKey}/${fileName}`);
     const metadata = {
       contentType: pic.type
     };
@@ -437,7 +440,7 @@ friendlyPix.Firebase = class {
     });
 
     // Start the thumb file upload to Firebase Storage.
-    const thumbRef = this.storage.ref(`${this.auth.currentUser.uid}/thumb/${Date.now()}/${fileName}`);
+    const thumbRef = this.storage.ref(`${this.auth.currentUser.uid}/thumb/${newPostKey}/${fileName}`);
     var tumbUploadTask = thumbRef.put(thumb, metadata).then(snapshot => {
       console.log('New thumb uploaded. Size:', snapshot.totalBytes, 'bytes.');
       var url = snapshot.metadata.downloadURLs[0];
@@ -448,9 +451,8 @@ friendlyPix.Firebase = class {
     });
 
     return Promise.all([picUploadTask, tumbUploadTask]).then(urls => {
-      // Once both pics and thumbanils has been uploaded add a new post in the Firebase Database and
+      // Once both pics and thumbnails has been uploaded add a new post in the Firebase Database and
       // to its fanned out posts lists (user's posts and home post).
-      const newPostKey = this.database.ref('/posts').push().key;
       const update = {};
       update[`/posts/${newPostKey}`] = {
         full_url: urls[0],
