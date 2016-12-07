@@ -15,7 +15,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <KZPropertyMapper.h>
+#import "KZPropertyMapper.h"
 
 @interface KZPropertyMapper (Date)
 + (NSDate *)boxValueAsDate:(long)value;

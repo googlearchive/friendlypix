@@ -1,4 +1,7 @@
 # FriendlyPix
+platform :ios, '8.0'
+use_frameworks!
+
 pod 'Firebase/Auth'
 pod 'Firebase/Database'
 pod 'Firebase/Storage'
@@ -9,5 +12,4 @@ pod 'Firebase/Messaging'
 pod 'FirebaseUI', '~> 0.4.0'
 pod 'STXDynamicTableView'
 
-platform :ios, '8.0'
 target 'FriendlyPix'

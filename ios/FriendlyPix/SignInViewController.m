@@ -21,11 +21,16 @@
 @import FirebaseAuthUI;
 @import FirebaseGoogleAuthUI;
 @import FirebaseFacebookAuthUI;
+@import FirebaseTwitterAuthUI;
 
 // Your Facebook App ID, which can be found on developers.facebook.com.
 static NSString *const kFacebookAppID = @"FACEBOOK_APP_ID";
 
+static NSString *const kFirebaseTermsOfService = @"https://firebase.google.com/terms/";
+
 @interface SignInViewController()
+@property (nonatomic) FIRAuth *auth;
+@property (nonatomic) FUIAuth *authUI;
 @property(strong, nonatomic) FIRAuthStateDidChangeListenerHandle authStateDidChangeHandle;
 @end
 
@@ -33,20 +38,31 @@ static NSString *const kFacebookAppID = @"FACEBOOK_APP_ID";
 
 - (void)viewWillAppear:(BOOL)animated {
   [super viewWillAppear:animated];
-  [FIRAuthUI authUI].signInProviders = @[[[FIRGoogleAuthUI alloc] initWithClientID:[FIRApp defaultApp].options.clientID],
-                                         [[FIRFacebookAuthUI alloc] initWithAppID:kFacebookAppID]];
-  [FIRAuthUI authUI].termsOfServiceURL = [[NSURL alloc] initWithString:@"https://firebase.google.com/terms/"];
-  self.authStateDidChangeHandle = [[FIRAuth auth]
+
+  self.auth = [FIRAuth auth];
+  self.authUI = [FUIAuth defaultAuthUI];
+
+  _authUI.TOSURL = [NSURL URLWithString:kFirebaseTermsOfService];
+  _authUI.signInWithEmailHidden = YES;
+  NSArray<id<FUIAuthProvider>> *providers = @[
+                                              [[FUIGoogleAuth alloc] init],
+                                              [[FUIFacebookAuth alloc] init],
+                                              [[FUITwitterAuth alloc] init],
+                                              ];
+  _authUI.providers = providers;
+
+  __weak SignInViewController *weakSelf = self;
+  self.authStateDidChangeHandle = [_auth
                                    addAuthStateDidChangeListener:^(FIRAuth *_Nonnull auth, FIRUser *_Nullable user) {
                                      if (user) {
-                                       [self signedIn:user];
+                                       [weakSelf signedIn:user];
                                      }
                                    }];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
   [super viewWillDisappear:animated];
-  [[FIRAuth auth] removeAuthStateDidChangeListener:_authStateDidChangeHandle];
+  [_auth removeAuthStateDidChangeListener:_authStateDidChangeHandle];
 }
 
 -(void)signIn:(GIDSignIn *)signIn didSignInForUser:(GIDGoogleUser *)user withError:(NSError *)error {
@@ -56,7 +72,7 @@ static NSString *const kFacebookAppID = @"FACEBOOK_APP_ID";
   }
   GIDAuthentication *auth = user.authentication;
   FIRAuthCredential *credential = [FIRGoogleAuthProvider credentialWithIDToken:auth.idToken accessToken:auth.accessToken];
-  [[FIRAuth auth] signInWithCredential:credential completion:^(FIRUser * _Nullable user, NSError * _Nullable error) {
+  [_auth signInWithCredential:credential completion:^(FIRUser * _Nullable user, NSError * _Nullable error) {
     if (error) {
       NSLog(@"%@", error.localizedDescription);
       return;
@@ -66,7 +82,7 @@ static NSString *const kFacebookAppID = @"FACEBOOK_APP_ID";
 }
 
 - (IBAction)didTapSignIn:(UIButton *)sender {
-  UIViewController *authViewController = [[FIRAuthUI authUI] authViewController];
+  UIViewController *authViewController = [_authUI authViewController];
   [self presentViewController:authViewController animated:YES completion:nil];
 }
 
