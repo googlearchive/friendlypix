@@ -15,7 +15,7 @@
 //
 
 #import "FPUser.h"
-#import <KZPropertyMapper.h>
+#import "KZPropertyMapper.h"
 
 @interface FPUser ()
 

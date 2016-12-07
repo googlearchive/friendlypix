@@ -16,23 +16,34 @@
 
 #import "AppDelegate.h"
 
-@import FirebaseAnalytics;
-@import GoogleSignIn;
+@import Firebase;
+@import Fabric;
+@import FirebaseAuthUI;
+@import TwitterKit;
 
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+  [Fabric with:@[[Twitter class]]];
   // Use Firebase library to configure APIs
   [FIRApp configure];
-
   return YES;
 }
 
--(BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<NSString *,id> *)options {
-  return [self application:app openURL:url sourceApplication:options[UIApplicationOpenURLOptionsSourceApplicationKey] annotation:@{}];
+- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<NSString*, id> *)options {
+  NSString *sourceApplication = options[UIApplicationOpenURLOptionsSourceApplicationKey];
+  return [self handleOpenUrl:url sourceApplication:sourceApplication];
 }
 
--(BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
-  return [[GIDSignIn sharedInstance] handleURL:url sourceApplication:sourceApplication annotation:annotation];
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(nullable NSString *)sourceApplication annotation:(id)annotation {
+  return [self handleOpenUrl:url sourceApplication:sourceApplication];
 }
+
+- (BOOL)handleOpenUrl:(NSURL *)url sourceApplication:(nullable NSString *)sourceApplication {
+  if ([FUIAuth.defaultAuthUI handleOpenURL:url sourceApplication:sourceApplication]) {
+    return YES;
+  }
+  return NO;
+}
+
 @end
