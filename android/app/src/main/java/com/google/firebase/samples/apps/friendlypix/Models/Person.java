@@ -19,7 +19,7 @@ package com.google.firebase.samples.apps.friendlypix.Models;
 import java.util.Map;
 
 public class Person {
-    private String full_name;
+    private String displayName;
     private String profile_picture;
     private Map<String, Boolean> posts;
     private Map<String, Object> following;
@@ -28,13 +28,13 @@ public class Person {
 
     }
 
-    public Person(String full_name, String profile_picture) {
-        this.full_name = full_name;
+    public Person(String displayName, String profile_picture) {
+        this.displayName = displayName;
         this.profile_picture = profile_picture;
     }
 
-    public String getFull_name() {
-        return full_name;
+    public String getDisplayName() {
+        return displayName;
     }
 
     public String getProfile_picture() {

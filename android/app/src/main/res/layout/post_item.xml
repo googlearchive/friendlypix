@@ -46,7 +46,7 @@
             android:layout_marginLeft="4dp"
             style="@style/Base.TextAppearance.AppCompat.Title"
             android:textColor="@android:color/primary_text_light_nodisable"
-            android:text="Unknown"/>
+            android:text="111Unknown222"/>
         <TextView
             android:id="@+id/post_timestamp"
             android:layout_width="wrap_content"
