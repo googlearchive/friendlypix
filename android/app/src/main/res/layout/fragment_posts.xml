@@ -18,7 +18,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".PostsFragment">
+    tools:context=".fragment.PostsFragment">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/my_recycler_view"

@@ -22,7 +22,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.google.firebase.samples.apps.friendlypix.FeedsActivity">
+    tools:context="com.google.firebase.samples.apps.friendlypix.activity.FeedsActivity">
 
     <android.support.v4.view.ViewPager
         android:id="@+id/feeds_view_pager"

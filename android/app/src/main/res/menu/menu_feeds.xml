@@ -17,7 +17,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.google.firebase.samples.apps.friendlypix.FeedsActivity">
+    tools:context="com.google.firebase.samples.apps.friendlypix.activity.FeedsActivity">
     <item
         android:id="@+id/action_profile"
         android:title="Profile"

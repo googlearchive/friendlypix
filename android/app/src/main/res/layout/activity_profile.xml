@@ -21,7 +21,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".ProfileActivity">
+    tools:context=".activity.ProfileActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -47,7 +47,7 @@
         android:paddingRight="4dp"
         android:paddingTop="@dimen/activity_vertical_margin"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:context=".ProfileActivity"
+        tools:context=".activity.ProfileActivity"
         tools:showIn="@layout/activity_profile">
 
         <RelativeLayout
