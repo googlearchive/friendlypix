@@ -20,7 +20,7 @@ import java.util.Map;
 
 public class Person {
     private String displayName;
-    private String profile_picture;
+    private String photoUrl;
     private Map<String, Boolean> posts;
     private Map<String, Object> following;
 
@@ -30,15 +30,15 @@ public class Person {
 
     public Person(String displayName, String profile_picture) {
         this.displayName = displayName;
-        this.profile_picture = profile_picture;
+        this.photoUrl = photoUrl;
     }
 
     public String getDisplayName() {
         return displayName;
     }
 
-    public String getProfile_picture() {
-        return profile_picture;
+    public String getPhotoUrl() {
+        return photoUrl;
     }
 
     public Map<String, Boolean> getPosts() {
