@@ -81,15 +81,15 @@
 - (instancetype)copyWithZone:(NSZone *)zone {
   FPPost *theCopy = [[FPPost allocWithZone:zone] init];  // use designated initializer
 
-  [theCopy setPostID:[_postID copy]];
-  [theCopy setPostDate:[_postDate copy]];
-  [theCopy setImageURL:[_imageURL copy]];
-  [theCopy setLink:[_link copy]];
-  [theCopy setComments:[_comments copy]];
-  [theCopy setLikes:[_likes copy]];
-  [theCopy setUser:_user];
-  [theCopy setText:_text];
-  [theCopy setLiked:_liked];
+  theCopy.postID = [_postID copy];
+  theCopy.postDate = [_postDate copy];
+  theCopy.imageURL = [_imageURL copy];
+  theCopy.link = [_link copy];
+  theCopy.comments = [_comments copy];
+  theCopy.likes = [_likes copy];
+  theCopy.user = _user;
+  theCopy.text = _text;
+  theCopy.liked = _liked;
 
   return theCopy;
 }
@@ -117,7 +117,7 @@
   FPPost *post = [self initWithDictionary:snapshot.value];
   post.postID = snapshot.key;
   _comments = comments;
-  _liked = [_likes objectForKey:[FPAppState sharedInstance].currentUser.userID];
+  _liked = _likes[[FPAppState sharedInstance].currentUser.userID];
   return post;
 }
 
@@ -125,7 +125,7 @@
 #pragma mark - NSObject
 
 - (NSUInteger)hash {
-  return [_postID hash];
+  return _postID.hash;
 }
 
 - (BOOL)isEqualToPost:(FPPost *)post {
@@ -174,11 +174,11 @@
 //}
 
 - (NSInteger)totalLikes {
-  long totalLikes = [_likes count];
+  long totalLikes = _likes.count;
   // if current user liked after syncing.
-  if (_liked && [_likes objectForKey:[FPAppState sharedInstance].currentUser.userID]) {
+  if (_liked && _likes[[FPAppState sharedInstance].currentUser.userID]) {
     ++totalLikes;
-  } else if (!_liked && ![_likes objectForKey:[FPAppState sharedInstance].currentUser.userID]) {
+  } else if (!_liked && !_likes[[FPAppState sharedInstance].currentUser.userID]) {
     // if current user disliked after syncing.
     --totalLikes;
   }
@@ -186,7 +186,7 @@
 }
 
 - (NSInteger)totalComments {
-  return [_comments count];
+  return _comments.count;
 }
 
 - (NSDictionary *)likes {

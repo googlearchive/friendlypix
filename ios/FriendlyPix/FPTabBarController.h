@@ -20,7 +20,7 @@
 
 @interface FPTabBarController : UITabBarController <UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIActionSheetDelegate>
 
-- (BOOL)shouldPresentPhotoCaptureController;
+@property (NS_NONATOMIC_IOSONLY, readonly) BOOL shouldPresentPhotoCaptureController;
 
 @end
 

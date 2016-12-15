@@ -41,7 +41,7 @@ NSMutableArray *comments;
     cell = [[STXCommentCell alloc] initWithStyle:STXCommentCellStyleSingleComment
                                          comment:comment reuseIdentifier:CellIdentifier];
   } else {
-    [cell setComment:comment];
+    cell.comment = comment;
   }
   cell.delegate = self;
   [cell setNeedsUpdateConstraints];
@@ -67,7 +67,7 @@ NSMutableArray *comments;
       [ref observeEventType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot *snapshot) {
         [comments addObject:[[FPComment alloc] initWithSnapshot:snapshot]];
         [self.tableView insertRowsAtIndexPaths:@[[NSIndexPath
-                                                  indexPathForRow:[comments count]-1 inSection:0]]
+                                                  indexPathForRow:comments.count-1 inSection:0]]
                               withRowAnimation:UITableViewRowAnimationNone];
       }];
     } else {
@@ -79,7 +79,7 @@ NSMutableArray *comments;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-  return [comments count];
+  return comments.count;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {

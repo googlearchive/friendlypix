@@ -36,7 +36,7 @@
    withBlock:^(FIRDataSnapshot *userSnapshot) {
      NSArray *posts = [userSnapshot childSnapshotForPath:@"posts"].value;
      self.postCount = posts.count;
-     self.followingCount = [[userSnapshot childSnapshotForPath:@"following"] childrenCount];
+     self.followingCount = [userSnapshot childSnapshotForPath:@"following"].childrenCount;
      [self feedDidLoad];
      for (NSString *postId in posts) {
        [[super.ref child:[@"posts/" stringByAppendingString:postId]]
@@ -49,10 +49,10 @@
   [[[super.ref child:@"followers"] child: _user.userID]
    observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull snapshot) {
      self.followers = snapshot.value;
-     unsigned long followersCount = [_followers count];
-     [_followerCountLabel setText:[NSString
+     unsigned long followersCount = _followers.count;
+     _followerCountLabel.text = [NSString
                                    stringWithFormat:@"%lu follower%@",
-                                   followersCount, followersCount==1?@"":@"s"]];
+                                   followersCount, followersCount==1?@"":@"s"];
 
    }];
 
@@ -67,12 +67,12 @@
 
   self.navigationItem.title = _user.username;
 
-  [_photoCountLabel setText:[NSString
-                             stringWithFormat:@"%lu post%@", _postCount, _postCount==1?@"":@"s"]];
+  _photoCountLabel.text = [NSString
+                             stringWithFormat:@"%lu post%@", _postCount, _postCount==1?@"":@"s"];
 
-  [_followingCountLabel setText:[NSString
+  _followingCountLabel.text = [NSString
                                  stringWithFormat:@"%lu following",
-                                 _followingCount]];
+                                 _followingCount];
 
   if (![self.user.userID isEqualToString:[FPAppState sharedInstance].currentUser.userID]) {
     UIActivityIndicatorView *loadingActivityIndicatorView =
@@ -83,7 +83,7 @@
     [[UIBarButtonItem alloc] initWithCustomView:loadingActivityIndicatorView];
 
     // check if the currentUser is following this user
-    if ([_followers objectForKey:[FPAppState sharedInstance].currentUser.userID]) {
+    if (_followers[[FPAppState sharedInstance].currentUser.userID]) {
       [self configureUnfollowButton];
     } else {
       [self configureFollowButton];
