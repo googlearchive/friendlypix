@@ -9,7 +9,7 @@ pod 'Firebase/RemoteConfig'
 pod 'Firebase/AdMob'
 pod 'Firebase/Invites'
 pod 'Firebase/Messaging'
-pod 'FirebaseUI', '~> 0.4.0'
+pod 'FirebaseUI', '~> 1.0'
 pod 'STXDynamicTableView'
 
 target 'FriendlyPix'
