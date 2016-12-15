@@ -73,7 +73,7 @@
 
 - (void)viewDidAppear:(BOOL)animated {
   [super viewDidAppear:animated];
-    
+
   // This will be notified when the Dynamic Type user setting changes (from the system Settings app)
   [[NSNotificationCenter defaultCenter] addObserver:self
                                            selector:@selector(contentSizeCategoryChanged:)
