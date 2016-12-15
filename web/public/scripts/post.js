@@ -148,8 +148,8 @@ friendlyPix.Post = class {
    */
   leaveTheatreMode() {
     this.theatre.hide();
-    this.theatre.unbind('click');
-    $(document).unbind('keydown');
+    this.theatre.off('click');
+    $(document).off('keydown');
   }
 
   /**
@@ -159,7 +159,9 @@ friendlyPix.Post = class {
     $('.fp-fullpic', this.theatre).prop('src', picUrl);
     this.theatre.css('display', 'flex');
     // Leave theatre mode if click or ESC key down.
-    this.theatre.click(() => this.leaveTheatreMode());
+    this.theatre.off('click');
+    this.theatre.click(() => this.leaveTheatreMode())
+    $(document).off('keydown');
     $(document).keydown(e => {
       if (e.which === 27) {
         this.leaveTheatreMode();
@@ -220,9 +222,13 @@ friendlyPix.Post = class {
 
     if (this.auth.currentUser) {
       // Bind comments form posting.
+      $('.fp-add-comment', post).off('submit');
       $('.fp-add-comment', post).submit(e => {
         e.preventDefault();
         const commentText = $(`.mdl-textfield__input`, post).val();
+        if (!commentText || commentText.length === 0) {
+          return;
+        }
         friendlyPix.firebase.addComment(postId, commentText);
         $(`.mdl-textfield__input`, post).val('');
       });
@@ -243,6 +249,7 @@ friendlyPix.Post = class {
 
     if (this.auth.currentUser && this.auth.currentUser.uid === author.uid && picStorageUri) {
       $('.fp-delete-post', post).show();
+      $('.fp-delete-post', post).off('click');
       $('.fp-delete-post', post).click(() => {
         swal({
           title: 'Are you sure?',
@@ -301,7 +308,9 @@ friendlyPix.Post = class {
       });
 
       // Add event listeners.
+      $('.fp-liked', post).off('click');
       $('.fp-liked', post).click(() => friendlyPix.firebase.updateLike(postId, false));
+      $('.fp-not-liked', post).off('click');
       $('.fp-not-liked', post).click(() => friendlyPix.firebase.updateLike(postId, true));
     } else {
       $('.fp-liked', post).hide();
