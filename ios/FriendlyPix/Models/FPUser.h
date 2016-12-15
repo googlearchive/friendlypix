@@ -22,11 +22,11 @@
 @interface FPUser : NSObject <STXUserItem>
 @property (copy, nonatomic) NSString *userID;
 
-- (instancetype)initWithDictionary:(NSDictionary *)dictionary;
+- (instancetype)initWithDictionary:(NSDictionary *)dictionary NS_DESIGNATED_INITIALIZER;
 
 /**
  *  Initialize data model from snapshot
  */
 - (instancetype)initWithSnapshot:(FIRDataSnapshot *)snapshot;
-- (NSDictionary *)author;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSDictionary *author;
 @end

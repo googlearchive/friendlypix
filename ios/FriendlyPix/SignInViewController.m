@@ -96,7 +96,7 @@ static NSString *const kFirebaseTermsOfService = @"https://firebase.google.com/t
     } else {
       NSDictionary *person = @{
                                @"full_name" : user.displayName ? user.displayName : @"",
-                               @"profile_picture" : user.photoURL ? [user.photoURL absoluteString] : @"",
+                               @"profile_picture" : user.photoURL ? (user.photoURL).absoluteString : @"",
                                @"_search_index" : @{
                                    @"full_name": user.displayName ? user.displayName.lowercaseString : @"",
                                    @"reversed_full_name": [[self reverseArray:[user.displayName componentsSeparatedByString:@" "]] componentsJoinedByString:@" "]
@@ -111,7 +111,7 @@ static NSString *const kFirebaseTermsOfService = @"https://firebase.google.com/t
 }
 
 - (NSArray *)reverseArray:(NSArray *)array {
-  NSMutableArray *rarray = [NSMutableArray arrayWithCapacity:[array count]];
+  NSMutableArray *rarray = [NSMutableArray arrayWithCapacity:array.count];
   NSEnumerator *enumerator = [array reverseObjectEnumerator];
   for (id element in enumerator) {
     [rarray addObject:element];

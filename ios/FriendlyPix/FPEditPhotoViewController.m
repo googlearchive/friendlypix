@@ -86,11 +86,11 @@
   //    NSLog(@"Requested background expiration task with id %lu for Anypic photo upload", (unsigned long)self.fileUploadBackgroundTaskId);
 
   PHFetchResult* assets = [PHAsset fetchAssetsWithALAssetURLs:@[URL] options:nil];
-  PHAsset *asset = [assets firstObject];
+  PHAsset *asset = assets.firstObject;
   [asset requestContentEditingInputWithOptions:nil
                              completionHandler:^(PHContentEditingInput *contentEditingInput, NSDictionary *info) {
                                NSURL *imageFile = contentEditingInput.fullSizeImageURL;
-                               NSString *filePath = [NSString stringWithFormat:@"%@/%lld/%@", [FPAppState sharedInstance].currentUser.userID, (long long)([[NSDate date] timeIntervalSince1970] * 1000.0), [_referenceURL lastPathComponent]];
+                               NSString *filePath = [NSString stringWithFormat:@"%@/%lld/%@", [FPAppState sharedInstance].currentUser.userID, (long long)([NSDate date].timeIntervalSince1970 * 1000.0), _referenceURL.lastPathComponent];
                                FIRStorageMetadata *metadata = [FIRStorageMetadata new];
                                metadata.contentType = @"image/jpeg";
                                [[_storageRef child:filePath]
@@ -100,7 +100,7 @@
                                     NSLog(@"Error uploading: %@", error);
                                     return;
                                   }
-                                  _fileUrl = [metadata.downloadURLs[0] absoluteString];
+                                  _fileUrl = (metadata.downloadURLs[0]).absoluteString;
                                   _storageUri = [_storageRef child:metadata.path].description;
                                 }
                                 ];

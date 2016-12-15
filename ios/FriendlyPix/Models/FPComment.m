@@ -52,10 +52,10 @@
 
 - (instancetype)copyWithZone:(NSZone *)zone {
   FPComment *theCopy = [[[self class] allocWithZone:zone] init];
-  [theCopy setCommentID:[_commentID copy]];
-  [theCopy setText:[_text copy]];
-  [theCopy setPostDate:[_postDate copy]];
-  [theCopy setFrom:[_from copy]];
+  theCopy.commentID = [_commentID copy];
+  theCopy.text = [_text copy];
+  theCopy.postDate = [_postDate copy];
+  theCopy.from = [_from copy];
 
   return theCopy;
 }
@@ -85,7 +85,7 @@
 
 - (NSUInteger)hash
 {
-  return [_commentID hash];
+  return _commentID.hash;
 }
 
 - (BOOL)isEqualToComment:(FPComment *)comment {

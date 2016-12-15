@@ -21,6 +21,6 @@
   if (value == nil) {
     return nil;
   }
-  return [NSDate dateWithTimeIntervalSince1970:([value longValue] / 1000.0)];
+  return [NSDate dateWithTimeIntervalSince1970:(value.longValue / 1000.0)];
 }
 @end

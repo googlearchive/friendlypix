@@ -24,7 +24,7 @@
  *  Initialize data model from dictionary
  */
 
-- (instancetype)initWithDictionary:(NSDictionary *)dictionary;
+- (instancetype)initWithDictionary:(NSDictionary *)dictionary NS_DESIGNATED_INITIALIZER;
 
 /**
  *  Initialize data model from snapshot

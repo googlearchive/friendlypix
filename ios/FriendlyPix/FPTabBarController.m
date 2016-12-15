@@ -31,8 +31,8 @@
   [self.tabBar addSubview:cameraButton];
 
   UISwipeGestureRecognizer *swipeUpGestureRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleGesture:)];
-  [swipeUpGestureRecognizer setDirection:UISwipeGestureRecognizerDirectionUp];
-  [swipeUpGestureRecognizer setNumberOfTouchesRequired:1];
+  swipeUpGestureRecognizer.direction = UISwipeGestureRecognizerDirectionUp;
+  swipeUpGestureRecognizer.numberOfTouchesRequired = 1;
   [cameraButton addGestureRecognizer:swipeUpGestureRecognizer];
 }
 
@@ -99,7 +99,7 @@
       && [[UIImagePickerController availableMediaTypesForSourceType:
            UIImagePickerControllerSourceTypeCamera] containsObject:(NSString *)kUTTypeImage]) {
 
-    cameraUI.mediaTypes = [NSArray arrayWithObject:(NSString *) kUTTypeImage];
+    cameraUI.mediaTypes = @[(NSString *) kUTTypeImage];
     cameraUI.sourceType = UIImagePickerControllerSourceTypeCamera;
 
     if ([UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceRear]) {
@@ -133,13 +133,13 @@
       && [[UIImagePickerController availableMediaTypesForSourceType:UIImagePickerControllerSourceTypePhotoLibrary] containsObject:(NSString *)kUTTypeImage]) {
 
     cameraUI.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
-    cameraUI.mediaTypes = [NSArray arrayWithObject:(NSString *) kUTTypeImage];
+    cameraUI.mediaTypes = @[(NSString *) kUTTypeImage];
 
   } else if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeSavedPhotosAlbum]
              && [[UIImagePickerController availableMediaTypesForSourceType:UIImagePickerControllerSourceTypeSavedPhotosAlbum] containsObject:(NSString *)kUTTypeImage]) {
 
     cameraUI.sourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
-    cameraUI.mediaTypes = [NSArray arrayWithObject:(NSString *) kUTTypeImage];
+    cameraUI.mediaTypes = @[(NSString *) kUTTypeImage];
 
   } else {
     return NO;
@@ -158,7 +158,7 @@
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-  if ([[segue identifier] isEqualToString:@"edit"])  {
+  if ([segue.identifier isEqualToString:@"edit"])  {
     UINavigationController *navigationController = segue.destinationViewController;
     FPEditPhotoViewController *viewController = (FPEditPhotoViewController *)navigationController.topViewController;
 //    FPEditPhotoViewController *viewController = segue.destinationViewController;

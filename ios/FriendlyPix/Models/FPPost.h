@@ -22,7 +22,7 @@
 
 @interface FPPost : NSObject <STXPostItem>
 
-- (instancetype)initWithDictionary:(NSDictionary *)dictionary;
+- (instancetype)initWithDictionary:(NSDictionary *)dictionary NS_DESIGNATED_INITIALIZER;
 
 /**
  *  Initialize data model from snapshot

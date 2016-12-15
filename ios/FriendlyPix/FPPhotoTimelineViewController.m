@@ -80,7 +80,7 @@
                                                name:UIContentSizeCategoryDidChangeNotification
                                              object:nil];
 
-  if ([self.tableViewDataSource.posts count] == 0) {
+  if ((self.tableViewDataSource.posts).count == 0) {
       [self.activityIndicatorView startAnimating];
   }
 }
@@ -96,7 +96,7 @@
      [_posts removeObject:post];
      self.tableViewDataSource.posts = [_posts copy];
      [self.tableView deleteSections:[NSIndexSet
-      indexSetWithIndex:[self.tableViewDataSource.posts count]]
+      indexSetWithIndex:(self.tableViewDataSource.posts).count]
       withRowAnimation:UITableViewRowAnimationNone];
      [self.tableView reloadData];
    }];
@@ -122,7 +122,7 @@
           }
           [_posts addObject:post];
           self.tableViewDataSource.posts = [_posts copy];
-          [self.tableView insertSections:[NSIndexSet indexSetWithIndex:[self.tableViewDataSource.posts count]-1]
+          [self.tableView insertSections:[NSIndexSet indexSetWithIndex:(self.tableViewDataSource.posts).count-1]
                         withRowAnimation:UITableViewRowAnimationNone];
         }];
   }];
@@ -217,12 +217,12 @@
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-  if ([[segue identifier] isEqualToString:@"account"])  {
+  if ([segue.identifier isEqualToString:@"account"])  {
     FPAccountViewController *accountViewController = segue.destinationViewController;
-    [accountViewController setUser:sender];
-  } else if ([[segue identifier] isEqualToString:@"comment"]) {
+    accountViewController.user = sender;
+  } else if ([segue.identifier isEqualToString:@"comment"]) {
     FPCommentViewController *commentViewController = segue.destinationViewController;
-    [commentViewController setPost:sender];
+    commentViewController.post = sender;
   }
 }
 

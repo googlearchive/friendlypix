@@ -47,9 +47,9 @@
 
 - (instancetype)copyWithZone:(NSZone *)zone {
   FPUser *theCopy = [[[self class] allocWithZone:zone] init];
-  [theCopy setUserID:[_userID copy]];
-  [theCopy setFullname:[_fullname copy]];
-  [theCopy setProfilePictureURL:[_profilePictureURL copy]];
+  theCopy.userID = [_userID copy];
+  theCopy.fullname = [_fullname copy];
+  theCopy.profilePictureURL = [_profilePictureURL copy];
 
   return theCopy;
 }
@@ -76,7 +76,7 @@
 }
 
 - (NSUInteger)hash {
-  return [_userID hash];
+  return _userID.hash;
 }
 
 - (BOOL)isEqualToUser:(FPUser *)user {
