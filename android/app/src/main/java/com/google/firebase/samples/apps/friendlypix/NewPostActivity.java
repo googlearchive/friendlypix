@@ -195,13 +195,7 @@ public class NewPostActivity extends BaseActivity implements
 
         if (requestCode == TC_PICK_IMAGE) {
             if (resultCode == Activity.RESULT_OK) {
-                final boolean isCamera;
-                if (data == null) {
-                    isCamera = true;
-                } else {
-                    isCamera = MediaStore.ACTION_IMAGE_CAPTURE.equals(data.getAction());
-                }
-                if (!isCamera) {
+                if (data != null && !MediaStore.ACTION_IMAGE_CAPTURE.equals(data.getAction())) {
                     mFileUri = data.getData();
                 }
                 Log.d(TAG, "Received file uri: " + mFileUri.getPath());
