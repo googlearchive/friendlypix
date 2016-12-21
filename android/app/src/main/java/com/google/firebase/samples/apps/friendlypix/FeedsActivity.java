@@ -17,6 +17,8 @@
 package com.google.firebase.samples.apps.friendlypix;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
@@ -33,6 +35,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -47,6 +52,7 @@ import java.util.List;
 public class FeedsActivity extends AppCompatActivity implements PostsFragment.OnPostSelectedListener {
     private static final String TAG = "FeedsActivity";
     private FloatingActionButton mFab;
+    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,10 +115,20 @@ public class FeedsActivity extends AppCompatActivity implements PostsFragment.On
         });
     }
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_feeds, menu);
+
+        final MenuItem accountProfileItem = menu.findItem(R.id.action_profile);
+        Glide.with(this).load(user.getPhotoUrl()).asBitmap().into(new SimpleTarget<Bitmap>(100,100) {
+            @Override
+            public void onResourceReady(Bitmap resource, GlideAnimation glideAnimation) {
+                accountProfileItem.setIcon(new BitmapDrawable(getResources(), resource));
+            }
+        });
+
         return true;
     }
 
