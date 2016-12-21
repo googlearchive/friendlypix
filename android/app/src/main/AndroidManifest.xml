@@ -60,7 +60,6 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".UserDetailActivity"
-            android:label="@string/title_activity_user_detail"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".BaseActivity"></activity>
     </application>
