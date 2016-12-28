@@ -113,6 +113,7 @@ public class PostsFragment extends Fragment {
                         // TODO: Refresh feed view.
                     }
                 });
+                mRecyclerView.setAdapter(mAdapter);
                 break;
             case TYPE_HOME:
                 Log.d(TAG, "Restoring recycler view position (following): " + mRecyclerViewPosition);
@@ -203,6 +204,7 @@ public class PostsFragment extends Fragment {
                                         setupPost(holder, post, position, postKey);
                                     }
                                 });
+                                mRecyclerView.setAdapter(mAdapter);
                             }
                             @Override
                             public void onCancelled(DatabaseError firebaseError) {
@@ -213,7 +215,7 @@ public class PostsFragment extends Fragment {
             default:
                 throw new RuntimeException("Illegal post fragment type specified.");
         }
-        mRecyclerView.setAdapter(mAdapter);
+
     }
 
     private FirebaseRecyclerAdapter<Post, PostViewHolder> getFirebaseRecyclerAdapter(Query query) {
