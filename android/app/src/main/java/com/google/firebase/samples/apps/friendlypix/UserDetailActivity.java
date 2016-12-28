@@ -82,6 +82,11 @@ public class UserDetailActivity extends AppCompatActivity {
 
         final FloatingActionButton followUserFab = (FloatingActionButton) findViewById(R.id
                 .follow_user_fab);
+
+        if (currentUserId != null && mUserId.equals(currentUserId)) {
+            followUserFab.setVisibility(View.GONE);
+        }
+
         mFollowingListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -108,6 +113,11 @@ public class UserDetailActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (currentUserId == null) {
                     Toast.makeText(UserDetailActivity.this, "You need to sign in to follow someone.",
+                            Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (mUserId.equals(currentUserId)) {
+                    Toast.makeText(UserDetailActivity.this, "You can't follow your self.",
                             Toast.LENGTH_SHORT).show();
                     return;
                 }
