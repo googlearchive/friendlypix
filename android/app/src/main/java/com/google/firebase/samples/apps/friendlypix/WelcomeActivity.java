@@ -44,7 +44,9 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
 
         mAuth = FirebaseAuth.getInstance();
         if (FirebaseUtil.getCurrentUserId() != null) {
-            startActivity(new Intent(this, ProfileActivity.class));
+            Intent signInIntent = new Intent(this, ProfileActivity.class);
+            signInIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(signInIntent);
         }
     }
 
