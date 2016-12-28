@@ -36,12 +36,12 @@
             android:name=".ProfileActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar"
-            android:configChanges="orientation|screenSize"/>
+            android:configChanges="orientation|screenSize" />
         <activity
             android:name=".FeedsActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar"
-            android:configChanges="orientation|screenSize"/>
+            android:configChanges="orientation|screenSize" />
         <activity
             android:name=".WelcomeActivity"
             android:label="@string/app_name"
@@ -57,17 +57,17 @@
             android:name=".CommentsActivity"
             android:label="@string/title_activity_comments"
             android:theme="@style/AppTheme.NoActionBar"
-            android:configChanges="orientation|screenSize"/>
+            android:configChanges="orientation|screenSize" />
         <activity
             android:name=".NewPostActivity"
             android:label="@string/title_activity_new_post"
             android:theme="@style/AppTheme.NoActionBar"
-            android:configChanges="orientation|screenSize"/>
+            android:configChanges="orientation|screenSize" />
         <activity
             android:name=".UserDetailActivity"
             android:label="@string/title_activity_user_detail"
             android:theme="@style/AppTheme.NoActionBar"
-            android:configChanges="orientation|screenSize"/>
+            android:configChanges="orientation|screenSize" />
         <activity android:name=".BaseActivity"></activity>
     </application>
 
