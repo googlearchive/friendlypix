@@ -39,8 +39,8 @@
             android:layout_alignParentStart="true"/>
         <TextView
             android:id="@+id/post_author_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="200dp"
+            android:layout_height="80dp"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@id/post_author_icon"
             android:layout_marginLeft="4dp"
@@ -56,7 +56,7 @@
             android:layout_alignParentEnd="true"
             android:layout_gravity="end"
             android:textColor="@android:color/primary_text_light"
-            android:textSize="18sp" />
+            android:textSize="13sp" />
     </RelativeLayout>
     <ImageView
         android:id="@+id/post_photo"
