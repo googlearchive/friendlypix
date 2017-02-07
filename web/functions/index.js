@@ -147,7 +147,7 @@ exports.blurOffensiveImages = functions.storage().onChange(event => {
   // Exit if this is a move or deletion event.
   if (event.data.resourceState === 'not_exists') {
     console.log('This is a deletion event.');
-    return null;
+    return;
   }
 
   // Check the image content using the Cloud Vision API.
@@ -165,7 +165,6 @@ exports.blurOffensiveImages = functions.storage().onChange(event => {
         return refreshImages(uid, postId, size);
       });
     }
-    return null;
   });
 });
 
@@ -188,7 +187,7 @@ function blurImage(filePath, bucketName, metadata) {
     }).then(() => {
       console.log('The file has been downloaded to', tempLocalFile);
       // Blur the image using ImageMagick.
-      return exec(`convert ${tempLocalFile} -channel RGBA -blur 0x8 ${tempLocalFile}`).then(() => {
+      return exec(`convert ${tempLocalFile} -channel RGBA -blur 0x24 ${tempLocalFile}`).then(() => {
         console.log('Blurred image created at', tempLocalFile);
         // Uploading the Blurred image.
         return bucket.upload(tempLocalFile, {
@@ -196,7 +195,6 @@ function blurImage(filePath, bucketName, metadata) {
           metadata: {metadata: metadata} // Keeping custom metadata.
         }).then(() => {
           console.log('Blurred image uploaded to Storage at', filePath);
-          return null;
         });
       });
     });
