@@ -15,7 +15,7 @@
 //
 
 @import Foundation;
-@import Firebase;
+@import FirebaseDatabase;
 
 #import "STXPostItem.h"
 #import "FPComment.h"

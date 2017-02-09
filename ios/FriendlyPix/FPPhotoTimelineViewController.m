@@ -43,14 +43,14 @@
 - (void)viewDidLoad {
   [super viewDidLoad];
 
-  _ref = [FIRDatabase database].reference;
+  _ref = [[FIRDatabase database] reference];
   _postsRef = [_ref child:@"posts"];
   _commentsRef = [_ref child:@"comments"];
   _likesRef = [_ref child:@"likes"];
   _posts = [[NSMutableArray alloc] init];
 
   self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-
+    
   STXFeedTableViewDataSource *dataSource = [[STXFeedTableViewDataSource alloc]
                                             initWithController:self tableView:self.tableView];
   self.tableView.dataSource = dataSource;
