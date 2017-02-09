@@ -16,7 +16,6 @@
 
 #import "FPHomeViewController.h"
 #import "FPAppState.h"
-@import FirebaseAuth;
 
 @implementation FPHomeViewController
 
@@ -28,7 +27,7 @@
 }
 
 -(void)getHomeFeedPosts {
-  FIRDatabaseQuery *homeFeedQuery = [[[super.ref child:@"feed"] child:[FPAppState sharedInstance].currentUser.userID] queryOrderedByKey];
+  FIRDatabaseQuery *homeFeedQuery = [[super.ref child:@"feed"] child:[FPAppState sharedInstance].currentUser.userID].queryOrderedByKey;
   [homeFeedQuery observeEventType:FIRDataEventTypeChildAdded
                         withBlock:^(FIRDataSnapshot *feedSnapshot) {
      [[super.ref child:[@"posts/" stringByAppendingString:feedSnapshot.key]]
@@ -49,8 +48,8 @@
     // Start listening the followed user's posts to populate the home feed.
     NSString *followedUid = followingSnapshot.key;
     FIRDatabaseQuery *followedUserPostsRef = [[[super.ref child:@"people"] child:followedUid] child:@"posts"];
-    if ([followingSnapshot exists] && [followingSnapshot.value isKindOfClass:[NSString class]]) {
-      followedUserPostsRef = [[followedUserPostsRef queryOrderedByKey] queryStartingAtValue:followingSnapshot.value];
+    if (followingSnapshot.exists && [followingSnapshot.value isKindOfClass:[NSString class]]) {
+      followedUserPostsRef = [followedUserPostsRef.queryOrderedByKey queryStartingAtValue:followingSnapshot.value];
     }
     [followedUserPostsRef observeEventType:FIRDataEventTypeChildAdded withBlock:^(FIRDataSnapshot * _Nonnull postSnapshot) {
       if (postSnapshot.key != followingSnapshot.key) {
@@ -88,7 +87,7 @@
     [following enumerateKeysAndObjectsUsingBlock:^(NSString* followedUid, id lastSyncedPostId, BOOL* stop) {
       followedUserPostsRef = [[[super.ref child:@"people"] child:followedUid] child:@"posts"];
       if ([lastSyncedPostId isKindOfClass:[NSString class]]) {
-        followedUserPostsRef = [[followedUserPostsRef queryOrderedByKey] queryStartingAtValue:lastSyncedPostId];
+        followedUserPostsRef = [followedUserPostsRef.queryOrderedByKey queryStartingAtValue:lastSyncedPostId];
       }
       [followedUserPostsRef observeSingleEventOfType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot * _Nonnull postSnapshot) {
         if (!postSnapshot.value) {
@@ -111,6 +110,39 @@
       }];
     }];
   }];
+}
+
+- (IBAction)inviteTapped:(id)sender {
+  id<FIRInviteBuilder> inviteDialog = [FIRInvites inviteDialog];
+  [inviteDialog setInviteDelegate:self];
+
+  // NOTE: You must have the App Store ID set in your developer console project
+  // in order for invitations to successfully be sent.
+  NSString *message =
+  [NSString stringWithFormat:@"Try this out!\n -%@",
+   [FIRAuth auth].currentUser.displayName];
+
+  // A message hint for the dialog. Note this manifests differently depending on the
+  // received invitation type. For example, in an email invite this appears as the subject.
+  [inviteDialog setMessage:message];
+
+  // Title for the dialog, this is what the user sees before sending the invites.
+  [inviteDialog setTitle:@"FriendlyPix"];
+  [inviteDialog setDeepLink:@"app_url"];
+  [inviteDialog setCallToActionText:@"Install!"];
+  [inviteDialog setCustomImage:@"https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png"];
+  [inviteDialog open];
+}
+
+- (void)inviteFinishedWithInvitations:(NSArray *)invitationIds error:(NSError *)error {
+  NSString *message =
+  error ? error.localizedDescription
+  : [NSString stringWithFormat:@"%lu invites sent", (unsigned long)invitationIds.count];
+  [[[UIAlertView alloc] initWithTitle:@"Done"
+                              message:message
+                             delegate:nil
+                    cancelButtonTitle:@"OK"
+                    otherButtonTitles:nil] show];
 }
 
 - (IBAction)didTapSignOut:(id)sender {
