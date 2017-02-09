@@ -50,7 +50,7 @@
   _posts = [[NSMutableArray alloc] init];
 
   self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-    
+
   STXFeedTableViewDataSource *dataSource = [[STXFeedTableViewDataSource alloc]
                                             initWithController:self tableView:self.tableView];
   self.tableView.dataSource = dataSource;
