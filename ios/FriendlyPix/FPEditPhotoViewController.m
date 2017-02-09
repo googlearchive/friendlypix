@@ -19,8 +19,6 @@
 
 @import Photos;
 
-@import FirebaseStorage;
-
 @interface FPEditPhotoViewController ()
 //@property (nonatomic, strong) PFFile *photoFile;
 //@property (nonatomic, strong) PFFile *thumbnailFile;
@@ -48,7 +46,7 @@
 
   [_imageView initWithImage:_image];
 
-  _storageRef = [[FIRStorage storage] reference];
+  _storageRef = [FIRStorage storage].reference;
 
   [self shouldUploadImage:self.referenceURL];
 }
@@ -115,13 +113,13 @@
   NSDictionary * data = @{ @"url" : _fileUrl,
                            @"storage_uri": _storageUri,
                            @"text" : trimmedComment,
-                           @"author" : [[FPAppState sharedInstance].currentUser author],
+                           @"author" : ([FPAppState sharedInstance].currentUser).author,
                            @"timestamp" : FIRServerValue.timestamp
                            };
 
   FIRDatabaseReference *ref;
   ref = [FIRDatabase database].reference;
-  FIRDatabaseReference *photo = [[ref child:@"posts"] childByAutoId];
+  FIRDatabaseReference *photo = [ref child:@"posts"].childByAutoId;
   [photo setValue:data];
   NSString *postId = photo.key;
   [ref updateChildValues:@{

@@ -43,7 +43,7 @@
 - (void)viewDidLoad {
   [super viewDidLoad];
 
-  _ref = [[FIRDatabase database] reference];
+  _ref = [FIRDatabase database].reference;
   _postsRef = [_ref child:@"posts"];
   _commentsRef = [_ref child:@"comments"];
   _likesRef = [_ref child:@"likes"];

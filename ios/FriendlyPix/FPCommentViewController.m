@@ -55,13 +55,13 @@ NSMutableArray *comments;
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
   NSDictionary *data = @{ @"timestamp": FIRServerValue.timestamp,
-                          @"author": [[FPAppState sharedInstance].currentUser author],
+                          @"author": ([FPAppState sharedInstance].currentUser).author,
                           @"text": textField.text
                           };
   // Push data to Firebase Database
   FIRDatabaseReference *ref;
-  ref = [[FIRDatabase database] reference];
-  FIRDatabaseReference *comment = [[ref child:[@"comments/" stringByAppendingString:self.post.postID]] childByAutoId];
+  ref = [FIRDatabase database].reference;
+  FIRDatabaseReference *comment = [ref child:[@"comments/" stringByAppendingString:self.post.postID]].childByAutoId;
   [comment setValue:data withCompletionBlock:^(NSError *error, FIRDatabaseReference *ref) {
     if (error==nil) {
       [ref observeEventType:FIRDataEventTypeValue withBlock:^(FIRDataSnapshot *snapshot) {
