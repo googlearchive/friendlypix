@@ -16,7 +16,7 @@
 
 #import <UIKit/UIKit.h>
 #import "STXCommentItem.h"
-@import FirebaseDatabase;
+@import Firebase;
 
 @interface FPComment : NSObject <STXCommentItem>
 

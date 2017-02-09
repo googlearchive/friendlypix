@@ -83,7 +83,7 @@
     [actionSheet showFromTabBar:self.tabBar];
   } else {
     // if we don't have at least two options, we automatically show whichever is available (camera or roll)
-    [self shouldPresentPhotoCaptureController];
+    self.shouldPresentPhotoCaptureController;
   }
 }
 
@@ -154,7 +154,7 @@
 }
 
 - (void)handleGesture:(UIGestureRecognizer *)gestureRecognizer {
-  [self shouldPresentPhotoCaptureController];
+  self.shouldPresentPhotoCaptureController;
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {

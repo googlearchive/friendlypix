@@ -17,7 +17,6 @@
 
 #import "SignInViewController.h"
 #import "FPAppState.h"
-@import Firebase;
 @import FirebaseAuthUI;
 @import FirebaseGoogleAuthUI;
 @import FirebaseFacebookAuthUI;
@@ -82,7 +81,7 @@ static NSString *const kFirebaseTermsOfService = @"https://firebase.google.com/t
 }
 
 - (IBAction)didTapSignIn:(UIButton *)sender {
-  UIViewController *authViewController = [_authUI authViewController];
+  UIViewController *authViewController = _authUI.authViewController;
   [self presentViewController:authViewController animated:YES completion:nil];
 }
 
