@@ -15,7 +15,7 @@
 //
 
 @import UIKit;
-@import Firebase;
+@import FirebaseDatabase;
 @import GoogleMobileAds;
 
 @interface FPPhotoTimelineViewController : UITableViewController

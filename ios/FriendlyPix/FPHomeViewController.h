@@ -17,5 +17,5 @@
 #import <UIKit/UIKit.h>
 #import "FPPhotoTimelineViewController.h"
 
-@interface FPHomeViewController : FPPhotoTimelineViewController<FIRInviteDelegate>
+@interface FPHomeViewController : FPPhotoTimelineViewController
 @end

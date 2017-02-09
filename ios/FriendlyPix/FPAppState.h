@@ -15,6 +15,7 @@
 //
 
 @import Foundation;
+@import FirebaseDatabase;
 #import "FPUser.h"
 
 @interface FPAppState : NSObject 
