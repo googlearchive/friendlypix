@@ -209,7 +209,7 @@ friendlyPix.Uploader = class {
   }
 
   /**
-   * Uploads the pic to Firebase Storage and add a new post into the Firebase Database.
+   * Uploads the pic to Cloud Storage and add a new post into the Firebase Database.
    */
   uploadPic(e) {
     e.preventDefault();
@@ -217,7 +217,7 @@ friendlyPix.Uploader = class {
     var imageCaption = this.imageCaptionInput.val();
 
     this.generateImages().then(pics => {
-      // Upload the File upload to Firebase Storage and create new post.
+      // Upload the File upload to Cloud Storage and create new post.
       friendlyPix.firebase.uploadNewPic(pics.full, pics.thumb, this.currentFile.name, imageCaption)
           .then(postId => {
             page(`/user/${this.auth.currentUser.uid}`);
