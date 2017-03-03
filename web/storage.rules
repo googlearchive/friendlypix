@@ -9,8 +9,7 @@ function isImageAndBelowMaxSize(uid, maxSizeMB) {
 }
 
 service firebase.storage {
-  // TODO: Change the <STORAGE_BUCKET> placeholder below
-  match /b/<STORAGE_BUCKET>/o {
+  match /b/{bucket}/o {
     match /{userId}/thumb/{postId}/{fileName} {
       allow read, write: if isImageAndBelowMaxSize(userId, 1);
     }
