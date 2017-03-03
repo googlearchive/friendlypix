@@ -7,7 +7,7 @@ Friendly Pix is a place where you can share photos, follow friends, comment on p
 
 ## Initial setup, build tools and dependencies
 
-Friendly Pix is built using Javascript, [Firebase](https://firebase.google.com/docs/web/setup) and jQuery. The Auth flow is build using [Firebase-UI](https://github.com/firebase/firebaseui-web). Javascript dependencies are managed using [bower](http://bower.io/) and Build/Deploy tools dependencies are managed using [npm](https://www.npmjs.com/). Also Friendly Pix is written in ES2015 so for wide browser support we'll transpile the code to ES5 using [BabelJs](http://babeljs.io).
+Friendly Pix is built using Javascript, [Firebase](https://firebase.google.com/docs/web/setup) and jQuery. The Auth flow is built using [Firebase-UI](https://github.com/firebase/firebaseui-web). Javascript dependencies are managed using [bower](http://bower.io/) and Build/Deploy tools dependencies are managed using [npm](https://www.npmjs.com/). Also Friendly Pix is written in ES2015 so for wide browser support we'll transpile the code to ES5 using [BabelJs](http://babeljs.io).
 
 Install all Build/Deploy tools dependencies by running:
 
@@ -19,9 +19,9 @@ $> npm install
 ## Create Firebase Project
 
 1. Create a Firebase project using the [Firebase Console](https://firebase.google.com/console).
-2. Enable **Google** as a Sign in provider in **Firebase Console > Auth > Sign in Method** tab.
-3. Enable **Facebook** as a Sign in provider in **Firebase Console > Auth > Sign in Method** tab. You'll need to provide your Facebook app's credentials. If you haven't yet you'll need to have created a Facebook app on [Facebook for Developers](https://developers.facebook.com)
-4. Now click the **WEB SETUP** button in the top right corner to copy the initialization snippet it will look like this:
+2. Enable **Google** as a Sign in provider in **Firebase Console > Authentication > Sign in Method** tab.
+3. Enable **Facebook** as a Sign in provider in **Firebase Console > Authentication > Sign in Method** tab. You'll need to provide your Facebook app's credentials. If you haven't yet you'll need to have created a Facebook app on [Facebook for Developers](https://developers.facebook.com)
+4. Now navigate to the **Overview** on the top left and click **Add Firebase to your web app** to get the initialization snippet to copy. The snippet will look like this:
 
   ```html
   <script src="https://www.gstatic.com/firebasejs/<VERSION>/firebase.js"></script>
@@ -31,7 +31,7 @@ $> npm install
       apiKey: "<YOUR_API_KEY>",
       authDomain: "<YOUR_PROJECT_ID>.firebaseapp.com",
       databaseURL: "https://<YOUR_PROJECT_ID>.firebaseapp.com",
-      storageBucket: "<YOUR_PROJECT_ID>.firebaseapp.com",
+      storageBucket: "<YOUR_PROJECT_ID>.appspot.com",
     };
     firebase.initializeApp(config);
   </script>
@@ -42,13 +42,13 @@ $> npm install
 
 ## Update the app with your firebase project
 
-1. In the root of the site locate the **index.html** in the root of the folder and replace the text below with the snippet you coppied above:
+1. In root of the site, locate the **index.html** file and replace the text below with the snippet you copied above:
 
   ```html
   <!-- TODO(DEVELOPER): Paste the initialization snippet from: Firebase Console > Add Firebase to your web app. -->
   ```
 
-2. In the root of the site locate the file __storage.rules__ and replace the storage bucket location with the one from firebase project:
+2. In web directory, locate the **storage.rules** file and replace the storage bucket location with the one from firebase project. The location is the storageBucket parameter in the initialization snippet:
 
   ```javascript
   // TODO: Change the <STORAGE_BUCKET> placeholder below
