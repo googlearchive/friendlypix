@@ -32,6 +32,7 @@ $> npm install
       authDomain: "<YOUR_PROJECT_ID>.firebaseapp.com",
       databaseURL: "https://<YOUR_PROJECT_ID>.firebaseapp.com",
       storageBucket: "<YOUR_PROJECT_ID>.appspot.com",
+      messagingSenderId: "<YOUR_MESSAGING_SENDER_ID>"
     };
     firebase.initializeApp(config);
   </script>
@@ -48,7 +49,7 @@ $> npm install
   <!-- TODO(DEVELOPER): Paste the initialization snippet from: Firebase Console > Add Firebase to your web app. -->
   ```
 
-2. In web directory, locate the **storage.rules** file and replace the storage bucket location with the one from firebase project. The location is the storageBucket parameter in the initialization snippet:
+2. In the web directory, locate the **storage.rules** file and replace the storage bucket location with the one from firebase project. The location is the storageBucket parameter in the initialization snippet:
 
   ```javascript
   // TODO: Change the <STORAGE_BUCKET> placeholder below
