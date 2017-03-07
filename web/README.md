@@ -7,12 +7,18 @@ Friendly Pix is a place where you can share photos, follow friends, comment on p
 
 ## Initial setup, build tools and dependencies
 
-Friendly Pix is built using Javascript, [Firebase](https://firebase.google.com/docs/web/setup) and jQuery. The Auth flow is built using [Firebase-UI](https://github.com/firebase/firebaseui-web). Javascript dependencies are managed using [bower](http://bower.io/) and Build/Deploy tools dependencies are managed using [npm](https://www.npmjs.com/). Also Friendly Pix is written in ES2015 so for wide browser support we'll transpile the code to ES5 using [BabelJs](http://babeljs.io).
+Friendly Pix is built using Javascript, [Firebase](https://firebase.google.com/docs/web/setup) and jQuery. The Auth flow is built using [Firebase-UI](https://github.com/firebase/firebaseui-web). Javascript dependencies are managed using [bower](http://bower.io/) and Build/Deploy tools dependencies are managed using [npm](https://www.npmjs.com/). Also Friendly Pix is written in ES2015 so for wide browser support we'll transpile the code to ES5 using [BabelJs](http://babeljs.io). Additionally server-side micro-services are built on [Cloud Functions for Firebase](https://firebase.google.com/docs/functions).
 
 Install all Build/Deploy tools dependencies by running:
 
 ```bash
-$> npm install
+$ npm install
+```
+
+Install Firebase Functions dependencies by running:
+
+```bash
+$ cd functions; npm install; cd -
 ```
 
 
@@ -38,9 +44,6 @@ $> npm install
   </script>
   ```
 
-> If the `storageBucket` value is empty you've hit a bug. Just close the window and click the  **WEB SETUP** button again and you should get it.
-
-
 ## Update the app with your firebase project
 
 1. In root of the site, locate the **index.html** file and replace the text below with the snippet you copied above:
@@ -64,6 +67,8 @@ This will start `firebase serve` and make sure your Javascript files are transpi
 > This is currently broken on Windows. On Windows please run the following commands separately instead: `bower install`, `babel -w scripts -s --retain-lines -d lib` and `firebase serve`.
 
 Then open [http://localhost:5000](http://localhost:5000)
+
+> Note: Cloud Functions cannot yet be ran locally. Deploy the app to deploy and enable the Cloud Functions.
 
 
 ## Deploy the app

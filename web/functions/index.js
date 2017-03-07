@@ -99,18 +99,20 @@ exports.sendFollowerNotification = functions.database.ref('/followers/{followedU
           response.results.forEach((result, index) => {
             const error = result.error;
             if (error) {
-              console.error('Failure sending notification to', tokens[index], error);
               // Cleanup the tokens who are not registered anymore.
               if (error.code === 'messaging/invalid-registration-token' ||
-                error.code === 'messaging/registration-token-not-registered') {
+                  error.code === 'messaging/registration-token-not-registered') {
+                console.log('The following token is not registered anymore', tokens[index]);
                 tokensToRemove[`/people/${followedUid}/notificationTokens/${tokens[index]}`] = null;
+              } else {
+                console.error('Failure sending notification to', tokens[index], error);
               }
             }
           });
           // If there are tokens to cleanup.
           const nbTokensToCleanup = Object.keys(tokensToRemove).length;
           if (nbTokensToCleanup > 0) {
-            return admin.database.ref('/').update(tokensToRemove).then(() => {
+            return admin.database().ref('/').update(tokensToRemove).then(() => {
               console.log(`Removed ${nbTokensToCleanup} unregistered tokens.`);
             });
           }
@@ -174,7 +176,7 @@ function blurImage(filePath, bucketName, metadata) {
     }).then(() => {
       console.log('The file has been downloaded to', tempLocalFile);
       // Blur the image using ImageMagick.
-      return exec(`convert ${tempLocalFile} -channel RGBA -blur 0x24 ${tempLocalFile}`).then(() => {
+      return exec(`convert ${tempLocalFile} -channel RGBA -blur 0x18 ${tempLocalFile}`).then(() => {
         console.log('Blurred image created at', tempLocalFile);
         // Uploading the Blurred image.
         return bucket.upload(tempLocalFile, {
@@ -204,17 +206,20 @@ function refreshImages(uid, postId, size) {
     };
     app = admin.initializeApp(config, uid);
   } catch (e) {
-    if (e.code === 'app/duplicate-app') {
-      // An app for that UID was already created so we re-use it.
-      app = admin.app(uid);
-    } else {
+    if (e.code !== 'app/duplicate-app') {
+      console.error('There was an error initializing Firebase Admin', e);
       throw e;
     }
+    // An app for that UID was already created so we re-use it.
+    console.log('Re-using existing app.');
+    app = admin.app(uid);
   }
 
   const imageUrlRef = app.database().ref(`/posts/${postId}/${size}_url`);
   return imageUrlRef.once('value').then(snap => {
     const picUrl = snap.val();
-    return imageUrlRef.set(`${picUrl}&blurred`);
+    return imageUrlRef.set(`${picUrl}&blurred`).then(() => {
+      console.log('Blurred image URL updated.');
+    });
   });
 }
