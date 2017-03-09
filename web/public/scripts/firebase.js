@@ -418,14 +418,14 @@ friendlyPix.Firebase = class {
   }
 
   /**
-   * Uploads a new Picture to Firebase Storage and adds a new post referencing it.
+   * Uploads a new Picture to Cloud Storage and adds a new post referencing it.
    * This returns a Promise which completes with the new Post ID.
    */
   uploadNewPic(pic, thumb, fileName, text) {
     // Get a reference to where the post will be created.
     const newPostKey = this.database.ref('/posts').push().key;
 
-    // Start the pic file upload to Firebase Storage.
+    // Start the pic file upload to Cloud Storage.
     const picRef = this.storage.ref(`${this.auth.currentUser.uid}/full/${newPostKey}/${fileName}`);
     const metadata = {
       contentType: pic.type
@@ -439,7 +439,7 @@ friendlyPix.Firebase = class {
       console.error('Error while uploading new pic', error);
     });
 
-    // Start the thumb file upload to Firebase Storage.
+    // Start the thumb file upload to Cloud Storage.
     const thumbRef = this.storage.ref(`${this.auth.currentUser.uid}/thumb/${newPostKey}/${fileName}`);
     var tumbUploadTask = thumbRef.put(thumb, metadata).then(snapshot => {
       console.log('New thumb uploaded. Size:', snapshot.totalBytes, 'bytes.');
@@ -629,7 +629,7 @@ friendlyPix.Firebase = class {
 
   /**
    * Deletes the given post from the global post feed and the user's post feed. Also deletes
-   * comments, likes and the file on Firebase Storage.
+   * comments, likes and the file on Cloud Storage.
    */
   deletePost(postId, picStorageUri, thumbStorageUri) {
     console.log(`Deleting ${postId}`);
