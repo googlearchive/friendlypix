@@ -46,13 +46,6 @@ $ open your-project.xcworkspace
 - Run the app on your device or simulator.
     - Select **Sign In** and select Facebook to begin.
 
-### Email/Password Setup
-- Go to the [Firebase Console](https://console.firebase.google.com) and navigate to your project:
-  - Select the **Auth** panel and then click the **Sign In Method** tab.
-  - Click **Email/Password** and turn on the **Enable** switch, then click **Save**.
-- Run the app on your device or simulator.
-    - Select **Sign In** and select Email to begin.
-
 ### Twitter Login Setup
 - Go to the [Twitter Developers Site](https://apps.twitter.com/) and follow all
   instructions to set up a new iOS app.
