@@ -21,9 +21,10 @@ admin.initializeApp(functions.config().firebase);
 const mkdirp = require('mkdirp-promise');
 const gcs = require('@google-cloud/storage')();
 const vision = require('@google-cloud/vision')();
-const exec = require('child-process-promise').exec;
-
-const LOCAL_TMP_FOLDER = '/tmp';
+const spawn = require('child-process-promise').spawn;
+const path = require('path');
+const os = require('os');
+const fs = require('fs');
 
 /**
  * Triggers when a user gets a new follower and sends notifications if the user has enabled them.
@@ -146,7 +147,7 @@ exports.blurOffensiveImages = functions.storage.object().onChange(event => {
 
     if (safeSearch.adult || safeSearch.violence) {
       return blurImage(object.name, object.bucket, object.metadata).then(() => {
-        const filePathSplit = object.name.split('/');
+        const filePathSplit = object.name.split(path.sep);
         const uid = filePathSplit[0];
         const size = filePathSplit[1]; // 'thumb' or 'full'
         const postId = filePathSplit[2];
@@ -161,32 +162,29 @@ exports.blurOffensiveImages = functions.storage.object().onChange(event => {
  * Blurs the given image located in the given bucket using ImageMagick.
  */
 function blurImage(filePath, bucketName, metadata) {
-  const filePathSplit = filePath.split('/');
-  filePathSplit.pop();
-  const fileDir = filePathSplit.join('/');
-  const tempLocalDir = `${LOCAL_TMP_FOLDER}/${fileDir}`;
-  const tempLocalFile = `${LOCAL_TMP_FOLDER}/${filePath}`;
+  const tempLocalFile = path.join(os.tmpdir(), filePath);
+  const tempLocalDir = path.dirname(tempLocalFile);
+  const bucket = gcs.bucket(bucketName);
 
   // Create the temp directory where the storage file will be downloaded.
   return mkdirp(tempLocalDir).then(() => {
     // Download file from bucket.
-    const bucket = gcs.bucket(bucketName);
-    return bucket.file(filePath).download({
-      destination: tempLocalFile
-    }).then(() => {
-      console.log('The file has been downloaded to', tempLocalFile);
-      // Blur the image using ImageMagick.
-      return exec(`convert ${tempLocalFile} -channel RGBA -blur 0x18 ${tempLocalFile}`).then(() => {
-        console.log('Blurred image created at', tempLocalFile);
-        // Uploading the Blurred image.
-        return bucket.upload(tempLocalFile, {
-          destination: filePath,
-          metadata: {metadata: metadata} // Keeping custom metadata.
-        }).then(() => {
-          console.log('Blurred image uploaded to Storage at', filePath);
-        });
-      });
+    return bucket.file(filePath).download({destination: tempLocalFile});
+  }).then(() => {
+    console.log('The file has been downloaded to', tempLocalFile);
+    // Blur the image using ImageMagick.
+    return spawn('convert', [tempLocalFile, '-channel', 'RGBA', '-blur', '0x18', tempLocalFile]);
+  }).then(() => {
+    console.log('Blurred image created at', tempLocalFile);
+    // Uploading the Blurred image.
+    return bucket.upload(tempLocalFile, {
+      destination: filePath,
+      metadata: {metadata: metadata} // Keeping custom metadata.
     });
+  }).then(() => {
+    console.log('Blurred image uploaded to Storage at', filePath);
+    fs.unlinkSync(tempLocalFile);
+    console.log('Deleted local file', tempLocalFile);
   });
 }
 
