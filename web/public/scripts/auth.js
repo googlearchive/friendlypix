@@ -64,11 +64,6 @@ friendlyPix.Auth = class {
    * "Sign-In" button if the user isn't signed-in.
    */
   onAuthStateChanged(user) {
-    // We ignore token refresh events.
-    if (user && this.userId === user.uid) {
-      return;
-    }
-
     if (window.friendlyPix.router) {
       window.friendlyPix.router.reloadPage();
     }
