@@ -1,5 +1,0 @@
-public/libs
-*.pyc
-node_modules
-public/scripts-es5
-firebase-debug.log
