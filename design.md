@@ -65,7 +65,7 @@ By checking `followers` structure, we decide the the user already following the 
 
 If follow is clicked, go through profile’s post ids, add them all into the user’s feed. Then set lastpost’s id as `lastpostID`. Check feed creation for the use of `lastpostID`. If profile doesn’t have any post we simply use YES value, to show that following is occured.
 
-Once again using `updateChildValues` we update values of both the `followers/profile_id/user_id` with `lastPostID` and `people/user_id/following/profile_id` with `YES`. So we update both follower and following info at the same time.
+Once again using `updateChildValues` we update values of both the `followers/followee_user_id/user_id` with `lastPostID` and `people/user_id/following/profile_id` with `YES`. So we update both follower and following info at the same time.
 
 Unfollowing simply reverses the follow, deletes posts from feed and removes follower/following link.
 
@@ -80,7 +80,7 @@ Here we sell only the posts our followee’s submitted and ourselves. So we’ll
 #### Lazy Feed
 Instead of creating each feed on post submission time, we will be using lazy creation of feed. So till the user will need a feed, we won’t be updating since the last use. There is only penalty in the first time user looks for the feed but for subsequent updates should be much faster. This way we won’t have to create/update feed regularly for inactive users.
 
-Each time we follow a user, their previous posts are added to our feed. And their last post id is entered on `followers/profile_id/user_id”`. So to update the feed, we go through all the followee list by `people/user_id/following/`. For each followee we query `followers/followee_user_id/user_id` to get the last post that was updated into feed. We query the remaining posts by them from `people/followee_user_id/posts` using `queryOrderedByKey` and `queryStartingAtValue:lastSyncedPostId`.
+Each time we follow a user, their previous posts are added to our feed. And their last post id is entered on `followers/followee_user_id/user_id”`. So to update the feed, we go through all the followee list by `people/user_id/following/`. For each followee we query `followers/followee_user_id/user_id` to get the last post that was updated into feed. We query the remaining posts by them from `people/followee_user_id/posts` using `queryOrderedByKey` and `queryStartingAtValue:lastSyncedPostId`.
 
 Once again using `updateChildValues` we simultaneously update `lastsyncedId` and the feed for each post we copy. This way we don’t end up with a race condition in Database in case our connection is disrupted.
 Once the current feed is updated to latest, we start listening for new additions from followers as long as the app is alive.
