@@ -1,3 +1,8 @@
+# Status: Archived
+This repository has been archived and is no longer maintained.
+
+![status: inactive](https://img.shields.io/badge/status-inactive-red.svg)
+
 # Friendly Pix
 
 Friendly Pix is a sample app demonstrating how a photo sharing social network can be built using the [Firebase Platform](http://firebase.google.com).
